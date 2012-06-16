@@ -5,7 +5,7 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
-// Cleanup expired pastes every 1 minute
+// Read the cron table
 $sql = "SELECT timestamp, locked FROM {$db->prefix}cron LIMIT 1";
 $row = $db->query($sql, true);
 $timestamp = $row['timestamp'];

@@ -123,8 +123,6 @@ class skin
     {
         global $core, $lang, $nav;
 
-        $project = $core->variable('project', '');
-
         $data = str_replace("[[site_logo]]",
                              $this->skin_path . '/images/' . $lang->lang_name . '/logo.png', $data);
         $data = str_replace("[[site_logo_rss]]",
@@ -134,14 +132,7 @@ class skin
         $data = str_replace("[[skin_path]]", $this->skin_path, $data);
         $data = str_replace("[[addon_path]]", $core->root_path() . 'addons', $data);
         $data = str_replace("[[skin_name]]", $this->skin_name_fancy, $data);
-        $data = str_replace("[[nav_home_rss]]", $core->base_uri(), $data);
-        $data = str_replace("[[nav_newpaste]]", $nav->get('nav_newpaste', $project), $data);
-        $data = str_replace("[[nav_archives]]", $nav->get('nav_archives', $project), $data);
-        $data = str_replace("[[nav_rss]]", $nav->get('nav_rss', $project), $data);
-        $data = str_replace("[[nav_api]]", $nav->get('nav_api', $project), $data);
-        $data = str_replace("[[nav_help]]", $nav->get('nav_help', $project), $data);
-        $data = str_replace("[[nav_about]]", $nav->get('nav_about', $project), $data);
-        $data = str_replace("[[nav_admin]]", $nav->get('nav_admin'), $data);
+        $data = str_replace("[[nav_home]]", $nav->get('nav_home'), $data);
 
         return $data;
     }
@@ -224,12 +215,11 @@ class skin
     }
 
     // Function to generate pagination
-    function pagination($total_pastes, $current_page)
+    function pagination($total_items, $current_page)
     {
         global $lang, $core, $nav;
 
-        $pages = ceil($total_pastes / 10);
-        $project = $core->variable('project', '');
+        $pages = ceil($total_items / 10);
         $pagination = '';
 
         for ($idx = 1; $idx <= $pages; $idx++)
@@ -253,7 +243,7 @@ class skin
             {
                 if ($idx != $current_page)
                 {
-                    $pagination .= '<a href="' . $nav->get('nav_archives', $project, $idx) . '">';
+                    $pagination .= '<a href="' . $nav->get('nav_list', $idx) . '">';
                 }
 
                 $pagination .= '<span class="page_no';
