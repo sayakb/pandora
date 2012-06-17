@@ -36,17 +36,24 @@ class nav
         try
         {
             global $core;
+            
+            // Set URL bases
+            $base = $core->path();
 
             // URLs when rewrite is enabled
             $rewrite_ary = array(
-                'nav_home'      => $core->path(),
-                'nav_list'      => $core->path(),
+                'nav_home'      => $base,
+                'nav_list'      => $base,
+                'nav_login'     => "{$base}user/login/",
+                'nav_logout'    => "{$base}user/logout/",
             );
 
             // URLs when rewrite is disabled
             $general_ary = array(
-                'nav_home'      => $core->path(),
-                'nav_list'      => $core->path(),
+                'nav_home'      => $base,
+                'nav_list'      => $base,
+                'nav_login'     => "{$base}index.php?q=login",
+                'nav_logout'    => "{$base}index.php?q=logout",
             );
 
             // Generate the navigation URL

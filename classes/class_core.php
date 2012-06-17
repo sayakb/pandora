@@ -7,6 +7,15 @@
 
 class core
 {
+    // Global vars
+    var $timestamp;
+
+    // Constructor
+    function __construct()
+    {
+        $this->timestamp = time();
+    }
+    
     // Function to return root path
     function path()
     {

@@ -21,7 +21,7 @@ class lang
     // Function to parse localization data
     function parse($data)
     {
-        global $core, $gsod;
+        global $core, $auth, $gsod, $config;
         
         if (file_exists(realpath("lang/{$this->lang_name}.php")))
         {
@@ -40,6 +40,8 @@ class lang
         foreach ($lang_data as $key => $value)
         {
             $value = str_replace("[[host]]", $core->base_uri(), $value);
+            $value = str_replace("[[site_name]]", $config->site_name, $value);
+            $value = str_replace("[[username]]", $auth->username, $value);
             $data = str_replace("{{{$key}}}", $value, $data);
         }
 

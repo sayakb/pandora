@@ -20,6 +20,7 @@ if (((time() - $timestamp) > 60) && !$locked)
     if ($db->affected_rows() > 0)
     {
         // Perform cron tasks
+        $db->query("DELETE FROM {$db->prefix}session WHERE timestamp < {$auth->max_age}");
     }
 }
 

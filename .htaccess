@@ -1,0 +1,15 @@
+# PHP.ini config stuff
+php_flag magic_quotes_gpc off
+
+# Rewrite rules
+<IfModule mod_rewrite.c>
+    # Tell PHP that rewrite rules are available
+    SetEnv HTTP_MOD_REWRITE On
+
+    # Rewrite rules
+    RewriteEngine on
+
+    # User links
+    RewriteRule ^user/login/?$ index.php?q=login [NC]
+    RewriteRule ^user/logout/?$ index.php?q=logout [NC]
+</IfModule>

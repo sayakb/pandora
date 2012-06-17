@@ -1,4 +1,32 @@
-        </form>
+                </form>
+            </div>
+
+            <div class="span3">
+                <div class="well">
+                    <div class="align-center [[guest_visibility]]">
+                        <h4>
+                            <i class="icon-info-sign"></i>
+                            {{not_logged_in}}
+                        </h4>
+
+                        <a href="[[nav_login]]" class="btn">
+                            {{log_in}}
+                        </a>
+                    </div>
+
+                    <div class="align-center [[user_visibility]]">
+                        <h4>
+                            <i class="icon-user"></i>
+                            {{logged_in_as}}
+                        </h4>
+
+                        <a href="[[nav_logout]]" class="btn">
+                            {{log_out}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <footer id="copyright" class="copyright align-center">{{site_copyright}}</footer>
     </div>

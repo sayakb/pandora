@@ -1,0 +1,36 @@
+<h1>{{log_in}}</h1>
+
+<div class="alert alert-error [[error_visibility]]">
+    {{login_error}}
+</div>
+
+<h4>{{iko_credentials}}</h4>
+<br />
+
+<div class="control-group">
+    <label class="control-label">{{username}}</label>
+    <div class="controls">
+        <input type="text" name="username" class="input-xlarge" />
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label">{{password}}</label>
+    <div class="controls">
+        <input type="password" name="password" class="input-xlarge" />
+    </div>
+</div>
+
+<div class="form-actions">
+    <button type="submit" name="login" class="btn btn-primary">{{log_in}}</button>
+    <button type="resrt" class="btn">{{reset}}</button>
+</div>
+
+<div class="alert alert-info">
+    <h3>{{create_account}}</h3>
+    <p>{{create_account_exp}}</p>
+    
+    <a href="https://identity.kde.org/index.php?r=registration/index" target="_blank" class="btn">
+        {{register_iko}}
+    </a>
+</div>
