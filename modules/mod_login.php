@@ -23,24 +23,32 @@ if ($auth->is_logged_in)
 // Login data was submitted
 if ($login_submit)
 {
-    // Log in user
-    $login_success = $auth->login($username, $password);
-
-    // Check if login succeeded
-    if ($login_success)
+    if (!empty($username) && !empty($password))
     {
-        $homepage = $nav->get('nav_home');
-        $core->redirect($homepage);
+        // Log in user
+        $login_success = $auth->login($username, $password);
+
+        // Check if login succeeded
+        if ($login_success)
+        {
+            $homepage = $nav->get('nav_home');
+            $core->redirect($homepage);
+        }
+        else
+        {
+            $error_message = $lang->get('login_error');
+        }
     }
     else
     {
-        $show_error = true;
+        $error_message = $lang->get('enter_user_pw');
     }
 }
 
 // Assign skin data
 $skin->assign(array(
-    'error_visibility'      => isset($show_error) ? 'visible' : 'hidden',
+    'error_message'         => isset($error_message) ? $error_message : '',
+    'error_visibility'      => isset($error_message) ? 'visible' : 'hidden',
 ));
 
 // Assign the module data and title

@@ -25,6 +25,8 @@ class config
     var $ldap_base_dn;
     var $ldap_uid;
     var $ldap_filter;
+    var $ldap_group;
+    var $ldap_admin_group;
     var $ldap_user_dn;
     var $ldap_password;
     
@@ -62,25 +64,27 @@ class config
         // Set the data
         if ($load_data)
         {
-            $this->db_host         = isset($db_host) ? $db_host : '';
-            $this->db_port         = isset($db_port) ? $db_port : '';
-            $this->db_name         = isset($db_name) ? $db_name : '';
-            $this->db_username     = isset($db_username) ? $db_username : '';
-            $this->db_password     = isset($db_password) ? $db_password : '';
-            $this->db_prefix       = isset($db_prefix) ? $db_prefix : '';
+            $this->db_host          = isset($db_host) ? $db_host : '';
+            $this->db_port          = isset($db_port) ? $db_port : '';
+            $this->db_name          = isset($db_name) ? $db_name : '';
+            $this->db_username      = isset($db_username) ? $db_username : '';
+            $this->db_password      = isset($db_password) ? $db_password : '';
+            $this->db_prefix        = isset($db_prefix) ? $db_prefix : '';
             
-            $this->site_name       = isset($site_name) ? $site_name : 'Pandora';
-            $this->site_copyright  = isset($site_copyright) ? $site_copyright : '&copy; 2012 KDE';
-            $this->skin_name       = isset($skin_name) ? $skin_name : 'Neverland';
-            $this->lang_name       = isset($lang_name) ? $lang_name : 'en-gb';
+            $this->site_name        = isset($site_name) ? $site_name : 'Pandora';
+            $this->site_copyright   = isset($site_copyright) ? $site_copyright : '&copy; 2012 KDE';
+            $this->skin_name        = isset($skin_name) ? $skin_name : 'Neverland';
+            $this->lang_name        = isset($lang_name) ? $lang_name : 'en-gb';
             
-            $this->ldap_server     = isset($ldap_server) ? $ldap_server : '';
-            $this->ldap_port       = isset($ldap_port) ? $ldap_port : '';
-            $this->ldap_base_dn    = isset($ldap_base_dn) ? $ldap_base_dn : '';
-            $this->ldap_uid        = isset($ldap_uid) ? $ldap_uid : '';
-            $this->ldap_filter     = isset($ldap_filter) ? $ldap_filter : '';
-            $this->ldap_user_dn    = isset($ldap_user_dn) ? $ldap_user_dn : '';
-            $this->ldap_password   = isset($ldap_password) ? $ldap_password : '';
+            $this->ldap_server      = isset($ldap_server) ? $ldap_server : '';
+            $this->ldap_port        = isset($ldap_port) ? $ldap_port : '';
+            $this->ldap_base_dn     = isset($ldap_base_dn) ? $ldap_base_dn : '';
+            $this->ldap_uid         = isset($ldap_uid) ? $ldap_uid : '';
+            $this->ldap_filter      = isset($ldap_filter) ? $ldap_filter : '';
+            $this->ldap_group       = isset($ldap_group) ? $ldap_group : '';
+            $this->ldap_admin_group = isset($ldap_admin_group) ? $ldap_admin_group : '';
+            $this->ldap_user_dn     = isset($ldap_user_dn) ? $ldap_user_dn : '';
+            $this->ldap_password    = isset($ldap_password) ? $ldap_password : '';
         }
     }
 }

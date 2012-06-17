@@ -118,34 +118,7 @@ class auth
             @ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
         }
 
-        // Try to bind with the user DN and password, if provided
-        if ($config->ldap_user_dn || $config->ldap_password)
-        {
-            if (!@ldap_bind($ldap, htmlspecialchars_decode($config->ldap_user_dn), htmlspecialchars_decode($config->ldap_password)))
-            {
-                return false;
-            }
-        }
 
-        // Generate the user key (filter)
-        $key = '(' . $config->ldap_uid . '=' . $this->ldap_escape(htmlspecialchars_decode($username)) . ')';
-
-        // Check if an additional filter is set
-        if ($config->ldap_filter)
-        {
-            $filter = ($config->ldap_filter[0] == '(' && substr($config->ldap_filter, -1) == ')')
-                          ? $config->ldap_filter
-                          : "({$config->ldap_filter})";
-            $key = "(&{$key}{$filter})";
-        }
-
-        // Look up for the user
-        $search = @ldap_search($ldap, htmlspecialchars_decode($config->ldap_base_dn), $key,
-                               array(htmlspecialchars_decode($config->ldap_uid)), 0, 1);
-        $ldap_result = @ldap_get_entries($ldap, $search);
-
-        // Return the user details
-        return (is_array($ldap_result) && sizeof($ldap_result) > 1) ? $ldap_result[0] : false;
     }
 
     // Method for authenticating a user
@@ -172,27 +145,52 @@ class auth
         @ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         @ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
-        // Connection succeeded, fetch the user details
-        $user_details = $this->get_user_details($username, $ldap);
-       
-        if ($user_details !== false)
+        // Try to bind with the user DN and password, if provided
+        if ($config->ldap_user_dn || $config->ldap_password)
+        {
+            if (!@ldap_bind($ldap, htmlspecialchars_decode($config->ldap_user_dn), htmlspecialchars_decode($config->ldap_password)))
+            {
+                return false;
+            }
+        }
+
+        // Look up for the user
+        $filter = $config->ldap_uid . '=' . $this->ldap_escape(htmlspecialchars_decode($username));
+        $search = @ldap_search($ldap, htmlspecialchars_decode($config->ldap_base_dn), $filter);
+        $user_entry = @ldap_first_entry($ldap, $search);
+
+        // Was the user found?
+        if ($user_entry !== false)
         {
             // Validate credentials by binding with user's password
-            if (@ldap_bind($ldap, $user_details['dn'], htmlspecialchars_decode($password)))
+            $user_dn = @ldap_get_dn($ldap, $user_entry);
+            
+            if (@ldap_bind($ldap, htmlspecialchars_decode($user_dn), htmlspecialchars_decode($password)))
             {
-                @ldap_close($ldap);
-                unset($user_details);
+                // Check if user is an admin
+                if (!empty($config->ldap_group) && !empty($config->ldap_admin_group))
+                {
+                    $user_values = @ldap_get_values($ldap, $user_entry, $config->ldap_group);
+                    $is_admin = in_array($config->ldap_admin_group, $user_values);
+                }
+                else
+                {
+                    $is_admin = false;
+                }
 
                 // Create a new session for the user
-                $this->create_session($username);
+                $this->create_session($username, $is_admin);
+
+                @ldap_close($ldap);
+                unset($user_entry);
 
                 // Authentication was successful
                 return true;
             }
             else
             {
-                unset($user_details);
                 @ldap_close($ldap);
+                unset($user_entry);
 
                 // Password was wrong
                 return false;

@@ -19,6 +19,7 @@ $lang_data = array(
 
     /* Module: login */
     'reset'                 => 'Reset',
+    'enter_user_pw'         => 'Please enter your username and password',
     'login_error'           => 'Login failed. Please notify the <a href="mailto:kde-soc-mentor-owner@kde.org">' .
                                'KDE SoC Administrators</a> if the problem persists',
     'iko_credentials'       => 'Log into [[site_name]] using your <a href="http://identity.kde.org">identity.kde.org' .
