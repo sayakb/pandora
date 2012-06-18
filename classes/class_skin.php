@@ -136,9 +136,7 @@ class skin
         $data = str_replace("[[guest_visibility]]", ($auth->is_logged_in ? 'hidden' : 'visible'), $data);
         $data = str_replace("[[user_visibility]]", ($auth->is_logged_in ? 'visible' : 'hidden'), $data);
         $data = str_replace("[[admin_visibility]]", ($auth->is_admin ? 'visible' : 'hidden'), $data);
-        $data = str_replace("[[nav_home]]", $nav->get('nav_home'), $data);
-        $data = str_replace("[[nav_login]]", $nav->get('nav_login'), $data);
-        $data = str_replace("[[nav_logout]]", $nav->get('nav_logout'), $data);
+        $data = str_replace("[[nav_home]]", $core->path(), $data);
         
         return $data;
     }

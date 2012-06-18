@@ -7,6 +7,10 @@
 var isIe = (navigator.appName.indexOf("Microsoft") >= 0);
 
 // Startup function
-$(document).ready(function() {
-
+$(function() {
+    $(".datepicker").datepicker({
+        dateFormat: 'M dd, yy',
+        changeMonth: true,
+        changeYear: true,
+    });
 });

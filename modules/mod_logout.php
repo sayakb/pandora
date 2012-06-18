@@ -9,7 +9,6 @@
 $auth->logout();
 
 // Redirect to homepage
-$homepage = $nav->get('nav_home');
-$core->redirect($homepage);
+$core->redirect($core->path());
 
 ?>

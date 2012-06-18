@@ -7,6 +7,21 @@
 
 class module
 {
+    // Global vars
+    var $pool;
+
+    // Constructor
+    function __construct()
+    {
+        $this->pool = array(
+            array('name' => 'login',     'access' => 'u'),
+            array('name' => 'logout',    'access' => 'u'),
+            array('name' => 'programs',  'access' => 'a'),
+            array('name' => 'proposals', 'access' => 'a'),
+            array('name' => 'users',     'access' => 'a'),
+        );
+    }
+    
     // Method to load a module
     function load($module_name)
     {
@@ -15,8 +30,7 @@ class module
         if (file_exists(realpath("modules/mod_{$module_name}.php")))
         {
             // Set globals
-            global $gsod, $config, $core, $db, $auth, $lang, $skin, $nav,
-                   $module_title, $module_data;
+            global $gsod, $config, $core, $db, $auth, $lang, $skin, $module_title, $module_data;
 
             // Include the module
             include("modules/mod_{$module_name}.php");
@@ -34,14 +48,21 @@ class module
     // Method to validate the current module
     function validate($mode)
     {
-        global $core;
+        global $core, $auth;
 
-        // Available modes
-        $modes_ary = array('login', 'logout');
+        foreach ($this->pool as $module)
+        {
+            // Name matched. Access granted if it's a user module.
+            // For admin module, user should have admin privileges
+            if ($module['name'] == $mode)
+            {
+                return ($module['access'] == 'u') || ($module['access'] == 'a' && $auth->is_admin);
+            }
+        }
 
-        // Return true if module is in valid array
-        return in_array($mode, $modes_ary);
-    }    
+        // Module was not found in the pool
+        return false;
+    }  
 }
 
 ?>

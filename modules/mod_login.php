@@ -15,9 +15,7 @@ $login_submit = isset($_POST['login']);
 if ($auth->is_logged_in)
 {
     $auth->logout();
-
-    $login_page = $nav->get('nav_login');
-    $core->redirect($login_page);
+    $core->redirect('?q=login');
 }
 
 // Login data was submitted
@@ -31,8 +29,7 @@ if ($login_submit)
         // Check if login succeeded
         if ($login_success)
         {
-            $homepage = $nav->get('nav_home');
-            $core->redirect($homepage);
+            $core->redirect($core->path());
         }
         else
         {

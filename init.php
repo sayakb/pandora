@@ -17,7 +17,6 @@ include_once('classes/class_db.php');
 include_once('classes/class_auth.php');
 include_once('classes/class_lang.php');
 include_once('classes/class_skin.php');
-include_once('classes/class_nav.php');
 include_once('classes/class_module.php');
 
 // We need to instantiate the GSoD class first, just in case!
@@ -29,21 +28,8 @@ $core   = new core();
 $db     = new db();
 $auth   = new auth();
 $lang   = new lang();
-$nav    = new nav();
 $skin   = new skin();
 $module = new module();
-
-// Before we do anything, let's add a trailing slash
-$url = $core->request_uri();
-
-if (strrpos($url, '/') != (strlen($url) - 1) && $nav->rewrite_on && strpos($url, '.php') === false)
-{
-    $core->redirect($url . '/');
-}
-else
-{
-    unset($url);
-}
 
 // Set up the db connection
 $db->connect();

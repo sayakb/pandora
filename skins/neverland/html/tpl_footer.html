@@ -9,7 +9,7 @@
                             {{not_logged_in}}
                         </h4>
 
-                        <a href="[[nav_login]]" class="btn">
+                        <a href="?q=login" class="btn">
                             {{log_in}}
                         </a>
                     </div>
@@ -20,10 +20,39 @@
                             {{logged_in_as}}
                         </h4>
 
-                        <a href="[[nav_logout]]" class="btn">
+                        <a href="?q=logout" class="btn">
                             {{log_out}}
                         </a>
                     </div>
+                </div>
+
+                <div class="well [[admin_visibility]]">
+                    <h4>{{administration}}</h4>
+                    <hr class="hr-head" />
+
+                    <ul class="nav nav-list">
+                        <li>
+                            <a href="?q=programs">
+                                <i class="icon-wrench"></i>
+                                {{manage_programs}}
+                            </a>
+                            
+                            <a href="?q=proposals">
+                                <i class="icon-bullhorn"></i>
+                                {{approve_proposal}}
+                            </a>
+                            
+                            <a href="?q=users&amp;c=student">
+                                <i class="icon-th"></i>
+                                {{approve_students}}
+                            </a>
+                            
+                            <a href="?q=users&amp;c=mentor">
+                            <i class="icon-th-large"></i>
+                                {{approve_mentors}}
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -39,6 +68,7 @@
     <script type="text/javascript" src="http://cdn.kde.org/js/jquery.cookie.js"></script>
     <script type="text/javascript" src="http://cdn.kde.org/js/min/bootstrap.js"></script>
     <script type="text/javascript" src="http://cdn.kde.org/nav/global-nav.js"></script>
+    <script type="text/javascript" src="addons/jquery-ui/js/jquery-ui.js"></script>
     <script type="text/javascript" src="[[skin_path]]/js/main.js"></script>
 </body>
 </html>
