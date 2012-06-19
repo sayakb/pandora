@@ -14,11 +14,12 @@ class module
     function __construct()
     {
         $this->pool = array(
-            array('name' => 'login',     'access' => 'u'),
-            array('name' => 'logout',    'access' => 'u'),
-            array('name' => 'programs',  'access' => 'a'),
-            array('name' => 'proposals', 'access' => 'a'),
-            array('name' => 'users',     'access' => 'a'),
+            array('name' => 'login',             'access' => 'u'),
+            array('name' => 'logout',            'access' => 'u'),
+            array('name' => 'view_programs',     'access' => 'u'),
+            array('name' => 'program_home',      'access' => 'u'),
+            array('name' => 'manage_programs',   'access' => 'a'),
+            array('name' => 'approve_proposals', 'access' => 'a'),
         );
     }
     

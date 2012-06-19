@@ -1,0 +1,29 @@
+<div class="hero-unit align-center">
+    <img src="[[skin_path]]/images/project.png" class="home-glyph" alt="" />
+
+    <h1>[[program_title]]</h1>
+    <h3 class="top-spacer">[[program_description]]</h3>
+    
+    <hr class="hr-hero" />
+
+    <div class="[[prog_guest_visibility]]">
+        <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]" class="btn btn-large">
+            {{apply_student}}
+        </a>
+        &nbsp;
+        <a href="?q=view_projects&amp;c=proposed" class="btn btn-large">
+            {{apply_mentor}}
+        </a>
+    </div>
+
+    <div class="[[prog_participant_visibility]]">
+        <h4>
+            <i class="icon-info-sign"></i>
+            [[program_role]]
+        </h4>
+        
+        <a href="?q=view_projects&amp;c=user" class="btn btn-large">
+            {{view_my_projects}}
+        </a>        
+    </div>
+</div>

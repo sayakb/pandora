@@ -221,9 +221,9 @@ class skin
     // Function to generate pagination
     function pagination($total_items, $current_page)
     {
-        global $lang, $core, $nav;
+        global $lang, $core;
 
-        $pages = ceil($total_items / 10);
+        $pages = ceil($total_items / 30);
         $pagination = '';
 
         for ($idx = 1; $idx <= $pages; $idx++)
@@ -247,7 +247,7 @@ class skin
             {
                 if ($idx != $current_page)
                 {
-                    $pagination .= '<a href="' . $nav->get('nav_list', $idx) . '">';
+                    $pagination .= '<a href="&pg=' . $idx . '">';
                 }
 
                 $pagination .= '<span class="page_no';
@@ -316,6 +316,12 @@ class skin
         $this->title($lang->get('error'));
         $this->output();
         exit;
+    }
+
+    // Return visibility based on condition
+    function visibility($condition)
+    {
+        return $condition ? 'visible' : 'hidden';
     }
     
     // Function to exclude a string from being treated as a key

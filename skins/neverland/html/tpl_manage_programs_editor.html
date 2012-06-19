@@ -1,0 +1,63 @@
+<h1>[[editor_title]]</h1>
+<hr class="hr-head" />
+
+<div class="alert alert-error [[error_visibility]]">
+    <a class="close" data-dismiss="alert">×</a>
+    [[error_message]]
+</div>
+
+<div class="alert alert-info">
+    {{mandatory_fields}}
+</div>
+
+<div class="control-group">
+    <label class="control-label">{{program_title}} *</label>
+    <div class="controls">
+        <input type="text" name="title" maxlength="100" class="input-xxlarge" value="[[title]]"  />
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label">{{description}}  &nbsp;</label>
+    <div class="controls">
+        <textarea name="description" rows="4" class="input-xxlarge">[[description]]</textarea>
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label">{{start_date}} *</label>
+    <div class="controls">
+        <input type="text" name="start_date" class="input-medium datepicker" value="[[start_date]]"  />
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label">{{end_date}} *</label>
+    <div class="controls">
+        <input type="text" name="end_date" class="input-medium datepicker" value="[[end_date]]"  />
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label">{{active}} &nbsp;</label>
+    <div class="controls">
+        <input type="checkbox" name="active" [[active_checked]] />
+    </div>
+</div>
+
+<div class="form-actions">
+    <button type="submit" name="program_save" class="btn btn-primary">
+        <i class="icon-ok-sign icon-white"></i>
+        {{save}}
+    </button>
+
+    <a href="?q=manage_programs" class="btn">
+        <i class="icon-remove icon-black"></i>
+        {{cancel}}
+    </a>
+
+    <a href="[[delete_url]]" class="btn btn-danger delete-button [[delete_visibility]]">
+        <i class="icon-trash icon-white"></i>
+        {{delete}}
+    </a>
+</div>

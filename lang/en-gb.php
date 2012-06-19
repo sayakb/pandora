@@ -14,14 +14,19 @@ $lang_data = array(
     'log_out'               => 'Log out',
     'administration'        => 'Administration',
     'manage_programs'       => 'Manage programs',
+    'navigation'            => 'Navigation',
+    'view_programs'         => 'View active programs',
+    'accepted_projects'     => 'Accepted projects',
+    'view_my_projects'      => 'View my projects',
     'approve_proposal'      => 'Approve proposals',
-    'approve_students'      => 'Approve students',
-    'approve_mentors'       => 'Approve mentors',
     'mandatory_fields'      => 'All fields marked with * are mandatory',
     'err_mandatory_fields'  => 'Please fill in all the mandatory fields',
     'delete'                => 'Delete',
     'yes'                   => 'Yes',
     'no'                    => 'No',
+    'program_title'         => 'Program title',
+    'description'           => 'Description',
+    'no_programs'           => 'There are no programs to display',
 
     /* Homepage */
     'welcome_pandora'       => 'Welcome to [[site_name]]',
@@ -41,12 +46,9 @@ $lang_data = array(
                                'new account at <a href="http://identity.kde.org">identity.kde.org</a>',
     'register_iko'          => 'Register at identity.kde.org',
 
-    /* Module: programs */
+    /* Module: manage_programs */
     'add_program'           => 'Add new program',
     'edit_program'          => 'Edit program',
-    'no_programs'           => 'There are no programs to display',
-    'program_title'         => 'Program title',
-    'description'           => 'Description',
     'edit'                  => 'Edit',
     'save'                  => 'Save',
     'cancel'                => 'Cancel',
@@ -57,6 +59,13 @@ $lang_data = array(
     'confirm_deletion'      => 'Confirm deletion',
     'confirm_del_msg'       => 'If you delete this program, all projects associated with it will also get deleted. ' .
                                'Do you want to continue?',
+
+    /* Module: programs_home */
+    'apply_student'         => 'Apply as student',
+    'apply_mentor'          => 'Apply to mentor',
+    'program_role'          => 'You are participating in this program as a __role__', // Do not remove __role__
+    'role_student'          => 'student',
+    'role_mentor'           => 'mentor',
 );
 
 ?>

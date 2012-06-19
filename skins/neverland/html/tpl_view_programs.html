@@ -1,0 +1,21 @@
+<h1>{{view_programs}}</h1>
+<hr class="hr-head" />
+
+<div class="alert alert-info [[notice_visibility]]">
+    {{no_programs}}
+</div>
+
+<div class="[[list_visibility]]">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:200px">{{program_title}}</th>
+                <th>{{description}}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            [[programs_list]]
+        </tbody>
+    </table>
+</div>
