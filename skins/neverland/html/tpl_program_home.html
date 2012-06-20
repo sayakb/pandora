@@ -6,24 +6,43 @@
     
     <hr class="hr-hero" />
 
-    <div class="[[prog_guest_visibility]]">
+    <div class="[[prg_guest_visibility]]">
         <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]" class="btn btn-large">
             {{apply_student}}
         </a>
         &nbsp;
-        <a href="?q=view_projects&amp;c=proposed" class="btn btn-large">
+        <a href="?q=view_projects&amp;a=proposed" class="btn btn-large">
             {{apply_mentor}}
         </a>
     </div>
 
-    <div class="[[prog_participant_visibility]]">
+    <div class="[[prg_student_visibility]]">
         <h4>
             <i class="icon-info-sign"></i>
-            [[program_role]]
+            {{role_student}}
         </h4>
-        
-        <a href="?q=view_projects&amp;c=user" class="btn btn-large">
+
+        <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]" class="btn btn-large">
+            {{submit_another}}
+        </a>
+        &nbsp;        
+        <a href="?q=view_projects&amp;a=user" class="btn btn-large">
             {{view_my_projects}}
         </a>        
+    </div>
+
+    <div class="[[prg_mentor_visibility]]">
+        <h4>
+            <i class="icon-info-sign"></i>
+            {{role_mentor}}
+        </h4>
+
+        <a href="?q=view_projects&amp;a=proposed" class="btn btn-large">
+            {{mentor_another}}
+        </a>
+        &nbsp;
+        <a href="?q=view_projects&amp;a=user" class="btn btn-large">
+            {{view_my_projects}}
+        </a>
     </div>
 </div>

@@ -20,13 +20,16 @@ $lang_data = array(
     'view_my_projects'      => 'View my projects',
     'approve_proposal'      => 'Approve proposals',
     'mandatory_fields'      => 'All fields marked with * are mandatory',
+    'mandatory_all'         => 'Please fill in all the fields',
     'err_mandatory_fields'  => 'Please fill in all the mandatory fields',
     'delete'                => 'Delete',
     'yes'                   => 'Yes',
     'no'                    => 'No',
     'program_title'         => 'Program title',
+    'project_title'         => 'Project title',
     'description'           => 'Description',
     'no_programs'           => 'There are no programs to display',
+    'error_occurred'        => 'An error occurred while processing your request',
 
     /* Homepage */
     'welcome_pandora'       => 'Welcome to [[site_name]]',
@@ -63,9 +66,16 @@ $lang_data = array(
     /* Module: programs_home */
     'apply_student'         => 'Apply as student',
     'apply_mentor'          => 'Apply to mentor',
-    'program_role'          => 'You are participating in this program as a __role__', // Do not remove __role__
-    'role_student'          => 'student',
-    'role_mentor'           => 'mentor',
+    'submit_another'        => 'Submit another proposal',
+    'role_student'          => 'You are participating in this program as a student',
+    'role_mentor'           => 'You are participating in this program as a mentor',
+
+    /* Module: view_projects */
+    'submit_proposal'       => 'Submit a proposal',
+    'edit_project'          => 'Edit project',
+    'proposal_submitted'    => 'Your proposal has been submitted successfully',
+    'project_updated'       => 'Project updated successfully',
+    'project_home'          => 'Program home',
 );
 
 ?>

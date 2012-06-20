@@ -30,8 +30,8 @@ foreach ($result as $row)
 // Assign final skin data
 $skin->assign(array(
     'programs_list'     => $programs_list,
-    'notice_visibility' => count($result) > 0 ? 'hidden' : 'visible',
-    'list_visibility'   => count($result) > 0 ? 'visible' : 'hidden',
+    'notice_visibility' => $skin->visibility(count($result) == 0),
+    'list_visibility'   => $skin->visibility(count($result) > 0),
 ));
 
 // Output the module

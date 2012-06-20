@@ -16,7 +16,6 @@ $active = $core->variable('active', '');
 
 $program_save = isset($_POST['program_save']);
 $confirm = isset($_POST['yes']);
-$cancel = isset($_POST['no']);
 
 // Serve the page based on the action
 if ($action == 'list')
@@ -34,8 +33,8 @@ if ($action == 'list')
         $skin->assign(array(
             'program_id'          => $row['id'],
             'program_title'       => $row['title'],
-            'program_active'      => $row['is_active'] == 1 ? 'visible' : 'hidden',
-            'program_inactive'    => $row['is_active'] == 0 ? 'visible' : 'hidden',
+            'program_active'      => $skin->visibility($row['is_active'] == 1),
+            'program_inactive'    => $skin->visibility($row['is_active'] == 0),
             'program_description' => $row['description'],
         ));
 
@@ -45,8 +44,8 @@ if ($action == 'list')
     // Assign final skin data
     $skin->assign(array(
         'programs_list'     => $programs_list,
-        'notice_visibility' => count($result) > 0 ? 'hidden' : 'visible',
-        'list_visibility'   => count($result) > 0 ? 'visible' : 'hidden',
+        'notice_visibility' => $skin->visibility(count($result) == 0),
+        'list_visibility'   => $skin->visibility(count($result) > 0),
     ));
 
     // Output the module
@@ -129,9 +128,9 @@ else if ($action == 'editor')
         'end_date'          => $end_date,
         'active_checked'    => $active == 'on' ? 'checked' : '',
         'error_message'     => isset($error_message) ? $error_message : '',
-        'error_visibility'  => isset($error_message) ? 'visible' : 'hidden',
+        'error_visibility'  => $skin->visibility(isset($error_message)),
+        'delete_visibility' => $skin->visibility($id > 0),
         'delete_url'        => "?q=manage_programs&a=delete&p={$id}",
-        'delete_visibility' => $id > 0 ? 'visible' : 'hidden',
     ));
 
     // Output the module
@@ -171,7 +170,6 @@ else if ($action == 'delete')
     // Output the module
     $module_title = $lang->get('confirm_deletion');
     $module_data = $skin->output('tpl_confirm_box');
-
 }
 
 ?>

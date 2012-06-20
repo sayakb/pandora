@@ -130,12 +130,11 @@ class skin
                             '/images/' . $lang->lang_name . '/logo_rss.png', $data);
         $data = str_replace("[[page_title]]", $this->skin_title, $data);
         $data = str_replace("[[skin_path]]", $this->skin_path, $data);
-        $data = str_replace("[[addon_path]]", $core->root_path() . 'addons', $data);
         $data = str_replace("[[skin_name]]", $this->skin_name_fancy, $data);
         $data = str_replace("[[username]]", $auth->username, $data);
-        $data = str_replace("[[guest_visibility]]", ($auth->is_logged_in ? 'hidden' : 'visible'), $data);
-        $data = str_replace("[[user_visibility]]", ($auth->is_logged_in ? 'visible' : 'hidden'), $data);
-        $data = str_replace("[[admin_visibility]]", ($auth->is_admin ? 'visible' : 'hidden'), $data);
+        $data = str_replace("[[guest_visibility]]", $this->visibility(!$auth->is_logged_in), $data);
+        $data = str_replace("[[user_visibility]]", $this->visibility($auth->is_logged_in), $data);
+        $data = str_replace("[[admin_visibility]]", $this->visibility($auth->is_admin), $data);
         $data = str_replace("[[nav_home]]", $core->path(), $data);
         
         return $data;

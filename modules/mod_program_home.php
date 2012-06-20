@@ -27,18 +27,21 @@ if ($program_data != null)
     // Check if we have a role
     if ($role_data != null)
     {
-        $role = $role_data['role'] == 's' ? $lang->get('role_student') : $lang->get('role_mentor');
-        $program_role = preg_replace('/\_\_role\_\_/', $role, $lang->get('program_role'));
+        $role = $role_data['role'];
+    }
+    else
+    {
+        $role = 'g';
     }
 
     // Assign screen data for the program
     $skin->assign(array(
-        'program_id'                    => $program_data['id'],
-        'program_title'                 => $program_data['title'],
-        'program_description'           => $program_data['description'],
-        'program_role'                  => isset($program_role) ? $program_role : '',
-        'prog_guest_visibility'         => $skin->visibility($role_data == null),
-        'prog_participant_visibility'   => $skin->visibility($role_data != null),
+        'program_id'               => $program_data['id'],
+        'program_title'            => $program_data['title'],
+        'program_description'      => $program_data['description'],
+        'prg_guest_visibility'     => $skin->visibility($role == 'g'),
+        'prg_student_visibility'   => $skin->visibility($role == 's'),
+        'prg_mentor_visibility'    => $skin->visibility($role == 'm'),
     ));
 
     // Output the module

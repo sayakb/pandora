@@ -14,12 +14,13 @@ class module
     function __construct()
     {
         $this->pool = array(
-            array('name' => 'login',             'access' => 'u'),
+            array('name' => 'login',             'access' => 'g'),
             array('name' => 'logout',            'access' => 'u'),
+            array('name' => 'home',              'access' => 'g'),
             array('name' => 'view_programs',     'access' => 'u'),
+            array('name' => 'view_projects',     'access' => 'u'),
             array('name' => 'program_home',      'access' => 'u'),
             array('name' => 'manage_programs',   'access' => 'a'),
-            array('name' => 'approve_proposals', 'access' => 'a'),
         );
     }
     
@@ -51,19 +52,48 @@ class module
     {
         global $core, $auth;
 
+        $is_valid = false;
+
         foreach ($this->pool as $module)
         {
             // Name matched. Access granted if it's a user module.
             // For admin module, user should have admin privileges
             if ($module['name'] == $mode)
             {
-                return ($module['access'] == 'u') || ($module['access'] == 'a' && $auth->is_admin);
+                // Guest module is always valid
+                if ($module['access'] == 'g')
+                {
+                    $is_valid = true;
+                }
+
+                // User module is valid for authenticated users only
+                if ($module['access'] == 'u')
+                {
+                    if ($auth->is_logged_in)
+                    {
+                        $is_valid = true;
+                    }
+                    else
+                    {
+                        $redir_url = urlencode($core->request_uri());
+                        $core->redirect("?q=login&r={$redir_url}");
+                    }
+                }
+
+                // Admins module is valid for administrators
+                if ($module['access'] == 'a' && $auth->is_admin);
+                {
+                    $is_valid = true;
+                }
             }
         }
 
-        // Module was not found in the pool
-        return false;
-    }  
+        // Redirect to homepage if invalid module
+        if (!$is_valid)
+        {
+            $core->redirect($core->path());
+        }
+    }
 }
 
 ?>

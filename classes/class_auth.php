@@ -88,6 +88,10 @@ class auth
             $this->sid = $row['sid'];
             $this->is_admin = ($row['is_admin'] == 1);
             $this->is_logged_in = true;
+
+            // Escape the data since we might use it for queries
+            $db->escape($this->username);
+            $db->escape($this->sid);
         }
     }
 
@@ -225,6 +229,20 @@ class auth
             "WHERE username = '{$username}' " .
             "AND sid = '{$sid}'";
         $db->query($sql);
+    }
+
+    // Restricts a screen to a specific condition only
+    function restrict($condition, $admin_override = false)
+    {
+        global $core;
+        
+        if (!$condition)
+        {
+            if (!$admin_override || ($admin_override && !$this->is_admin))
+            {
+                $core->redirect($core->path());
+            }
+        }
     }
 
     // Escapes the auth string in LDAP authentication

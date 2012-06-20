@@ -26,21 +26,6 @@ class core
         return $path;
     }
     
-    // Function to return root path
-    function root_path()
-    {
-        $path = $this->path();
-        
-        if (strpos($path, 'admin') !== false)
-        {
-            return substr($path, 0, strrpos($path, 'admin'));
-        }
-        else
-        {
-            return $path;
-        }
-    }
-    
     // Function to return remote IP
     function remote_ip()
     {
@@ -55,13 +40,13 @@ class core
             $expire = time() + ($expire * 24 * 60 * 60);
         }
 
-        setcookie('pandora_' . $name, $value, $expire, $this->root_path());
+        setcookie('pandora_' . $name, $value, $expire, $this->path());
     }
     
     // Function to expire a cookie
     function unset_cookie($name)
     {
-        setcookie('pandora_' . $name, null, time() - 3600, $this->root_path());
+        setcookie('pandora_' . $name, null, time() - 3600, $this->path());
     }
 
     // Function to fetch query strings / post data

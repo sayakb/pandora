@@ -8,6 +8,7 @@
 // Collect some data
 $username = $core->variable('username', '');
 $password = $core->variable('password', '');
+$redir_url = $core->variable('r', '');
 
 $login_submit = isset($_POST['login']);
 
@@ -29,7 +30,8 @@ if ($login_submit)
         // Check if login succeeded
         if ($login_success)
         {
-            $core->redirect($core->path());
+            $url = !empty($redir_url) ? urldecode($redir_url) : $core->path();
+            $core->redirect($url);
         }
         else
         {
@@ -45,7 +47,7 @@ if ($login_submit)
 // Assign skin data
 $skin->assign(array(
     'error_message'         => isset($error_message) ? $error_message : '',
-    'error_visibility'      => isset($error_message) ? 'visible' : 'hidden',
+    'error_visibility'      => $skin->visibility(isset($error_message)),
 ));
 
 // Assign the module data and title

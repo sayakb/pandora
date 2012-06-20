@@ -1,0 +1,43 @@
+<a href="?q=program_home&amp;prg=[[program_id]]" class="no-decor pull-right top-spacer">
+    <i class="icon-arrow-left"></i>
+    {{project_home}}
+</a>
+
+<h1>[[editor_title]]</h1>
+<hr class="hr-head" />
+
+<div class="alert alert-error [[error_visibility]]">
+    <a class="close" data-dismiss="alert">×</a>
+    [[error_message]]
+</div>
+
+<div class="alert alert-success [[success_visibility]]">
+    <a class="close" data-dismiss="alert">×</a>
+    [[success_message]]
+</div>
+
+<div class="control-group">
+    <label class="control-label">{{project_title}}</label>
+    <div class="controls">
+        <input type="text" name="title" maxlength="100" class="input-xxlarge" value="[[title]]"  />
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label">{{description}}</label>
+    <div class="controls">
+        <textarea name="description" rows="10" class="input-xxlarge">[[description]]</textarea>
+    </div>
+</div>
+
+<div class="form-actions">
+    <button type="submit" name="project_save" class="btn btn-primary">
+        <i class="icon-ok-sign icon-white"></i>
+        {{save}}
+    </button>
+
+    <a href="[[delete_url]]" class="btn btn-danger [[delete_visibility]]">
+        <i class="icon-trash icon-white"></i>
+        {{delete}}
+    </a>
+</div>
