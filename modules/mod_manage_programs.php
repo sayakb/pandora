@@ -12,7 +12,9 @@ $title = $core->variable('title', '');
 $description = $core->variable('description', '');
 $start_date = $core->variable('start_date', '');
 $end_date = $core->variable('end_date', '');
-$active = $core->variable('active', '');
+$active = $core->variable('active', '') == "on" ? 1 : 0;
+$page = $core->variable('pg', 1);
+$limit_start = ($page - 1) * $config->per_page;
 
 $program_save = isset($_POST['program_save']);
 $confirm = isset($_POST['yes']);
@@ -23,29 +25,39 @@ if ($action == 'list')
     $programs_list = '';
     
     // Get all programs
-    $sql = "SELECT * FROM {$db->prefix}programs";
-    $result = $db->query($sql);
+    $sql = "SELECT * FROM {$db->prefix}programs " .
+           "LIMIT {$limit_start}, {$config->per_page}";
+    $program_data = $db->query($sql);
+
+    // Get program count
+    $sql = "SELECT COUNT(*) AS count FROM {$db->prefix}programs";
+    $program_count = $db->query($sql, true);
 
     // Build the list
-    foreach ($result as $row)
+    foreach ($program_data as $row)
     {
         // Assign data for this program
         $skin->assign(array(
             'program_id'          => $row['id'],
-            'program_title'       => $row['title'],
+            'program_title'       => htmlspecialchars($row['title']),
+            'program_description' => htmlspecialchars($row['description']),
             'program_active'      => $skin->visibility($row['is_active'] == 1),
             'program_inactive'    => $skin->visibility($row['is_active'] == 0),
-            'program_description' => $row['description'],
         ));
 
         $programs_list .= $skin->output('tpl_manage_programs_item');
     }
 
+    // Get the pagination
+    $pagination = $skin->pagination($program_count['count'], $page);
+
     // Assign final skin data
     $skin->assign(array(
         'programs_list'     => $programs_list,
-        'notice_visibility' => $skin->visibility(count($result) == 0),
-        'list_visibility'   => $skin->visibility(count($result) > 0),
+        'list_pages'        => $pagination,
+        'notice_visibility' => $skin->visibility(count($program_data) == 0),
+        'list_visibility'   => $skin->visibility(count($program_data) > 0),
+        'pages_visibility'  => $skin->visibility($program_count['count'] > $config->per_page),
     ));
 
     // Output the module
@@ -74,8 +86,6 @@ else if ($action == 'editor')
             $db->escape($title);
             $db->escape($description);
 
-            $is_active = $active == 'on' ? 1 : 0;
-
             // Are we updating?
             if ($id > 0)
             {
@@ -84,7 +94,7 @@ else if ($action == 'editor')
                        "    description = '{$description}', " .
                        "    start_time = {$start_time}, " .
                        "    end_time = {$end_time}, " .
-                       "    is_active = {$is_active} " .
+                       "    is_active = {$active} " .
                        "WHERE id = $id";
                 $db->query($sql);
             }
@@ -93,7 +103,7 @@ else if ($action == 'editor')
                 $sql = "INSERT INTO {$db->prefix}programs " .
                        "(title, description, start_time, end_time, is_active) " .
                        "VALUES ('{$title}', '{$description}', {$start_time}, " .
-                       "        {$end_time}, {$is_active})";
+                       "        {$end_time}, {$active})";
                 $db->query($sql);
             }
 
@@ -116,17 +126,17 @@ else if ($action == 'editor')
         $description = $row['description'];
         $start_date = date('M d, Y', $row['start_time']);
         $end_date = date('M d, Y', $row['end_time']);
-        $active = $row['is_active'] == 1 ? 'on' : '';
+        $active = $row['is_active'];
     }
     
     // Assign skin data
     $skin->assign(array(
         'editor_title'      => $page_title,
-        'title'             => $title,
-        'description'       => $description,
+        'title'             => htmlspecialchars($title),
+        'description'       => htmlspecialchars($description),
         'start_date'        => $start_date,
         'end_date'          => $end_date,
-        'active_checked'    => $active == 'on' ? 'checked' : '',
+        'active_checked'    => $skin->checked($active == 1),
         'error_message'     => isset($error_message) ? $error_message : '',
         'error_visibility'  => $skin->visibility(isset($error_message)),
         'delete_visibility' => $skin->visibility($id > 0),
@@ -163,7 +173,7 @@ else if ($action == 'delete')
     // Assign confirm box data
     $skin->assign(array(
         'message_title'     => $lang->get('confirm_deletion'),
-        'message_body'      => $lang->get('confirm_del_msg'),
+        'message_body'      => $lang->get('confirm_program_del'),
         'cancel_url'        => "?q=manage_programs&a=editor&p={$id}",
     ));
 

@@ -106,24 +106,6 @@ class db
         $data = $this->mysqli->real_escape_string($data);
     }
 
-    // Validate a unique ID
-    function validate($table, $column, $value)
-    {
-        global $core;
-
-        if ($value > 0)
-        {
-            $sql = "SELECT COUNT(*) as count FROM {$this->prefix}{$table} " .
-                "WHERE {$column} = '{$value}'";
-            $row = $this->query($sql, true);
-
-            if ($row['count'] == 0)
-            {
-                $core->redirect($core->path());
-            }
-        }
-    }
-
     // Object descturtor
     function __destruct()
     {

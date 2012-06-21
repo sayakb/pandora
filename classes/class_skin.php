@@ -220,10 +220,11 @@ class skin
     // Function to generate pagination
     function pagination($total_items, $current_page)
     {
-        global $lang, $core;
+        global $lang, $core, $config;
 
-        $pages = ceil($total_items / 30);
+        $pages = ceil($total_items / $config->per_page);
         $pagination = '';
+        $url = str_replace("&pg={$current_page}", "", $core->request_uri());
 
         for ($idx = 1; $idx <= $pages; $idx++)
         {
@@ -246,7 +247,7 @@ class skin
             {
                 if ($idx != $current_page)
                 {
-                    $pagination .= '<a href="&pg=' . $idx . '">';
+                    $pagination .= '<a href="' . $url . '&pg=' . $idx . '">';
                 }
 
                 $pagination .= '<span class="page_no';
@@ -321,6 +322,12 @@ class skin
     function visibility($condition)
     {
         return $condition ? 'visible' : 'hidden';
+    }
+
+    // Return checked status of checkbox/radio based on a condition
+    function checked($condition)
+    {
+        return $condition ? 'checked="checked"' : '';
     }
     
     // Function to exclude a string from being treated as a key

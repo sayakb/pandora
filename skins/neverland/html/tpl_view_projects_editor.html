@@ -19,14 +19,41 @@
 <div class="control-group">
     <label class="control-label">{{project_title}}</label>
     <div class="controls">
-        <input type="text" name="title" maxlength="100" class="input-xxlarge" value="[[title]]"  />
+        <input type="text" name="title" maxlength="100" class="input-xxlarge" value="[[project_title]]"  />
     </div>
 </div>
 
 <div class="control-group">
     <label class="control-label">{{description}}</label>
     <div class="controls">
-        <textarea name="description" rows="10" class="input-xxlarge">[[description]]</textarea>
+        <textarea name="description" rows="10" class="input-xxlarge">[[project_description]]</textarea>
+    </div>
+</div>
+
+<div class="control-group [[decision_visibility]]">
+    <label class="control-label">{{project_complete}}</label>
+    <div class="controls">
+        <input type="checkbox" name="complete" [[complete_checked]] />
+    </div>
+</div>
+
+<div class="control-group [[decision_visibility]]">
+    <label class="control-label">{{student_result}}</label>
+    <div class="controls">
+        <label class="radio">
+            <input type="radio" name="passed" value="1" [[pass_checked]] />
+            {{passed}}
+        </label>
+
+        <label class="radio">
+            <input type="radio" name="passed" value="0" [[failed_checked]] />
+            {{failed}}
+        </label>
+
+        <label class="radio">
+            <input type="radio" name="passed" value="-1" [[undecided_checked]] />
+            {{undecided}}
+        </label>
     </div>
 </div>
 
@@ -36,7 +63,12 @@
         {{save}}
     </button>
 
-    <a href="[[delete_url]]" class="btn btn-danger [[delete_visibility]]">
+    <a href="?q=program_home&amp;prg=[[program_id]]" class="btn">
+        <i class="icon-remove icon-black"></i>
+        {{cancel}}
+    </a>
+
+    <a href="[[delete_url]]" class="btn btn-danger delete-button [[delete_visibility]]">
         <i class="icon-trash icon-white"></i>
         {{delete}}
     </a>

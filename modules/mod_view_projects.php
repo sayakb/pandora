@@ -11,7 +11,13 @@ $program_id = $core->variable('prg', 0);
 $project_id = $core->variable('p', 0);
 $title = $core->variable('title', '');
 $description = $core->variable('description', '');
+$return_url = $core->variable('r', '');
+$is_passed = $core->variable('passed', 0);
+$is_complete = $core->variable('complete', '') == 'on' ? 1 : 0;
+$page = $core->variable('pg', 1);
+$limit_start = ($page - 1) * $config->per_page;
 
+$mentor_apply = isset($_POST['mentor_apply']);
 $project_save = isset($_POST['project_save']);
 $confirm = isset($_POST['yes']);
 
@@ -20,13 +26,35 @@ $db->escape($program_id);
 $db->escape($project_id);
 
 // Validate project and program ID
-$db->validate('programs', 'id', $program_id);
-$db->validate('projects', 'id', $project_id);
+if ($project_id > 0)
+{
+    $sql = "SELECT COUNT(*) AS count " .
+           "FROM {$db->prefix}projects prj " .
+           "LEFT JOIN {$db->prefix}programs prg " .
+           "ON (prg.id = prj.program_id) " .           
+           "WHERE prj.id = {$project_id} " .
+           "AND prg.id = {$program_id} " .
+           (!$auth->is_admin ? "AND prg.is_active = 1" : "");
+}
+else
+{
+    $sql = "SELECT COUNT(*) AS count " .
+           "FROM {$db->prefix}programs " .
+           "WHERE id = {$program_id} " .
+           (!$auth->is_admin ? "AND is_active = 1" : "");
+}
+
+$row = $db->query($sql, true);
+$auth->restrict($row['count'] > 0);
+
+// Treat all users as guest by default
+$is_owner = false;
+$role = 'g';
 
 // We are viewing/editing a project
 if ($project_id > 0)
 {  
-    $sql = "SELECT prj.is_approved, prt.role " .
+    $sql = "SELECT prj.is_accepted, prt.role " .
            "FROM {$db->prefix}projects prj " .
            "LEFT JOIN {$db->prefix}participants prt " .
            "ON (prj.id = prt.project_id) " .
@@ -48,15 +76,10 @@ if ($project_id > 0)
 
         // Role mentor should be approved for that project
         // to be considered as a owner
-        else if ($role == 'm' && $owner_data['is_approved'] == 1)
+        else if ($role == 'm' && $owner_data['is_accepted'] == 1)
         {
             $is_owner = true;
         }
-    }
-    else
-    {
-        $is_owner = false;
-        $role = 'g';
     }
 }
 
@@ -81,7 +104,9 @@ if ($action == 'editor')
 
     // Program ID is mandatory for editor
     $auth->restrict($program_id > 0);
-    $skin->assign('program_id', $program_id);
+
+    // Validate pass status of student (should be 1, 0 or -1)
+    $auth->restrict(in_array($is_passed, array(1, 0, -1)));
     
     // Only students/non-participants can create new proposals
     if ($project_id == 0)
@@ -95,6 +120,9 @@ if ($action == 'editor')
         $auth->restrict($is_owner, true);
     }
 
+    // Only mentor/admins can mark project as complete and pass a student
+    $can_decide = ($role == 'm' && $is_owner) || $auth->is_admin;
+    
     // Project was saved
     if ($project_save)
     {
@@ -107,31 +135,38 @@ if ($action == 'editor')
         {
             $db->escape($title);
             $db->escape($description);
+            $db->escape($is_complete);
+            $db->escape($is_passed);
 
             // Are we updating?
             if ($project_id > 0)
-            {
+            {                
+                // Update project data
                 $sql = "UPDATE {$db->prefix}projects " .
                        "SET title = '{$title}', " .
-                       "    description = '{$description}' " .
+                       "    description = '{$description}', " .
+                       "    is_complete = " . ($can_decide ? "{$is_complete} " : "is_complete ") .
                        "WHERE id = {$project_id}";
                 $db->query($sql);
 
-                if ($db->affected_rows() >= 0)
+                // Update student pass status
+                if ($can_decide)
                 {
-                    $success_message = $lang->get('project_updated');
+                    $sql = "UPDATE {$db->prefix}participants " .
+                           "SET passed = $is_passed " .
+                           "WHERE project_id = {$project_id} " .
+                           "AND role = 's'";
+                    $db->query($sql);
                 }
-                else
-                {
-                    $error_message = $lang->get('error_occurred');
-                }
+
+                $success_message = $lang->get('project_updated');
             }
 
             else
             {
                 // Insert new project
                 $sql = "INSERT INTO {$db->prefix}projects " .
-                       "(title, description, program_id, is_approved, is_complete) " .
+                       "(title, description, program_id, is_accepted, is_complete) " .
                        "VALUES ('{$title}', '{$description}', {$program_id}, 0, 0)";
                 $db->query($sql);
 
@@ -144,16 +179,9 @@ if ($action == 'editor')
                        "VALUES ('{$auth->username}', {$new_id}, {$program_id}, 's', -1)";
                 $db->query($sql);
 
-                if ($new_id > 0)
-                {
-                    $success_message = $lang->get('proposal_submitted');
-                    $title = '';
-                    $description = '';
-                }
-                else
-                {
-                    $error_message = $lang->get('error_occurred');
-                }
+                $success_message = $lang->get('proposal_submitted');
+                $title = '';
+                $description = '';
             }
         }
     }
@@ -161,24 +189,35 @@ if ($action == 'editor')
     // Populate project data 
     else if ($project_id > 0)
     {
-        $sql = "SELECT * FROM {$db->prefix}projects " .
-               "WHERE id = {$project_id}";
+        $sql = "SELECT * FROM {$db->prefix}projects prj " .
+               "LEFT JOIN {$db->prefix}participants prt " .
+               "ON (prj.id = prt.project_id) " .
+               "WHERE prj.id = {$project_id} " .
+               "AND prt.role = 's'";
         $project_data = $db->query($sql, true);
 
         $title = $project_data['title'];
         $description = $project_data['description'];
+        $is_passed = $project_data['passed'];
+        $is_complete = $project_data['is_complete'];
     }
 
     // Assign skin data
     $skin->assign(array(
         'editor_title'          => $page_title,
-        'title'                 => $title,
-        'description'           => $description,
+        'program_id'            => $program_id,
+        'project_title'         => htmlspecialchars($title),
+        'project_description'   => htmlspecialchars($description),
         'success_message'       => isset($success_message) ? $success_message : '',
         'error_message'         => isset($error_message) ? $error_message : '',
         'success_visibility'    => $skin->visibility(!empty($success_message)),
         'error_visibility'      => $skin->visibility(!empty($error_message)),
         'delete_visibility'     => $skin->visibility($project_id > 0),
+        'decision_visibility'   => $skin->visibility($project_id > 0 && $can_decide),
+        'complete_checked'      => $skin->checked($is_complete == 1),
+        'pass_checked'          => $skin->checked($is_passed == 1),
+        'fail_checked'          => $skin->checked($is_passed == 0),
+        'undecided_checked'     => $skin->checked($is_passed == -1),
         'delete_url'            => "?q=view_projects&a=delete&prg={$program_id}&p={$project_id}",
     ));
 
@@ -212,13 +251,202 @@ else if ($action == 'delete')
     // Assign confirm box data
     $skin->assign(array(
         'message_title'     => $lang->get('confirm_deletion'),
-        'message_body'      => $lang->get('confirm_del_msg'),
+        'message_body'      => $lang->get('confirm_project_del'),
         'cancel_url'        => "?q=view_projects&a=editor&prg={$program_id}&p={$project_id}",
     ));
 
     // Output the module
     $module_title = $lang->get('confirm_deletion');
     $module_data = $skin->output('tpl_confirm_box');
+}
+else if ($action == 'view')
+{
+    // Program and Project IDs are mandatory here
+    $auth->restrict($program_id > 0 && $project_id > 0);
+
+    // Get project data
+    $sql = "SELECT * FROM {$db->prefix}projects " .
+           "WHERE id = {$project_id}";
+    $project_data = $db->query($sql, true);
+
+    // Get participants for the project
+    $sql = "SELECT * FROM {$db->prefix}participants " .
+           "WHERE project_id = {$project_id}";
+    $participant_data = $db->query($sql);
+
+    // Assign participant data
+    $mentor = '-';
+    $has_mentor = false;
+    $passed = -1;
+
+    foreach($participant_data as $participant)
+    {
+        if ($participant['role'] == 's')
+        {
+            $passed = $participant['passed'];
+            $student = $participant['username'];
+        }
+        else if ($participant['role'] == 'm')
+        {
+            $has_mentor = true;
+            $mentor = $participant['username'];
+        }
+    }
+
+    // Convert indicators to string for displaying
+    $accepted = $project_data['is_accepted'] == 1 ? $lang->get('yes') : $lang->get('no');
+    $complete = $project_data['is_complete'] == 1 ? $lang->get('yes') : $lang->get('no');
+
+    if ($passed == 1)
+    {
+        $result = $lang->get('passed');
+    }
+    else if ($passed == 0)
+    {
+        $result = $lang->get('failed');
+    }
+    else if ($passed == -1)
+    {
+        $result = $lang->get('undecided');
+    }
+    
+    // A user can choose to mentor if:
+    //  1. He isn't a student in this program
+    //  2. Project doesn't already have a mentor
+    $can_mentor = $role != 's' && !$has_mentor;
+
+    // User applied as mentor
+    if ($mentor_apply && $can_mentor)
+    {
+        $sql = "INSERT INTO {$db->prefix}participants " .
+               "(username, project_id, program_id, role) " .
+               "VALUES ('{$auth->username}', {$project_id}, {$program_id}, 'm')";
+        $db->query($sql);
+
+        $success_message = $lang->get('mentor_submitted');
+        $can_mentor = false;
+        $mentor = $auth->username;
+    }
+
+    // Set the return URL (needed when approving the project)
+    $return_url = urlencode($core->request_uri());
+
+    // Assign final skin data
+    $skin->assign(array(
+        'program_id'                => $program_id,
+        'project_id'                => $project_id,
+        'project_title'             => htmlspecialchars($project_data['title']),
+        'project_description'       => htmlspecialchars($project_data['description']),
+        'project_student'           => htmlspecialchars($student),
+        'project_mentor'            => htmlspecialchars($mentor),
+        'project_accepted'          => $accepted,
+        'project_complete'          => $complete,
+        'project_result'            => $result,
+        'return_url'                => $return_url,
+        'success_message'           => isset($success_message) ? $success_message : '',
+        'success_visibility'        => $skin->visibility(!empty($success_message)),
+        'edit_visibility'           => $skin->visibility($is_owner || $auth->is_admin),
+        'mentorship_visibility'     => $skin->visibility($can_mentor),
+        'actions_visibility'        => $skin->visibility($is_owner || $can_mentor),
+        'approve_visibility'        => $skin->visibility($project_data['is_accepted'] == 0 && $auth->is_admin),
+        'disapprove_visibility'     => $skin->visibility($project_data['is_accepted'] == 1 && $auth->is_admin),
+    ));
+
+    // Output the module
+    $module_title = $lang->get('view_project');
+    $module_data = $skin->output('tpl_view_project');
+}
+else if ($action == 'user' || $action == 'proposed' || $action == 'accepted')
+{
+    $data_sql = "SELECT * FROM {$db->prefix}projects ";
+    $count_sql = "SELECT COUNT(*) AS count FROM {$db->prefix}projects ";
+    $limit = "LIMIT {$limit_start}, {$config->per_page}";
+    
+    // Set action specific page title and query
+    if ($action == 'user')
+    {
+        $title = $lang->get('your_projects');
+        $filter = "WHERE id IN (SELECT project_id " .
+                  "FROM {$db->prefix}participants " .
+                  "WHERE username = '{$auth->username}' " .
+                  "AND program_id = {$program_id}) ";
+    }
+    else if ($action == 'proposed')
+    {
+        $title = $lang->get('proposed_projects');
+        $filter = "WHERE is_accepted = 0 " .
+                  "AND program_id = {$program_id} ";
+    }
+    else if ($action == 'accepted')
+    {
+        $title = $lang->get('accepted_projects');
+        $filter = "WHERE is_accepted = 1 " .
+                  "AND program_id = {$program_id} ";
+    }
+
+    // Get list data and count
+    $list_data = $db->query($data_sql . $filter . $limit);
+    $list_count = $db->query($count_sql . $filter, true);
+
+    // Assign approve flag, we need it everywhere!
+    $skin->assign('approve_visibility', $skin->visibility($action == 'proposed' && $auth->is_admin));
+
+    // Set the return URL (needed when approving projects)
+    $return_url = urlencode($core->request_uri());
+
+    // Populate the project list
+    $projects_list = '';
+    
+    foreach($list_data as $row)
+    {
+        // Assign data for each project
+        $skin->assign(array(
+            'project_title'         => htmlspecialchars($row['title']),
+            'project_description'   => htmlspecialchars($row['description']),
+            'project_url'           => "?q=view_projects&prg={$program_id}&p={$row['id']}",
+            'approve_url'           => "?q=view_projects&a=approve&prg={$program_id}&p={$row['id']}&r={$return_url}",
+        ));
+
+        $projects_list .= $skin->output('tpl_view_projects_item');
+    }
+
+    // Get the pagination
+    $pagination = $skin->pagination($list_count['count'], $page);
+
+    // Assign final skin data
+    $skin->assign(array(
+        'program_id'            => $program_id,
+        'view_title'            => $title,
+        'projects_list'         => $projects_list,
+        'list_pages'            => $pagination,
+        'notice_visibility'     => $skin->visibility(count($list_data) == 0),
+        'list_visibility'       => $skin->visibility(count($list_data) > 0),
+        'pages_visibility'      => $skin->visibility($list_count['count'] > $config->per_page),
+    ));
+
+    // Output the module
+    $module_title = $title;
+    $module_data = $skin->output('tpl_view_projects');
+}
+else if ($action == 'approve' || $action == 'disapprove')
+{
+    // This is an admin only action
+    $auth->restrict(false, true);
+
+    // Project ID and return URL are mandatory
+    $auth->restrict($project_id > 0 && !empty($return_url));
+
+    // Set the accepted flag when approving
+    $flag = $action == 'approve' ? 1 : 0;        
+
+    // Set the project as approved
+    $sql = "UPDATE {$db->prefix}projects " .
+           "SET is_accepted = {$flag} " .
+           "WHERE id = {$project_id}";
+    $db->query($sql);
+
+    // Redirect to return URL
+    $core->redirect(urldecode($return_url));
 }
 
 ?>

@@ -1,0 +1,74 @@
+<a href="?q=program_home&amp;prg=[[program_id]]" class="no-decor pull-right top-spacer">
+    <i class="icon-arrow-left"></i>
+    {{project_home}}
+</a>
+
+<h1>{{view_project}}</h1>
+<hr class="hr-head" />
+
+<div class="alert alert-success [[success_visibility]]">
+    <a class="close" data-dismiss="alert">×</a>
+    [[success_message]]
+</div>
+
+<div class="project-data">
+    <div class="row">
+        <div class="span2">{{project_title}}</div>
+        <div class="span8">[[project_title]]</div>
+    </div>
+
+    <div class="row">
+        <div class="span2">{{description}}</div>
+        <div class="span8">[[project_description]]</div>
+    </div>
+
+    <div class="row">
+        <div class="span2">{{student}}</div>
+        <div class="span8">[[project_student]]</div>
+    </div>
+
+    <div class="row">
+        <div class="span2">{{mentor}}</div>
+        <div class="span8">[[project_mentor]]</div>
+    </div>
+
+    <div class="row">
+        <div class="span2">{{project_accepted}}</div>
+        <div class="span8">[[project_accepted]]</div>
+    </div>
+
+    <div class="row">
+        <div class="span2">{{project_complete}}</div>
+        <div class="span8">[[project_complete]]</div>
+    </div>
+
+    <div class="row">
+        <div class="span2">{{student_result}}</div>
+        <div class="span8">[[project_result]]</div>
+    </div>
+
+    <div class="form-actions [[actions_visibility]]">
+        <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]&amp;p=[[project_id]]"
+           class="btn btn-primary [[edit_visibility]]">
+            <i class="icon-pencil icon-white"></i>
+            {{edit}}
+        </a>
+
+        <button type="submit" name="mentor_apply" class="btn [[mentorship_visibility]]">
+            <i class="icon-briefcase icon-black"></i>
+            {{mentor_project}}
+        </button>
+
+        <a href="?q=view_projects&amp;a=approve&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
+           class="btn btn-success approve-button [[approve_visibility]]">
+            <i class="icon-ok icon-white"></i>
+            {{approve}}
+        </a>
+
+        <a href="?q=view_projects&amp;a=disapprove&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
+           class="btn btn-danger approve-button [[disapprove_visibility]]">
+            <i class="icon-remove icon-white"></i>
+            {{disapprove}}
+        </a>
+    </div>
+</div>

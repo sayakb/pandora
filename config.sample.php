@@ -37,6 +37,9 @@ $skin_name = "Neverland";
 // Currently active language
 $lang_name = "en-gb";
 
+// No. of items to display per page for lists
+$per_page = 20;
+
 // LDAP server address
 $ldap_server = "";
 

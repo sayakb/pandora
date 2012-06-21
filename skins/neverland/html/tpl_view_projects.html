@@ -1,0 +1,31 @@
+<a href="?q=program_home&amp;prg=[[program_id]]" class="no-decor pull-right top-spacer">
+    <i class="icon-arrow-left"></i>
+    {{project_home}}
+</a>
+
+<h1>[[view_title]]</h1>
+<hr class="hr-head" />
+
+<div class="alert alert-info [[notice_visibility]]">
+    {{no_projects}}
+</div>
+
+<div class="[[list_visibility]]">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:250px">{{project_title}}</th>                
+                <th>{{description}}</th>                
+                <th style="width:20px"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            [[projects_list]]
+        </tbody>
+    </table>
+
+    <div class="pages align-center [[pages_visibility]]">
+        [[list_pages]]
+    </div>
+</div>
