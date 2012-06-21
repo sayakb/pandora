@@ -74,6 +74,7 @@ $lang_data = array(
     'mentor_another'        => 'Mentor another project',
     'role_student'          => 'You are participating in this program as a student',
     'role_mentor'           => 'You are participating in this program as a mentor',
+    'to'                    => 'to',
 
     /* Module: view_projects */
     'submit_proposal'       => 'Submit a proposal',

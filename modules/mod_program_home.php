@@ -39,6 +39,8 @@ if ($program_data != null)
         'program_id'               => $program_data['id'],
         'program_title'            => $program_data['title'],
         'program_description'      => $program_data['description'],
+        'program_start_date'       => date('M d, Y', $program_data['start_time']),
+        'program_end_date'         => date('M d, Y', $program_data['end_time']),
         'prg_guest_visibility'     => $skin->visibility($role == 'g'),
         'prg_student_visibility'   => $skin->visibility($role == 's'),
         'prg_mentor_visibility'    => $skin->visibility($role == 'm'),
