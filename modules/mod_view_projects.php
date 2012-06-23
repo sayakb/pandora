@@ -403,10 +403,25 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted')
     
     foreach($list_data as $row)
     {
+        $project_title = htmlspecialchars($row['title']);
+        $project_desc  = htmlspecialchars($row['description']);
+
+        // Trim the title to 60 characters
+        if (strlen($project_title) > 60)
+        {
+            $project_title = trim(substr($project_title, 0, 60)) . '&hellip;';
+        }
+        
+        // Trim the description to 150 characters
+        if (strlen($project_desc) > 150)
+        {
+            $project_desc = trim(substr($project_desc, 0, 150)) . '&hellip;';
+        }
+        
         // Assign data for each project
         $skin->assign(array(
-            'project_title'         => htmlspecialchars($row['title']),
-            'project_description'   => htmlspecialchars($row['description']),
+            'project_title'         => $project_title,
+            'project_description'   => $project_desc,
             'project_url'           => "?q=view_projects&prg={$program_id}&p={$row['id']}",
             'approve_url'           => "?q=view_projects&a=approve&prg={$program_id}&p={$row['id']}&r={$return_url}",
         ));
