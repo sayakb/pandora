@@ -103,6 +103,12 @@ $lang_data = array(
     'disapprove'            => 'Disapprove',
     'mail_subject'          => '[[site_name]]: Project approval notification',
     'no_mentor'             => '<em>No mentor assigned</em>',
+    'subscribe_student'     => '<b>Important:</b> It is essential that you subscribe to the <a href="https:' .
+                               '//mail.kde.org/mailman/listinfo/kde-soc" target="_blank">KDE SoC Mailing List' .
+                               '</a>, if you haven\'t done it already.',
+    'subscribe_mentor'      => '<b>Important:</b> It is essential that you subscribe to the <a href="https:' .
+                               '//mail.kde.org/mailman/listinfo/kde-soc-mentor" target="_blank">KDE SoC ' .
+                               'Mentor Mailing List</a>, if you haven\'t done it already.',
 
     /* Module: user_profile */
     'user_profile'          => 'User profile',

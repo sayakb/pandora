@@ -182,6 +182,7 @@ if ($action == 'editor')
                 $success_message = $lang->get('proposal_submitted');
                 $title = '';
                 $description = '';
+                $show_subscribe = true;
             }
         }
     }
@@ -214,6 +215,7 @@ if ($action == 'editor')
         'error_visibility'      => $skin->visibility(!empty($error_message)),
         'delete_visibility'     => $skin->visibility($project_id > 0),
         'decision_visibility'   => $skin->visibility($project_id > 0 && $can_decide),
+        'subscribe_visibility'  => $skin->visibility(isset($show_subscribe)),
         'complete_checked'      => $skin->checked($is_complete == 1),
         'pass_checked'          => $skin->checked($is_passed == 1),
         'fail_checked'          => $skin->checked($is_passed == 0),
@@ -325,6 +327,7 @@ else if ($action == 'view')
 
         $success_message = $lang->get('mentor_submitted');
         $can_mentor = false;
+        $show_subscribe = true;
         $mentor = $user->username;
     }
 
@@ -348,6 +351,7 @@ else if ($action == 'view')
         'edit_visibility'           => $skin->visibility($is_owner || $user->is_admin),
         'mentorship_visibility'     => $skin->visibility($can_mentor),
         'actions_visibility'        => $skin->visibility($is_owner || $can_mentor),
+        'subscribe_visibility'      => $skin->visibility(isset($show_subscribe)),
         'approve_visibility'        => $skin->visibility($project_data['is_accepted'] == 0 && $user->is_admin),
         'disapprove_visibility'     => $skin->visibility($project_data['is_accepted'] == 1 && $user->is_admin),
     ));
