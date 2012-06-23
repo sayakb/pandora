@@ -160,7 +160,11 @@ class user
             {
                 if (isset($user_data[0][$entry]))
                 {
-                    $values[$entry] = $user_data[0][$entry][0];
+                    $values[$entry] = $user_data[0][$entry];
+                }
+                else
+                {
+                    $values[$entry] = array('');
                 }
             }
 

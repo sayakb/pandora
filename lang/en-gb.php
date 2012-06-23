@@ -119,6 +119,7 @@ $lang_data = array(
     'user_404'              => 'The requested user could not be found',
     'contact_user'          => 'Contact user',
     'full_profile'          => 'View full profile',
+    'site_admin'            => 'Site admin',
 
     /* Module: user_bans */
     'ban_user'              => 'Ban a user',

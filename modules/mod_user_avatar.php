@@ -20,10 +20,10 @@ header('Content-type: octet-stream');
 header('Content-Transfer-Encoding: binary');
 
 // Does the user have an avatar?
-if (isset($user_data[$config->ldap_avatar]))
+if (!empty($user_data[$config->ldap_avatar][0]))
 {
     // Avatar was found, output it
-    echo $user_data[$config->ldap_avatar];
+    echo $user_data[$config->ldap_avatar][0];
 }
 else
 {

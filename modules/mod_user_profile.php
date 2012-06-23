@@ -16,18 +16,33 @@ $username = urldecode($username_encoded);
 $user->restrict(!empty($username));
 
 // Build an array of the data that we need
-$required_data = array($config->ldap_fullname, $config->ldap_mail);
+$required_data = array(
+    $config->ldap_fullname,
+    $config->ldap_mail,
+    $config->ldap_group,
+);
 
 // Get the user data
 $username_data = $user->get_details($username, $required_data);
 
-// Output the avatar
+// Set the template data
 if (isset($username_data[$config->ldap_mail]))
 {
-    $full_name  = @$username_data[$config->ldap_fullname];
-    $email      = @$username_data[$config->ldap_mail];
+    $is_admin   = false;
     $avatar_url = "?q=user_avatar&u={$username_encoded}";
-    
+    $full_name  = $username_data[$config->ldap_fullname][0];
+    $email      = $username_data[$config->ldap_mail][0];
+
+    // Determine if the user is a site admin
+    foreach ($username_data[$config->ldap_group] as $group)
+    {
+        if ($group == $config->ldap_admin_group)
+        {
+            $is_admin = true;
+        }
+    }
+
+    // Assign profile variables
     $skin->assign(array(
         'user_username'         => htmlspecialchars($username),
         'user_fullname'         => htmlspecialchars($full_name),
@@ -36,11 +51,13 @@ if (isset($username_data[$config->ldap_mail]))
         'return_url'            => $return_url,
         'profile_visibility'    => $skin->visibility(true),
         'notice_visibility'     => $skin->visibility(false),
+        'badge_visibility'      => $skin->visibility($is_admin),
         'return_visibility'     => $skin->visibility(!empty($return_url)),
     ));    
 }
 else
 {
+    // No profile found, show notice
     $skin->assign(array(
         'profile_visibility'    => $skin->visibility(false),
         'notice_visibility'     => $skin->visibility(true),
