@@ -113,7 +113,7 @@ else if ($action == 'editor')
     }
 
     // Load data when in edit mode
-    else if ($id > 0)
+    if ($id > 0)
     {
         $db->escape($id);
 

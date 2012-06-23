@@ -188,7 +188,7 @@ if ($action == 'editor')
     }
 
     // Populate project data 
-    else if ($project_id > 0)
+    if ($project_id > 0)
     {
         $sql = "SELECT * FROM {$db->prefix}projects prj " .
                "LEFT JOIN {$db->prefix}participants prt " .
