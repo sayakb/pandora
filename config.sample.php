@@ -64,4 +64,28 @@ $ldap_user_dn = "";
 // Password to be used against the userDN above (leave blank for anonymous binding)
 $ldap_password = "";
 
+// Full name attribute for the user
+$ldap_fullname = "";
+
+// Email ID attribute for the user
+$ldap_mail = "";
+
+// Avatar attribute for the user
+$ldap_avatar = "";
+
+// SMTP host for sending mail
+$smtp_host = "localhost";
+
+// Port used on the SMTP server for sending mail
+$smtp_port = 25;
+
+// SMTP server username (optional)
+$smtp_username = "";
+
+// SMTP server password (leave blank if no smtp_username spacified)
+$smtp_password = "";
+
+// From address for sending emails
+$smtp_from = "webmaster@yoursite.com";
+
 ?>

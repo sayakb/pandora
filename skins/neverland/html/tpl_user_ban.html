@@ -1,0 +1,37 @@
+<h1>[[manage_bans]]</h1>
+<hr class="hr-head" />
+
+<div class="well ban-form">
+    <div class="control-group">
+        <label class="control-label">
+            {{ban_user}}
+        </label>
+
+        <div class="controls">
+            <input type="text" name="ban_user" maxlength="200" class="input-xlarge" />
+            
+            <button type="submit" name="ban_submit" class="btn">
+                {{ban}}
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info [[notice_visibility]]">
+    {{no_bans}}
+</div>
+
+<div class="ban-list [[list_visibility]]">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>{{username}}</th>
+                <th style="width:20px">{{unban}}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            [[ban_list]]
+        </tbody>
+    </table>
+</div>

@@ -6,16 +6,16 @@
 */
 
 // Collect some data
-$username = $core->variable('username', '');
+$username = $core->variable('username', '', false, true);
 $password = $core->variable('password', '');
 $redir_url = $core->variable('r', '');
 
 $login_submit = isset($_POST['login']);
 
 // Log the user out if already logged in
-if ($auth->is_logged_in)
+if ($user->is_logged_in)
 {
-    $auth->logout();
+    $user->logout();
     $core->redirect('?q=login');
 }
 
@@ -24,18 +24,29 @@ if ($login_submit)
 {
     if (!empty($username) && !empty($password))
     {
-        // Log in user
-        $login_success = $auth->login($username, $password);
+        // Check if user is banned
+        $is_banned = $user->is_banned($username);
 
-        // Check if login succeeded
-        if ($login_success)
+        // User isn't banned
+        if (!$is_banned)
         {
-            $url = !empty($redir_url) ? urldecode($redir_url) : $core->path();
-            $core->redirect($url);
+            // Log in user
+            $login_success = $user->login($username, $password);
+
+            // Check if login succeeded
+            if ($login_success)
+            {
+                $url = !empty($redir_url) ? urldecode($redir_url) : $core->path();
+                $core->redirect($url);
+            }
+            else
+            {
+                $error_message = $lang->get('login_error');
+            }
         }
         else
         {
-            $error_message = $lang->get('login_error');
+            $error_message = $lang->get('account_banned');
         }
     }
     else

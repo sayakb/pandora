@@ -50,7 +50,7 @@ class core
     }
 
     // Function to fetch query strings / post data
-    function variable($name, $default, $is_cookie = false)
+    function variable($name, $default, $is_cookie = false, $trim = false)
     {
         if (gettype($default) == "integer")
         {
@@ -62,21 +62,21 @@ class core
             $cookie_data = $_COOKIE['pandora_' . $name];
             settype($cookie_data, gettype($default));
 
-            return $cookie_data;
+            return $trim ? trim($cookie_data) : $cookie_data;
         }
         else if (isset($_POST[$name]))
         {
             $post_data = $_POST[$name];
             settype($post_data, gettype($default));
 
-            return $post_data;
+            return $trim ? trim($post_data) : $post_data;
         }
         else if (isset($_GET[$name]))
         {
             $get_data = $_GET[$name];
             settype($get_data, gettype($default));
 
-            return $get_data;
+            return $trim ? trim($get_data) : $get_data;
         }
         else
         {
@@ -170,7 +170,7 @@ class core
                 return false;
             }
         }
-    }    
+    }
 }
 
 ?>

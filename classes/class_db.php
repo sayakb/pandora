@@ -33,9 +33,9 @@ class db
         }
         catch (Exception $e)
         {
-            $message  = '<b>Pandora DB error</b><br /><br />';
-            $message .= 'Database connection failed! Please check your DB settings.';
-            $gsod->trigger($message);
+            $title   = 'Database error';
+            $message = 'Database connection failed! Please check your DB settings.';
+            $gsod->trigger($title, $message);
         }
     }
 
@@ -55,10 +55,10 @@ class db
             {
                 if (!$result)
                 {
-                    $message  = '<b>Pandora DB error</b><br /><br />';
-                    $message .= 'Error: ' . $this->mysqli->error . "<br />";
-                    $message .= 'Whole query: ' . $sql;
-                    $gsod->trigger($message);
+                    $title    = 'Database error';
+                    $message  = "Error: {$this->mysqli->error}<br />";
+                    $message .= "Whole query: {$sql}";
+                    $gsod->trigger($title, $message);
                 }
 
                 if (!$single)

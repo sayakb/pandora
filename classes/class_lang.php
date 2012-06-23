@@ -21,7 +21,7 @@ class lang
     // Function to parse localization data
     function parse($data)
     {
-        global $core, $auth, $gsod, $config;
+        global $core, $user, $gsod, $config;
         
         if (file_exists(realpath("lang/{$this->lang_name}.php")))
         {
@@ -29,10 +29,10 @@ class lang
         }
         else
         {
-            $message  = '<b>Pandora language parse error</b><br /><br />';
-            $message .= 'Error: Language file not found<br />';
+            $title    = 'Language parser error';
+            $message  = 'Error: Language file not found<br />';
             $message .= 'Verify that the language selected is present in the lang/ folder';
-            $gsod->trigger($message);
+            $gsod->trigger($title, $message);
         }
 
         $data = $this->set_defaults($data);
@@ -41,7 +41,7 @@ class lang
         {
             $value = str_replace("[[host]]", $core->base_uri(), $value);
             $value = str_replace("[[site_name]]", $config->site_name, $value);
-            $value = str_replace("[[username]]", $auth->username, $value);
+            $value = str_replace("[[username]]", $user->username, $value);
             $data = str_replace("{{{$key}}}", $value, $data);
         }
 

@@ -5,7 +5,7 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
-class auth
+class user
 {
     // Global vars
     var $username;
@@ -95,34 +95,81 @@ class auth
         }
     }
 
+    // Checks is a user is banned
+    function is_banned($username)
+    {
+        global $db;
+        
+        $db->escape($username);
+
+        // Check if an entry for the user exists in the ban table
+        $sql = "SELECT COUNT(*) AS count " .
+               "FROM {$db->prefix}bans " .
+               "WHERE username = '{$username}'";
+        $row = $db->query($sql, true);
+
+        // Return true if an entry was found
+        return $row['count'] > 0;
+    }
+
     // Get details of the user from LDAP
-    function get_user_details($username, $ldap = false)
+    function get_details($username, $entries)
     {
         global $config, $db;
 
-        if ($ldap === false)
-        {
-            // Connect to the LDAP server
-            if (!empty($config->ldap_port))
-            {
-                $ldap = @ldap_connect($config->ldap_server, (int)$config->ldap_port);
-            }
-            else
-            {
-                $ldap = @ldap_connect($config->ldap_server);
-            }
+        $values = array();
+        $entries = !is_array($entries) ? array($entries) : $entries;
 
-            // Check if connection failed
-            if (!$ldap)
+        // Connect to the LDAP server
+        if (!empty($config->ldap_port))
+        {
+            $ldap = @ldap_connect($config->ldap_server, (int)$config->ldap_port);
+        }
+        else
+        {
+            $ldap = @ldap_connect($config->ldap_server);
+        }
+
+        // Check if connection failed
+        if (!$ldap)
+        {
+            return false;
+        }
+
+        @ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+        @ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+
+        // Try to bind with the user DN and password, if provided
+        if ($config->ldap_user_dn || $config->ldap_password)
+        {
+            if (!@ldap_bind($ldap, htmlspecialchars_decode($config->ldap_user_dn), htmlspecialchars_decode($config->ldap_password)))
             {
                 return false;
             }
-
-            @ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-            @ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
         }
 
+        // Look up for the user
+        $filter = $config->ldap_uid . '=' . $this->escape(htmlspecialchars_decode($username));
+        $search = @ldap_search($ldap, htmlspecialchars_decode($config->ldap_base_dn), $filter);
+        $user_data = @ldap_get_entries($ldap, $search);
 
+        if ($user_data !== false)
+        {
+            // Traverse through all keys and populate their data
+            foreach ($entries as $entry)
+            {
+                if (isset($user_data[0][$entry]))
+                {
+                    $values[$entry] = $user_data[0][$entry][0];
+                }
+            }
+
+            return $values;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     // Method for authenticating a user
@@ -159,7 +206,7 @@ class auth
         }
 
         // Look up for the user
-        $filter = $config->ldap_uid . '=' . $this->ldap_escape(htmlspecialchars_decode($username));
+        $filter = $config->ldap_uid . '=' . $this->escape(htmlspecialchars_decode($username));
         $search = @ldap_search($ldap, htmlspecialchars_decode($config->ldap_base_dn), $filter);
         $user_entry = @ldap_first_entry($ldap, $search);
 
@@ -211,7 +258,7 @@ class auth
     function logout()
     {
         global $core, $db;
-        
+
         // Get username and session ID from cookie
         $username = $core->variable('username', '', true);
         $sid = $core->variable('session_id', '', true);
@@ -226,16 +273,40 @@ class auth
 
         // Delete session data from the DB
         $sql = "DELETE FROM {$db->prefix}session " .
-            "WHERE username = '{$username}' " .
-            "AND sid = '{$sid}'";
+               "WHERE username = '{$username}' " .
+               "AND sid = '{$sid}'";
         $db->query($sql);
+    }
+
+    // Gets the profile link for a user
+    function profile($username, $return = false)
+    {
+        global $core;
+        
+        if ($username != '-')
+        {
+            $username_url = urlencode($username);
+            $profile_url = "?q=user_profile&u={$username_url}";
+
+            if ($return)
+            {
+                $redir_url = urlencode($core->request_uri());
+                $profile_url .= '&r=' . urlencode($redir_url);
+            }
+
+            return '<a href="' . $profile_url . '">' . $username . '</a>';
+        }
+        else
+        {
+            return $username;
+        }
     }
 
     // Restricts a screen to a specific condition only
     function restrict($condition, $admin_override = false)
     {
         global $core;
-        
+
         if (!$condition)
         {
             if (!$admin_override || ($admin_override && !$this->is_admin))
@@ -246,7 +317,7 @@ class auth
     }
 
     // Escapes the auth string in LDAP authentication
-    function ldap_escape($string)
+    function escape($string)
     {
         return str_replace(array('*', '\\', '(', ')'), array('\\*', '\\\\', '\\(', '\\)'), $string);
     }

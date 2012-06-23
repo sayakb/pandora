@@ -14,6 +14,7 @@ $lang_data = array(
     'log_out'               => 'Log out',
     'administration'        => 'Administration',
     'manage_programs'       => 'Manage programs',
+    'manage_bans'           => 'Manage user bans',
     'navigation'            => 'Navigation',
     'view_active_progms'    => 'View active programs',
     'view_archives'         => 'View archived projects',
@@ -35,9 +36,10 @@ $lang_data = array(
     'edit'                  => 'Edit',
     'save'                  => 'Save',
     'cancel'                => 'Cancel',
+    'username'              => 'Username',
 
     /* Homepage */
-    'welcome_pandora'       => 'Welcome to [[site_name]]',
+    'welcome_homepage'      => 'Welcome to [[site_name]]',
     'home'                  => 'Home',
 
     /* Module: login */
@@ -45,14 +47,14 @@ $lang_data = array(
     'enter_user_pw'         => 'Please enter your username and password',
     'login_error'           => 'Login failed. Please notify the <a href="mailto:kde-soc-mentor-owner@kde.org">' .
                                'KDE SoC Administrators</a> if the problem persists',
-    'iko_credentials'       => 'Log into [[site_name]] using your <a href="http://identity.kde.org">identity.kde.org' .
-                               '</a> credentials:',
-    'username'              => 'Username',
+    'iko_credentials'       => 'Log into [[site_name]] using your <a href="http://identity.kde.org" target="_blank">' .
+                               'KDE Identity</a> credentials:',
     'password'              => 'Password',
     'create_account'        => 'Create a new account',
     'create_account_exp'    => 'Don\'t have an account? In order to log into [[site_name]], you\'ll need to create a ' .
-                               'new account at <a href="http://identity.kde.org">identity.kde.org</a>',
-    'register_iko'          => 'Register at identity.kde.org',
+                               'new account on <a href="http://identity.kde.org">identity.kde.org</a>',
+    'register_iko'          => 'Register on KDE Identity',
+    'account_banned'        => 'Your account has been banned by an administrator',
 
     /* Module: view_programs */
     'select_program'        => 'Select a program to continue',
@@ -99,6 +101,26 @@ $lang_data = array(
     'no_projects'           => 'No projects were found in this category',
     'approve'               => 'Approve',
     'disapprove'            => 'Disapprove',
+    'mail_subject'          => '[[site_name]]: Project approval notification',
+    'no_mentor'             => '<em>No mentor assigned</em>',
+
+    /* Module: user_profile */
+    'user_profile'          => 'User profile',
+    'full_name'             => 'Full name',
+    'email'                 => 'Email address',
+    'previous_page'         => 'Previous page',
+    'user_avatar'           => 'User avatar',
+    'user_404'              => 'The requested user could not be found',
+    'contact_user'          => 'Contact user',
+    'full_profile'          => 'View full profile',
+
+    /* Module: user_bans */
+    'ban_user'              => 'Ban a user',
+    'banned_users'          => 'Banned users',
+    'unban'                 => 'Unban',
+    'unban_user'            => 'Unban this user',
+    'ban'                   => 'Ban',
+    'no_bans'               => 'There are no banned users at the moment',
 );
 
 ?>

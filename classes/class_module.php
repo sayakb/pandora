@@ -14,13 +14,16 @@ class module
     function __construct()
     {
         $this->pool = array(
-            array('name' => 'login',             'access' => 'g'),
-            array('name' => 'logout',            'access' => 'u'),
-            array('name' => 'home',              'access' => 'g'),
-            array('name' => 'view_programs',     'access' => 'u'),
-            array('name' => 'view_projects',     'access' => 'u'),
-            array('name' => 'program_home',      'access' => 'u'),
-            array('name' => 'manage_programs',   'access' => 'a'),
+            array('name' => 'login',           'access' => 'g'),
+            array('name' => 'logout',          'access' => 'u'),
+            array('name' => 'home',            'access' => 'g'),
+            array('name' => 'user_avatar',     'access' => 'u'),
+            array('name' => 'user_profile',    'access' => 'u'),
+            array('name' => 'view_programs',   'access' => 'g'),
+            array('name' => 'view_projects',   'access' => 'u'),
+            array('name' => 'program_home',    'access' => 'g'),
+            array('name' => 'user_ban',        'access' => 'a'),
+            array('name' => 'manage_programs', 'access' => 'a'),
         );
     }
     
@@ -32,25 +35,26 @@ class module
         if (file_exists(realpath("modules/mod_{$module_name}.php")))
         {
             // Set globals
-            global $gsod, $config, $core, $db, $auth, $lang, $skin, $module_title, $module_data;
+            global $gsod, $config, $core, $db, $user, $lang, $skin, $email,
+                   $module_title, $module_data;
 
             // Include the module
             include("modules/mod_{$module_name}.php");
         }
         else
         {
-            $message  = 'Pandora module error<br /><br />';
-            $message .= 'Error: Cannot find specified module<br />';
+            $title    = 'Module handler error';
+            $message  = 'Error: Cannot find specified module<br />';
             $message .= 'Make sure the module scripts exist inside the modules/ folder';
 
-            $gsod->trigger($message);
+            $gsod->trigger($title, $message);
         }
     }
 
     // Method to validate the current module
     function validate($mode)
     {
-        global $core, $auth;
+        global $core, $user;
 
         $is_valid = false;
 
@@ -69,7 +73,7 @@ class module
                 // User module is valid for authenticated users only
                 if ($module['access'] == 'u')
                 {
-                    if ($auth->is_logged_in)
+                    if ($user->is_logged_in)
                     {
                         $is_valid = true;
                     }
@@ -80,8 +84,8 @@ class module
                     }
                 }
 
-                // Admins module is valid for administrators
-                if ($module['access'] == 'a' && $auth->is_admin);
+                // Admins module is valid for administrators only
+                if ($module['access'] == 'a' && $user->is_admin)
                 {
                     $is_valid = true;
                 }

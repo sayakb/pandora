@@ -94,10 +94,10 @@ class skin
         // Parse template variables
         if (!file_exists($file_name))
         {
-            $message  = '<b>Pandora skin read error</b><br /><br />';
-            $message .= 'Error: Skin file not found<br />';
+            $title    = 'Skin parser error';
+            $message  = 'Error: Skin file not found<br />';
             $message .= 'Verify that the skin selected is present in the skins/ folder';
-            $gsod->trigger($message);
+            $gsod->trigger($title, $message);
         }
         
         $data = ($has_scripts ? $data : '') . file_get_contents($file_name);
@@ -121,7 +121,7 @@ class skin
     // Function to assign default variables
     function set_defaults($data)
     {
-        global $core, $auth, $lang, $nav;
+        global $core, $user, $lang, $nav;
 
         $data = str_replace("[[site_logo]]",
                             $this->skin_path . '/images/' . $lang->lang_name . '/logo.png', $data);
@@ -131,10 +131,10 @@ class skin
         $data = str_replace("[[page_title]]", $this->skin_title, $data);
         $data = str_replace("[[skin_path]]", $this->skin_path, $data);
         $data = str_replace("[[skin_name]]", $this->skin_name_fancy, $data);
-        $data = str_replace("[[username]]", $auth->username, $data);
-        $data = str_replace("[[guest_visibility]]", $this->visibility(!$auth->is_logged_in), $data);
-        $data = str_replace("[[user_visibility]]", $this->visibility($auth->is_logged_in), $data);
-        $data = str_replace("[[admin_visibility]]", $this->visibility($auth->is_admin), $data);
+        $data = str_replace("[[username]]", $user->username, $data);
+        $data = str_replace("[[guest_visibility]]", $this->visibility(!$user->is_logged_in), $data);
+        $data = str_replace("[[user_visibility]]", $this->visibility($user->is_logged_in), $data);
+        $data = str_replace("[[admin_visibility]]", $this->visibility($user->is_admin), $data);
         $data = str_replace("[[nav_home]]", $core->path(), $data);
         
         return $data;
@@ -196,10 +196,10 @@ class skin
 
             if (!$this->skin_file)
             {
-                $message  = '<b>Pandora skin parse error</b><br /><br />';
-                $message .= 'Error: Skin file not initialized<br />';
+                $title    = 'Skin parser error';
+                $message  = 'Error: Skin file not initialized<br />';
                 $message .= 'Use $skin->init(\'filename\') to load a skin file';
-                $gsod->trigger($message);
+                $gsod->trigger($title, $message);
             }
 
             $file_body = $this->locate($this->skin_file);

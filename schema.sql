@@ -43,3 +43,8 @@ CREATE TABLE `pdr_session` (
   `timestamp` int(11) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `pdr_bans` (
+  `username` varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

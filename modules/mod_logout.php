@@ -6,7 +6,7 @@
 */
 
 // Log out the user
-$auth->logout();
+$user->logout();
 
 // Redirect to homepage
 $core->redirect($core->path());

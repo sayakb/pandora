@@ -20,7 +20,7 @@ if ($program_data != null)
 {
     // Check the role of the current user
     $sql = "SELECT role FROM {$db->prefix}participants " .
-           "WHERE username = '{$auth->username}' " .
+           "WHERE username = '{$user->username}' " .
            "AND program_id = {$id}";
     $role_data = $db->query($sql, true);
 

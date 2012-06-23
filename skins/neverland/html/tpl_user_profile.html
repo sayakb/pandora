@@ -1,0 +1,55 @@
+<a href="[[return_url]]" class="no-decor pull-right top-spacer [[return_visibility]]">
+    <i class="icon-arrow-left"></i>
+    {{previous_page}}
+</a>
+
+<h1>{{user_profile}}</h1>
+<hr class="hr-head" />
+
+<div class="alert alert-info [[notice_visibility]]">
+    {{user_404}}
+</div>
+
+<div class="user-data [[profile_visibility]]">
+    <table>
+        <tr>
+            <td style="width:165px">
+                <img class="thumbnail" src="[[avatar_url]]" alt="{{user_avatar}}" />
+            </td>
+            
+            <td>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td style="width:140px">{{username}}</td>
+                            <td>[[user_username]]</td>
+                        </tr>
+
+                        <tr>
+                            <td>{{full_name}}</td>
+                            <td>[[user_fullname]]</td>
+                        </tr>
+
+                        <tr>
+                            <td>{{email}}</td>
+                            <td>[[user_email]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div class="form-actions">
+        <a href="mailto:[[user_email]]" class="btn btn-primary">
+            <i class="icon-envelope icon-white"></i>
+            {{contact_user}}
+        </a>
+
+        <a href="https://identity.kde.org/index.php?r=people/view&amp;uid=[[username]]" class="btn"
+           target="_blank">
+            <i class="icon-user icon-black"></i>
+            {{full_profile}}
+        </a>
+    </div>
+</div>

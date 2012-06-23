@@ -14,8 +14,9 @@ include_once('classes/class_gsod.php');
 include_once('classes/class_config.php');
 include_once('classes/class_core.php');
 include_once('classes/class_db.php');
-include_once('classes/class_auth.php');
+include_once('classes/class_user.php');
 include_once('classes/class_lang.php');
+include_once('classes/class_email.php');
 include_once('classes/class_skin.php');
 include_once('classes/class_module.php');
 
@@ -26,8 +27,9 @@ $gsod = new gsod();
 $config = new config();
 $core   = new core();
 $db     = new db();
-$auth   = new auth();
+$user   = new user();
 $lang   = new lang();
+$email  = new email();
 $skin   = new skin();
 $module = new module();
 
@@ -44,6 +46,6 @@ $skin->assign(array(
 include_once('cron.php');
 
 // Verify user authentication
-$auth->verify();
+$user->verify();
 
 ?>

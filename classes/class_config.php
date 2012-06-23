@@ -30,6 +30,15 @@ class config
     var $ldap_admin_group;
     var $ldap_user_dn;
     var $ldap_password;
+    var $ldap_fullname;
+    var $ldap_mail;
+    var $ldap_avatar;
+
+    var $smtp_host;
+    var $smtp_port;
+    var $smtp_username;
+    var $smtp_password;
+    var $smtp_from;
     
     // Constructor
     function __construct()
@@ -87,6 +96,15 @@ class config
             $this->ldap_admin_group = isset($ldap_admin_group) ? $ldap_admin_group : '';
             $this->ldap_user_dn     = isset($ldap_user_dn) ? $ldap_user_dn : '';
             $this->ldap_password    = isset($ldap_password) ? $ldap_password : '';
+            $this->ldap_fullname    = isset($ldap_fullname) ? $ldap_fullname : '';
+            $this->ldap_mail        = isset($ldap_mail) ? $ldap_mail : '';
+            $this->ldap_avatar      = isset($ldap_avatar) ? $ldap_avatar : '';
+
+            $this->smtp_host        = isset($smtp_host) ? $smtp_host : 'localhost';
+            $this->smtp_port        = isset($smtp_port) ? $smtp_port : 25;
+            $this->smtp_username    = isset($smtp_username) ? $smtp_username : '';
+            $this->smtp_password    = isset($smtp_password) ? $smtp_password : '';
+            $this->smtp_from        = isset($smtp_from) ? $smtp_from : 'webmaster@yoursite.com';
         }
     }
 }

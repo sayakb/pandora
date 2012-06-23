@@ -8,10 +8,10 @@
 // Collect some data
 $action = $core->variable('a', 'list');
 $id = $core->variable('p', 0);
-$title = $core->variable('title', '');
-$description = $core->variable('description', '');
-$start_date = $core->variable('start_date', '');
-$end_date = $core->variable('end_date', '');
+$title = $core->variable('title', '', false, true);
+$description = $core->variable('description', '', false, true);
+$start_date = $core->variable('start_date', '', false, true);
+$end_date = $core->variable('end_date', '', false, true);
 $active = $core->variable('active', '') == "on" ? 1 : 0;
 $page = $core->variable('pg', 1);
 $limit_start = ($page - 1) * $config->per_page;
