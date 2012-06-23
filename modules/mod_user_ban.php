@@ -71,7 +71,7 @@ foreach ($result as $row)
     // Assign data for each row
     $skin->assign(array(
         'ban_username'   => $user->profile(htmlspecialchars($row['username'], true)),
-        'unban_url'      => "?q=user_ban&u={$username_url}",
+        'unban_url'      => "?q=user_ban&amp;u={$username_url}",
     ));
 
     // Output the row

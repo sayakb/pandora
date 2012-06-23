@@ -220,7 +220,7 @@ if ($action == 'editor')
         'pass_checked'          => $skin->checked($is_passed == 1),
         'fail_checked'          => $skin->checked($is_passed == 0),
         'undecided_checked'     => $skin->checked($is_passed == -1),
-        'delete_url'            => "?q=view_projects&a=delete&prg={$program_id}&p={$project_id}",
+        'delete_url'            => "?q=view_projects&amp;a=delete&amp;prg={$program_id}&amp;p={$project_id}",
     ));
 
     // Output the module
@@ -247,14 +247,14 @@ else if ($action == 'delete')
         $db->query($sql);
 
         // Redirect to list page
-        $core->redirect("?q=program_home&prg={$program_id}");
+        $core->redirect("?q=program_home&amp;prg={$program_id}");
     }
 
     // Assign confirm box data
     $skin->assign(array(
         'message_title'     => $lang->get('confirm_deletion'),
         'message_body'      => $lang->get('confirm_project_del'),
-        'cancel_url'        => "?q=view_projects&a=editor&prg={$program_id}&p={$project_id}",
+        'cancel_url'        => "?q=view_projects&amp;a=editor&amp;prg={$program_id}&amp;p={$project_id}",
     ));
 
     // Output the module
@@ -422,8 +422,9 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted')
         $skin->assign(array(
             'project_title'         => $project_title,
             'project_description'   => $project_desc,
-            'project_url'           => "?q=view_projects&prg={$program_id}&p={$row['id']}",
-            'approve_url'           => "?q=view_projects&a=approve&prg={$program_id}&p={$row['id']}&r={$return_url}",
+            'project_url'           => "?q=view_projects&amp;prg={$program_id}&amp;p={$row['id']}",
+            'approve_url'           => "?q=view_projects&amp;a=approve&amp;prg={$program_id}" .
+                                       "&amp;p={$row['id']}&amp;r={$return_url}",
         ));
 
         $projects_list .= $skin->output('tpl_view_projects_item');
@@ -515,7 +516,7 @@ else if ($action == 'approve' || $action == 'disapprove')
             'project_name'      => $env_data['project'],
             'student_name'      => $student_name,
             'mentor_name'       => $mentor_name,
-            'project_url'       => "{$base}?q=view_projects&prg={$program_id}&p={$project_id}",
+            'project_url'       => "{$base}?q=view_projects&amp;prg={$program_id}&amp;p={$project_id}",
         ));
 
         // Send a mail to the student

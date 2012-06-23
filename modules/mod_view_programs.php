@@ -30,8 +30,8 @@ $programs_list = '';
 foreach ($program_data as $row)
 {
     // Generate the program URL
-    $url  = !empty($return_url) ? "?q=view_projects&prg={$row['id']}&a={$return_url}"
-                                : "?q=program_home&prg={$row['id']}";
+    $url  = !empty($return_url) ? "?q=view_projects&amp;prg={$row['id']}&amp;a={$return_url}"
+                                : "?q=program_home&amp;prg={$row['id']}";
     
     // Assign data for program
     $skin->assign(array(

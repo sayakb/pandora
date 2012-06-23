@@ -140,7 +140,7 @@ else if ($action == 'editor')
         'error_message'     => isset($error_message) ? $error_message : '',
         'error_visibility'  => $skin->visibility(isset($error_message)),
         'delete_visibility' => $skin->visibility($id > 0),
-        'delete_url'        => "?q=manage_programs&a=delete&p={$id}",
+        'delete_url'        => "?q=manage_programs&amp;a=delete&amp;p={$id}",
     ));
 
     // Output the module
@@ -174,7 +174,7 @@ else if ($action == 'delete')
     $skin->assign(array(
         'message_title'     => $lang->get('confirm_deletion'),
         'message_body'      => $lang->get('confirm_program_del'),
-        'cancel_url'        => "?q=manage_programs&a=editor&p={$id}",
+        'cancel_url'        => "?q=manage_programs&amp;a=editor&amp;p={$id}",
     ));
 
     // Output the module

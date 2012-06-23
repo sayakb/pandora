@@ -29,7 +29,7 @@ $username_data = $user->get_details($username, $required_data);
 if (isset($username_data[$config->ldap_mail]))
 {
     $is_admin   = false;
-    $avatar_url = "?q=user_avatar&u={$username_encoded}";
+    $avatar_url = "?q=user_avatar&amp;u={$username_encoded}";
     $full_name  = $username_data[$config->ldap_fullname][0];
     $email      = $username_data[$config->ldap_mail][0];
 
