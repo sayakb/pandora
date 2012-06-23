@@ -55,7 +55,7 @@ class lang
     // Function to return a localized phrase
     function get($key)
     {
-        global $config;
+        global $config, $core, $user;
 
         // Return default data
         switch($key)
@@ -76,7 +76,15 @@ class lang
 
         if (isset($lang_data[$key]))
         {
-            return $lang_data[$key];
+            $data = $lang_data[$key];
+
+            // Parse default placeholders
+            $data = str_replace("[[host]]", $core->base_uri(), $data);
+            $data = str_replace("[[site_name]]", $config->site_name, $data);
+            $data = str_replace("[[username]]", $user->username, $data);
+
+            // Return localized data
+            return $data;
         }
         else
         {

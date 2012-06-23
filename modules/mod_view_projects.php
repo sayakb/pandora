@@ -475,8 +475,8 @@ else if ($action == 'approve' || $action == 'disapprove')
         foreach ($participant_data as $participant)
         {
             $data = $user->get_details($participant['username'], array($name, $mail));
-            $fullname = $data[$name];
-            $mail = $data[$mail];
+            $fullname = $data[$name][0];
+            $mail = $data[$mail][0];
 
             if ($participant['role'] == 's')
             {
