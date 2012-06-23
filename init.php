@@ -6,8 +6,7 @@
 */
 
 // Turn off error reporting
-// TODO: Change this to 0
-error_reporting(E_ALL);
+error_reporting(0);
 
 // Include classes
 include_once('classes/class_gsod.php');
