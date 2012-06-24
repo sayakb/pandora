@@ -1,6 +1,6 @@
 Hello [[recipient]],<br /><br />
 
-Your project has been approved for [[program_name]].
+Your project has been <b>approved</b> for [[program_name]].
 Details of the project are as follows:<br /><br />
 
 <table border="0">

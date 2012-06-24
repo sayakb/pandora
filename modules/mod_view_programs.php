@@ -12,7 +12,7 @@ $page = $core->variable('pg', 1);
 $limit_start = ($page - 1) * $config->per_page;
 
 // Validate action and return URL
-$user->restrict(in_array($return_url, array('', 'accepted', 'proposed')));
+$user->restrict(in_array($return_url, array('', 'accepted', 'proposed', 'rejected')));
 $user->restrict($action == 'active' || ($action == 'inactive' && $user->is_admin));
 
 // Get a list of active programs

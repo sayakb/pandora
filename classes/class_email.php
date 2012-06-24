@@ -20,12 +20,12 @@ class email
         $this->email_vars = array();
     }
     
-    // Returns the mail template
-    function get_template()
+    // Load a template and return its contents
+    function load($file)
     {
         global $config;
 
-        $tpl = realpath("email/{$config->lang_name}.tpl");
+        $tpl = realpath("email/{$config->lang_name}/{$file}.tpl");
 
         if (file_exists($tpl))
         {
@@ -54,10 +54,10 @@ class email
     }
     
     // Sends an email message
-    function send($recipient, $subject = "")
+    function send($recipient, $subject, $body_tpl)
     {
         global $config;
-        
+
         @include('Mail.php');
         @include('Mail/mime.php');
 
@@ -91,7 +91,7 @@ class email
             $mime = new Mail_mime("\n");
 
             // Load the mail template
-            $tpl = $this->get_template();
+            $tpl = $this->load($body_tpl);
 
             if ($tpl !== false)
             {

@@ -168,7 +168,7 @@ if ($action == 'editor')
                 // Insert new project
                 $sql = "INSERT INTO {$db->prefix}projects " .
                        "(title, description, program_id, is_accepted, is_complete) " .
-                       "VALUES ('{$title}', '{$description}', {$program_id}, 0, 0)";
+                       "VALUES ('{$title}', '{$description}', {$program_id}, -1, 0)";
                 $db->query($sql);
 
                 // Get the new project ID
@@ -299,10 +299,24 @@ else if ($action == 'view')
         }
     }
 
-    // Convert indicators to string for displaying
-    $accepted = $project_data['is_accepted'] == 1 ? $lang->get('yes') : $lang->get('no');
+    // Convert complete indicator to yes/no
     $complete = $project_data['is_complete'] == 1 ? $lang->get('yes') : $lang->get('no');
 
+    // Convert accepted indicator to yes/no/undecided
+    if ($project_data['is_accepted'] == 1)
+    {
+        $accepted = $lang->get('yes');
+    }
+    else if ($project_data['is_accepted'] == 0)
+    {
+        $accepted = $lang->get('no');
+    }
+    else if ($project_data['is_accepted'] == -1)
+    {
+        $accepted = $lang->get('undecided');
+    }
+
+    // Convert passed indicator to yes/no/undecided
     if ($passed == 1)
     {
         $result = $lang->get('passed');
@@ -338,6 +352,10 @@ else if ($action == 'view')
     // Set the return URL (needed when approving the project)
     $return_url = urlencode($core->request_uri());
 
+    // Determine if admin controls are visible or not
+    $can_approve = ($project_data['is_accepted'] == -1 || $project_data['is_accepted'] == 0) && $user->is_admin;
+    $can_reject  = ($project_data['is_accepted'] == -1 || $project_data['is_accepted'] == 1) && $user->is_admin;
+
     // Assign final skin data
     $skin->assign(array(
         'program_id'                => $program_id,
@@ -357,16 +375,16 @@ else if ($action == 'view')
         'mentorship_visibility'     => $skin->visibility($can_mentor),
         'actions_visibility'        => $skin->visibility($is_owner || $can_mentor || $user->is_admin),
         'subscribe_visibility'      => $skin->visibility(isset($show_subscribe)),
-        'approve_visibility'        => $skin->visibility($project_data['is_accepted'] == 0 && $user->is_admin),
-        'disapprove_visibility'     => $skin->visibility($project_data['is_accepted'] == 1 && $user->is_admin),
+        'approve_visibility'        => $skin->visibility($can_approve),
+        'reject_visibility'         => $skin->visibility($can_reject),
     ));
 
     // Output the module
     $module_title = $lang->get('view_project');
     $module_data = $skin->output('tpl_view_project');
 }
-else if ($action == 'user' || $action == 'proposed' || $action == 'accepted')
-{
+else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || $action == 'rejected')
+{   
     $data_sql = "SELECT * FROM {$db->prefix}projects ";
     $count_sql = "SELECT COUNT(*) AS count FROM {$db->prefix}projects ";
     $limit = "LIMIT {$limit_start}, {$config->per_page}";
@@ -383,13 +401,19 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted')
     else if ($action == 'proposed')
     {
         $title = $lang->get('proposed_projects');
-        $filter = "WHERE is_accepted = 0 " .
+        $filter = "WHERE is_accepted = -1 " .
                   "AND program_id = {$program_id} ";
     }
     else if ($action == 'accepted')
     {
         $title = $lang->get('accepted_projects');
         $filter = "WHERE is_accepted = 1 " .
+                  "AND program_id = {$program_id} ";
+    }
+    else if ($action == 'rejected')
+    {
+        $title = $lang->get('rejected_projects');
+        $filter = "WHERE is_accepted = 0 " .
                   "AND program_id = {$program_id} ";
     }
 
@@ -453,7 +477,7 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted')
     $module_title = $title;
     $module_data = $skin->output('tpl_view_projects');
 }
-else if ($action == 'approve' || $action == 'disapprove')
+else if ($action == 'approve' || $action == 'reject')
 {
     // This is an admin only action
     $user->restrict(false, true);
@@ -470,74 +494,81 @@ else if ($action == 'approve' || $action == 'disapprove')
            "WHERE id = {$project_id}";
     $db->query($sql);
 
-    if ($action == 'approve')
+    // Set default for sending mail
+    $name = $config->ldap_fullname;
+    $mail = $config->ldap_mail;
+    $base = $core->base_uri();
+    $mentor_name = $lang->get('no_mentor');
+
+    // Get program and project data
+    $sql = "SELECT prg.title as program, " .
+           "       prj.title as project " .
+           "FROM {$db->prefix}projects prj " .
+           "LEFT JOIN {$db->prefix}programs prg " .
+           "ON (prg.id = prj.program_id) " .
+           "WHERE prg.id = {$program_id} " .
+           "AND prj.id = {$project_id}";
+    $env_data = $db->query($sql, true);
+
+    // Get participant data
+    $sql = "SELECT * FROM {$db->prefix}participants " .
+           "WHERE project_id = {$project_id}";
+    $participant_data = $db->query($sql);
+
+    // Set the mentor and student names
+    foreach ($participant_data as $participant)
     {
-        $name = $config->ldap_fullname;
-        $mail = $config->ldap_mail;
-        $base = $core->base_uri();
-        $mentor_name = $lang->get('no_mentor');
+        $data = $user->get_details($participant['username'], array($name, $mail));
+        $fullname = $data[$name][0];
+        $mail = $data[$mail][0];
 
-        // Get program and project data
-        $sql = "SELECT prg.title as program, " .
-               "       prj.title as project " .
-               "FROM {$db->prefix}projects prj " .
-               "LEFT JOIN {$db->prefix}programs prg " .
-               "ON (prg.id = prj.program_id) " .
-               "WHERE prg.id = {$program_id} " .
-               "AND prj.id = {$project_id}";
-        $env_data = $db->query($sql, true);
-
-        // Get participant data
-        $sql = "SELECT * FROM {$db->prefix}participants " .
-               "WHERE project_id = {$project_id}";
-        $participant_data = $db->query($sql);
-
-        // Set the mentor and student names
-        foreach ($participant_data as $participant)
+        if ($participant['role'] == 's')
         {
-            $data = $user->get_details($participant['username'], array($name, $mail));
-            $fullname = $data[$name][0];
-            $mail = $data[$mail][0];
-
-            if ($participant['role'] == 's')
-            {
-                $student      = $participant['username'];
-                $student_to   = $fullname;
-                $student_name = "{$fullname} &lt;{$mail}&gt;";
-                $student_mail = $mail;
-            }
-            else if ($participant['role'] == 'm')
-            {
-                $mentor      = $participant['username'];
-                $mentor_to   = $fullname;
-                $mentor_name = "{$fullname} &lt;{$mail}&gt;";
-                $mentor_mail = $mail;
-            }
+            $student      = $participant['username'];
+            $student_to   = $fullname;
+            $student_name = "{$fullname} &lt;{$mail}&gt;";
+            $student_mail = $mail;
         }
-
-        // Assign data needed for the email
-        $email->assign(array(
-            'program_name'      => $env_data['program'],
-            'project_name'      => $env_data['project'],
-            'student_name'      => $student_name,
-            'mentor_name'       => $mentor_name,
-            'project_url'       => "{$base}?q=view_projects&amp;prg={$program_id}&amp;p={$project_id}",
-        ));
-
-        // Send a mail to the student
-        $email->assign('recipient', $student_to);
-        $status = $email->send($student_mail, $lang->get('mail_subject'));
-
-        // Send a mail to the mentor, if any
-        if (isset($mentor_mail))
+        else if ($participant['role'] == 'm')
         {
-            $email->assign('recipient', $mentor_to);
-            $email->send($mentor_mail, $lang->get('mail_subject'));
+            $mentor      = $participant['username'];
+            $mentor_to   = $fullname;
+            $mentor_name = "{$fullname} &lt;{$mail}&gt;";
+            $mentor_mail = $mail;
         }
+    }
+
+    // Assign data needed for the email
+    $email->assign(array(
+        'program_name'      => $env_data['program'],
+        'project_name'      => $env_data['project'],
+        'student_name'      => $student_name,
+        'mentor_name'       => $mentor_name,
+        'project_url'       => "{$base}?q=view_projects&amp;prg={$program_id}&amp;p={$project_id}",
+    ));
+
+    // Set the template and subject based on action
+    $subject = $lang->get("subject_{$action}");
+    $tpl = "mail_{$action}";
+
+    // Send a mail to the student
+    $email->assign('recipient', $student_to);
+    $status = $email->send($student_mail, $subject, $tpl);
+
+    // Send a mail to the mentor, if any
+    if (isset($mentor_mail))
+    {
+        $email->assign('recipient', $mentor_to);
+        $email->send($mentor_mail, $subject, $tpl);
     }
     
     // Redirect to return URL
     $core->redirect(urldecode($return_url));
+}
+else
+{
+    // Unknown action
+    $core->redirect($core->path());
 }
 
 ?>

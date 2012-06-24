@@ -329,6 +329,12 @@ class skin
     {
         return $condition ? 'checked="checked"' : '';
     }
+
+    // Return disabled status of control based on a condition
+    function disabled($condition)
+    {
+        return $condition ? 'disabled="disabled"' : '';
+    }
     
     // Function to exclude a string from being treated as a key
     function escape(&$data)

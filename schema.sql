@@ -18,7 +18,7 @@ CREATE TABLE `pdr_projects` (
   `title` varchar(255) NOT NULL DEFAULT '',
   `description` mediumtext,
   `program_id` mediumint(6) unsigned NOT NULL,
-  `is_accepted` tinyint(1) NOT NULL DEFAULT 0,
+  `is_accepted` tinyint(1) NOT NULL DEFAULT -1,
   `is_complete` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`program_id`) REFERENCES `pdr_programs`(`id`)
