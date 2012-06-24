@@ -21,7 +21,7 @@ class user
         $this->sid = null;
         $this->is_admin = false;
         $this->is_logged_in = false;
-        $this->max_age = time() - 3600;
+        $this->max_age = time() - 1800;
     }
 
     // Method for creating a new session
