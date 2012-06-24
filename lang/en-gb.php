@@ -103,6 +103,7 @@ $lang_data = array(
     'no_projects'           => 'No projects were found in this category',
     'approve'               => 'Approve',
     'reject'                => 'Reject',
+    'admin'                 => 'Admin',
     'subject_approve'       => '[[site_name]]: Project approval notification',
     'subject_reject'        => '[[site_name]]: Project rejection notification',
     'no_mentor'             => '<em>No mentor assigned</em>',

@@ -70,18 +70,28 @@
             {{delete}}
         </a>
 
-        <span class="admin-buttons">
-            <a href="?q=view_projects&amp;a=approve&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
-            class="btn btn-success [[approve_visibility]]">
-                <i class="icon-ok icon-white"></i>
-                {{approve}}
-            </a>
+        <div class="btn-group admin-buttons [[admin_visibility]]">
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <i class="icon-cog icon-black"></i>
+                {{admin}}
+                <span class="caret"></span>
+            </button>
 
-            <a href="?q=view_projects&amp;a=reject&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
-            class="btn btn-danger [[reject_visibility]]">
-                <i class="icon-remove icon-white"></i>
-                {{reject}}
-            </a>
-        </span>
+            <ul class="dropdown-menu">
+                <li class="[[approve_visibility]]">
+                    <a href="?q=view_projects&amp;a=approve&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]">
+                        <i class="icon-ok icon-black"></i>
+                        {{approve}}
+                    </a>
+                </li>
+
+                <li class="[[reject_visibility]]">
+                    <a href="?q=view_projects&amp;a=reject&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]">
+                        <i class="icon-remove icon-black"></i>
+                        {{reject}}
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
