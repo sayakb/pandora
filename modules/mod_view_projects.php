@@ -421,8 +421,8 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
     $list_data = $db->query($data_sql . $filter . $limit);
     $list_count = $db->query($count_sql . $filter, true);
 
-    // Assign approve flag, we need it everywhere!
-    $skin->assign('approve_visibility', $skin->visibility($action == 'proposed' && $user->is_admin));
+    // Assign approve/reject flag, we need it everywhere!
+    $skin->assign('apprej_visibility', $skin->visibility($action == 'proposed' && $user->is_admin));
 
     // Set the return URL (needed when approving projects)
     $return_url = urlencode($core->request_uri());
@@ -453,6 +453,8 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
             'project_description'   => $project_desc,
             'project_url'           => "?q=view_projects&amp;prg={$program_id}&amp;p={$row['id']}",
             'approve_url'           => "?q=view_projects&amp;a=approve&amp;prg={$program_id}" .
+                                       "&amp;p={$row['id']}&amp;r={$return_url}",
+            'reject_url'            => "?q=view_projects&amp;a=reject&amp;prg={$program_id}" .
                                        "&amp;p={$row['id']}&amp;r={$return_url}",
         ));
 

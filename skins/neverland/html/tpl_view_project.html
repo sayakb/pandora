@@ -70,16 +70,18 @@
             {{delete}}
         </a>
 
-        <a href="?q=view_projects&amp;a=approve&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
-           class="btn btn-success approve-button [[approve_visibility]]">
-            <i class="icon-ok icon-white"></i>
-            {{approve}}
-        </a>
-        
-        <a href="?q=view_projects&amp;a=reject&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
-           class="btn btn-danger disapprove-button [[reject_visibility]]">
-            <i class="icon-remove icon-white"></i>
-            {{reject}}
-        </a>
+        <span class="admin-buttons">
+            <a href="?q=view_projects&amp;a=approve&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
+            class="btn btn-success [[approve_visibility]]">
+                <i class="icon-ok icon-white"></i>
+                {{approve}}
+            </a>
+
+            <a href="?q=view_projects&amp;a=reject&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
+            class="btn btn-danger [[reject_visibility]]">
+                <i class="icon-remove icon-white"></i>
+                {{reject}}
+            </a>
+        </span>
     </div>
 </div>
