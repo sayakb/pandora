@@ -53,7 +53,7 @@ $role = 'g';
 
 // We are viewing/editing a project
 if ($project_id > 0)
-{  
+{
     $sql = "SELECT prj.is_accepted, prt.role " .
            "FROM {$db->prefix}projects prj " .
            "LEFT JOIN {$db->prefix}participants prt " .
