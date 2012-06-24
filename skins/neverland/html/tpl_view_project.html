@@ -53,7 +53,7 @@
     </div>
 
     <div class="form-actions [[actions_visibility]]">
-        <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]&amp;p=[[project_id]]"
+        <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=view"
            class="btn btn-primary [[edit_visibility]]">
             <i class="icon-pencil icon-white"></i>
             {{edit}}
@@ -64,14 +64,20 @@
             {{mentor_project}}
         </button>
 
+        <a href="?q=view_projects&amp;a=delete&amp;prg=[[program_id]]&amp;p=[[project_id]]"
+           class="btn btn-danger delete-button [[delete_visibility]]">
+            <i class="icon-trash     icon-white"></i>
+            {{delete}}
+        </a>
+
         <a href="?q=view_projects&amp;a=approve&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
-           class="btn btn-success approve-button [[approve_visibility]]">
+           class="btn btn-success [[approve_visibility]]">
             <i class="icon-ok icon-white"></i>
             {{approve}}
         </a>
-
+        
         <a href="?q=view_projects&amp;a=disapprove&amp;prg=[[program_id]]&amp;p=[[project_id]]&amp;r=[[return_url]]"
-           class="btn btn-danger approve-button [[disapprove_visibility]]">
+           class="btn btn-danger [[disapprove_visibility]]">
             <i class="icon-remove icon-white"></i>
             {{disapprove}}
         </a>

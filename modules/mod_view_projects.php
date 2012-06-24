@@ -159,7 +159,8 @@ if ($action == 'editor')
                     $db->query($sql);
                 }
 
-                $success_message = $lang->get('project_updated');
+                // We take the user back to the view project page
+                $core->redirect("?q=view_projects&prg={$program_id}&p={$project_id}");
             }
 
             else
@@ -203,6 +204,10 @@ if ($action == 'editor')
         $is_complete = $project_data['is_complete'];
     }
 
+    // Determine the cancel URL
+    $cancel_url = !empty($return_url) ? "?q=view_projects&amp;prg={$program_id}&amp;p={$project_id}"
+                                      : "?q=program_home&amp;prg={$program_id}";
+
     // Assign skin data
     $skin->assign(array(
         'editor_title'          => $page_title,
@@ -213,14 +218,13 @@ if ($action == 'editor')
         'error_message'         => isset($error_message) ? $error_message : '',
         'success_visibility'    => $skin->visibility(!empty($success_message)),
         'error_visibility'      => $skin->visibility(!empty($error_message)),
-        'delete_visibility'     => $skin->visibility($project_id > 0),
         'decision_visibility'   => $skin->visibility($project_id > 0 && $can_decide),
         'subscribe_visibility'  => $skin->visibility(isset($show_subscribe)),
         'complete_checked'      => $skin->checked($is_complete == 1),
         'pass_checked'          => $skin->checked($is_passed == 1),
         'fail_checked'          => $skin->checked($is_passed == 0),
         'undecided_checked'     => $skin->checked($is_passed == -1),
-        'delete_url'            => "?q=view_projects&amp;a=delete&amp;prg={$program_id}&amp;p={$project_id}",
+        'cancel_url'            => $cancel_url,
     ));
 
     // Output the module
@@ -254,7 +258,7 @@ else if ($action == 'delete')
     $skin->assign(array(
         'message_title'     => $lang->get('confirm_deletion'),
         'message_body'      => $lang->get('confirm_project_del'),
-        'cancel_url'        => "?q=view_projects&amp;a=editor&amp;prg={$program_id}&amp;p={$project_id}",
+        'cancel_url'        => "?q=view_projects&amp;prg={$program_id}&amp;p={$project_id}",
     ));
 
     // Output the module
@@ -349,8 +353,9 @@ else if ($action == 'view')
         'success_message'           => isset($success_message) ? $success_message : '',
         'success_visibility'        => $skin->visibility(!empty($success_message)),
         'edit_visibility'           => $skin->visibility($is_owner || $user->is_admin),
+        'delete_visibility'         => $skin->visibility($is_owner || $user->is_admin),
         'mentorship_visibility'     => $skin->visibility($can_mentor),
-        'actions_visibility'        => $skin->visibility($is_owner || $can_mentor),
+        'actions_visibility'        => $skin->visibility($is_owner || $can_mentor || $user->is_admin),
         'subscribe_visibility'      => $skin->visibility(isset($show_subscribe)),
         'approve_visibility'        => $skin->visibility($project_data['is_accepted'] == 0 && $user->is_admin),
         'disapprove_visibility'     => $skin->visibility($project_data['is_accepted'] == 1 && $user->is_admin),
