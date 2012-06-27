@@ -19,7 +19,7 @@ $program_data = $db->query($sql, true);
 if ($program_data != null)
 {
     // Check the role of the current user
-    $sql = "SELECT role FROM {$db->prefix}participants " .
+    $sql = "SELECT role FROM {$db->prefix}roles " .
            "WHERE username = '{$user->username}' " .
            "AND program_id = {$id}";
     $role_data = $db->query($sql, true);
@@ -34,6 +34,20 @@ if ($program_data != null)
         $role = 'g';
     }
 
+    // Set object availability based on deadlines
+    $show_student = true;
+    $show_mentor = true;
+    
+    if ($core->timestamp >= $program_data['dl_student'])
+    {
+        $show_student = false;
+    }
+
+    if ($core->timestamp >= $program_data['dl_mentor'])
+    {
+        $show_mentor = false;
+    }
+
     // Assign screen data for the program
     $skin->assign(array(
         'program_id'               => $program_data['id'],
@@ -42,8 +56,14 @@ if ($program_data != null)
         'program_start_date'       => date('M d, Y', $program_data['start_time']),
         'program_end_date'         => date('M d, Y', $program_data['end_time']),
         'prg_guest_visibility'     => $skin->visibility($role == 'g'),
+        'prg_resign_visibility'    => $skin->visibility($role == 'r'),
+        'prg_rejected_visibility'  => $skin->visibility($role == 'x'),
         'prg_student_visibility'   => $skin->visibility($role == 's'),
+        'prg_interm_visibility'    => $skin->visibility($role == 'i'),
         'prg_mentor_visibility'    => $skin->visibility($role == 'm'),
+        'dl_student_visibility'    => $skin->visibility($show_student),
+        'dl_mentor_visibility'     => $skin->visibility($show_mentor),
+        'started_visibility'       => $skin->visibility($role == 'g' && !($show_student || $show_mentor)),
     ));
 
     // Output the module

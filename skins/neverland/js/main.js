@@ -8,8 +8,10 @@ var isIe = (navigator.appName.indexOf("Microsoft") >= 0);
 
 // Startup function
 $(function() {
-    $(".datepicker").datepicker({
-        dateFormat: 'M dd, yy',
+    $(".datepicker").datetimepicker({
+        dateFormat: 'M dd yy,',
+        timeFormat: 'hh:mm tt',
+        ampm: true,
         changeMonth: true,
         changeYear: true,
     });

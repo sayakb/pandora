@@ -7,10 +7,12 @@
 
 // Collect some data
 $action = $core->variable('a', 'view');
+$category = $core->variable('c', '');
 $program_id = $core->variable('prg', 0);
 $project_id = $core->variable('p', 0);
 $title = $core->variable('title', '', false, true);
 $description = $core->variable('description', '', false, true);
+$new_mentor = $core->variable('new_mentor', '', false, true);
 $return_url = $core->variable('r', '');
 $is_passed = $core->variable('passed', 0);
 $is_complete = $core->variable('complete', '') == 'on' ? 1 : 0;
@@ -47,53 +49,26 @@ else
 $row = $db->query($sql, true);
 $user->restrict($row['count'] > 0);
 
-// Treat all users as guest by default
-$is_owner = false;
-$role = 'g';
+// Get the role of the user
+$sql = "SELECT * FROM {$db->prefix}roles " .
+       "WHERE program_id = {$program_id} " .
+       "AND username = '{$user->username}'";
+$role_data = $db->query($sql, true);
 
-// We are viewing/editing a project
+// Role is guest if no entry was found
+$role = $role_data != null ? $role_data['role'] : 'g';
+
+// Check if the user is the owner of the project
 if ($project_id > 0)
 {
-    $sql = "SELECT prj.is_accepted, prt.role " .
-           "FROM {$db->prefix}projects prj " .
-           "LEFT JOIN {$db->prefix}participants prt " .
-           "ON (prj.id = prt.project_id) " .
-           "WHERE prj.id = {$project_id} " .
-           "AND prt.username = '{$user->username}'";
-    $owner_data = $db->query($sql, true);
-
-    if ($owner_data != null)
-    {
-        // Set the role for the user
-        $role = $owner_data['role'];
-        
-        // Role student means the user submitted the proposal
-        // Hence set as owner
-        if ($role == 's')
-        {
-            $is_owner = true;
-        }
-
-        // Role mentor should be approved for that project
-        // to be considered as a owner
-        else if ($role == 'm' && $owner_data['is_accepted'] == 1)
-        {
-            $is_owner = true;
-        }
-    }
-}
-
-// We are viewing a list
-else
-{
-    // Get the role of the user
-    $sql = "SELECT * FROM {$db->prefix}participants " .
-           "WHERE program_id = {$program_id} " .
-           "AND username = '{$user->username}'";
-    $role_data = $db->query($sql, true);
-
-    // Role is guest if no entry was found
-    $role = $role_data != null ? $role_data['role'] : 'g';
+    $sql = "SELECT COUNT(*) AS count " .
+           "FROM {$db->prefix}participants " .
+           "WHERE project_id = {$project_id} " .
+           "AND username = '{$user->username}' " .
+           "AND (role = 's' OR role = 'm')";       
+    $owner_count = $db->query($sql, true);
+    
+    $is_owner = $owner_count['count'] > 0;
 }
 
 
@@ -108,16 +83,26 @@ if ($action == 'editor')
     // Validate pass status of student (should be 1, 0 or -1)
     $user->restrict(in_array($is_passed, array(1, 0, -1)));
     
-    // Only students/non-participants can create new proposals
+    // Only students can create new proposals
     if ($project_id == 0)
     {
-        $user->restrict($role == 'g' || $role == 's', true);
+        $user->restrict($role == 's', true);
     }
 
     // Only owners can edit a project
     else
     {
         $user->restrict($is_owner, true);
+    }
+
+    // Past student deadline, don't let them submit or edit
+    if ($role == 's')
+    {
+        $sql = "SELECT dl_student FROM {$db->prefix}programs " .
+               "WHERE id = {$program_id}";
+        $program_data = $db->query($sql, true);
+
+        $user->restrict($core->timestamp < $program_data['dl_student'], true);
     }
 
     // Only mentor/admins can mark project as complete and pass a student
@@ -159,8 +144,63 @@ if ($action == 'editor')
                     $db->query($sql);
                 }
 
-                // We take the user back to the view project page
-                $core->redirect("?q=view_projects&prg={$program_id}&p={$project_id}");
+                // Update student and mentor names
+                if ($user->is_admin && !empty($new_mentor))
+                {
+                    $db->escape($new_mentor);
+
+                    // Get existing role of the new mentor
+                    $sql = "SELECT role FROM {$db->prefix}roles " .
+                           "WHERE username = '{$new_mentor}' " .
+                           "AND program_id = {$program_id}";
+                    $role_data = $db->query($sql, true);
+
+                    // New mentor has an already defined role
+                    if ($role_data != null)
+                    {
+                        if ($role_data['role'] != 's')
+                        {
+                            // Update role to mentor
+                            $sql = "UPDATE {$db->prefix}roles " .
+                                   "SET role = 'm' " .
+                                   "WHERE username = '{$new_mentor}' " .
+                                   "AND program_id = {$program_id} ";
+                            $db->query($sql);
+                        }
+                        else
+                        {
+                            $error_message = $lang->get('new_mentor_student');
+                        }
+                    }
+                    else
+                    {
+                        $sql = "INSERT INTO {$db->prefix}roles " .
+                               "(username, program_id, role) " .
+                               "VALUES ('{$new_mentor}', {$program_id}, 'm')";
+                        $db->query($sql);
+                    }
+
+                    if (empty($error_message))
+                    {
+                        // Delete existing mentors of this project
+                        $sql = "DELETE FROM {$db->prefix}participants " .
+                               "WHERE project_id = {$project_id} " .
+                               "AND role = 'm'";
+                        $db->query($sql);
+
+                        // Insert the new mentor
+                        $sql = "INSERT INTO {$db->prefix}participants " .
+                               "(username, project_id, program_id, role) " .
+                               "VALUES ('{$new_mentor}', {$project_id}, {$program_id}, 'm')";
+                        $db->query($sql);
+                    }
+                }
+
+                if (empty($error_message))
+                {
+                    // We take the user back to the view project page
+                    $core->redirect("?q=view_projects&prg={$program_id}&p={$project_id}");
+                }
             }
 
             else
@@ -214,12 +254,14 @@ if ($action == 'editor')
         'program_id'            => $program_id,
         'project_title'         => htmlspecialchars($title),
         'project_description'   => htmlspecialchars($description),
+        'new_mentor'            => htmlspecialchars($new_mentor),
         'success_message'       => isset($success_message) ? $success_message : '',
         'error_message'         => isset($error_message) ? $error_message : '',
         'success_visibility'    => $skin->visibility(!empty($success_message)),
         'error_visibility'      => $skin->visibility(!empty($error_message)),
         'decision_visibility'   => $skin->visibility($project_id > 0 && $can_decide),
         'subscribe_visibility'  => $skin->visibility(isset($show_subscribe)),
+        'newmentor_visibility'  => $skin->visibility($project_id > 0 && $user->is_admin),
         'complete_checked'      => $skin->checked($is_complete == 1),
         'pass_checked'          => $skin->checked($is_passed == 1),
         'fail_checked'          => $skin->checked($is_passed == 0),
@@ -233,9 +275,9 @@ if ($action == 'editor')
 }
 else if ($action == 'delete')
 {
-    // Program ID should be supplied, and user must be project owner
+    // Program ID should be supplied, and user must be an admin
     $user->restrict($program_id > 0);
-    $user->restrict($is_owner, true);
+    $user->restrict(false, true);
     
     // Deletion was confirmed
     if ($confirm)
@@ -270,6 +312,11 @@ else if ($action == 'view')
     // Program and Project IDs are mandatory here
     $user->restrict($program_id > 0 && $project_id > 0);
 
+    // Get program data
+    $sql = "SELECT * FROM {$db->prefix}programs " .
+            "WHERE id = {$program_id}";
+    $program_data = $db->query($sql, true);
+   
     // Get project data
     $sql = "SELECT * FROM {$db->prefix}projects " .
            "WHERE id = {$project_id}";
@@ -329,11 +376,18 @@ else if ($action == 'view')
     {
         $result = $lang->get('undecided');
     }
+
+    // Don't let students edit post student deadline
+    if ($role == 's' && $is_owner)
+    {
+        $is_owner = $core->timestamp < $program_data['dl_student'];
+    }
     
     // A user can choose to mentor if:
-    //  1. He isn't a student in this program
+    //  1. He signed up as a mentor for the program, and
     //  2. Project doesn't already have a mentor
-    $can_mentor = $role != 's' && !$has_mentor;
+    //  3. Project hasn't passed mentor deadline
+    $can_mentor = ($role == 'm' && !$has_mentor && $core->timestamp < $program_data['dl_mentor']);
 
     // User applied as mentor
     if ($mentor_apply && $can_mentor)
@@ -371,7 +425,7 @@ else if ($action == 'view')
         'success_message'           => isset($success_message) ? $success_message : '',
         'success_visibility'        => $skin->visibility(!empty($success_message)),
         'edit_visibility'           => $skin->visibility($is_owner || $user->is_admin),
-        'delete_visibility'         => $skin->visibility($is_owner || $user->is_admin),
+        'delete_visibility'         => $skin->visibility($user->is_admin),
         'mentorship_visibility'     => $skin->visibility($can_mentor),
         'actions_visibility'        => $skin->visibility($is_owner || $can_mentor || $user->is_admin),
         'subscribe_visibility'      => $skin->visibility(isset($show_subscribe)),
@@ -566,6 +620,130 @@ else if ($action == 'approve' || $action == 'reject')
     
     // Redirect to return URL
     $core->redirect(urldecode($return_url));
+}
+else if ($action == 'apply')
+{
+    // Only guests can apply
+    $user->restrict($role == 'g');
+
+    // We need program ID for this action
+    $user->restrict($program_id > 0);
+
+    // Validate category
+    $user->restrict(in_array($category, array('student', 'mentor')));
+
+    // Get the program data
+    $sql = "SELECT * FROM {$db->prefix}programs " .
+           "WHERE id = {$program_id}";
+    $program_data = $db->query($sql, true);
+
+    // Set the new role based on action
+    $new_role = $category == 'student' ? 's' : 'i';
+
+    // Allow setting new role based on deadlines
+    $user->restrict(($new_role == 's' && $core->timestamp < $program_data['dl_student']) ||
+                    ($new_role == 'i' && $core->timestamp < $program_data['dl_mentor']));
+
+    // Insert the new role
+    $sql = "INSERT INTO {$db->prefix}roles " .
+           "(username, program_id, role) " .
+           "VALUES ('{$user->username}', {$program_id}, " .
+           "'{$new_role}')";
+    $db->query($sql);
+
+    // Notify admin with email for new mentor requests
+    if ($new_role == 'i')
+    {
+        $email->assign(array(
+            'mentor_name'    => $user->username,
+            'approval_url'   => $core->base_uri() . "?q=approve_mentors",
+        ));
+
+        $email->send($config->webmaster, $lang->get('mentor_subject'), 'mail_mentor');
+    }
+
+    // Redirect to program home
+    $core->redirect("?q=program_home&prg={$program_id}");
+}
+else if ($action == 'resign')
+{
+    // Only students can resign
+    $user->restrict($role == 's');
+
+    // We need program ID for this action
+    $user->restrict($program_id > 0);
+
+    if ($confirm)
+    {
+        // Check if program has already started
+        $sql = "SELECT COUNT(*) AS count " .
+               "FROM {$db->prefix}programs " .
+               "WHERE id = {$program_id} " .
+               "AND start_time <= {$core->timestamp}";
+        $prog_count = $db->query($sql, true);
+
+        // If program already started, mark student as failed
+        if ($prog_count['count'] > 0)
+        {
+            $sql = "UPDATE {$db->prefix}participants " .
+                   "SET passed = 0 " .
+                   "WHERE program_id = {$program_id} " .
+                   "AND username = '{$user->username}'";
+            $db->query($sql);
+        }
+
+        // Else, simply delete the proposals
+        else
+        {
+            $sql = "SELECT * FROM {$db->prefix}participants " .
+                   "WHERE program_id = {$program_id} " .
+                   "AND username = '{$user->username}'";
+            $project_data = $db->query($sql);
+
+            // Student has one or more proposals
+            if ($project_data != null)
+            {
+                $projects_ary = array();
+
+                foreach ($project_data as $row)
+                {
+                    $projects_ary[] = $row['project_id'];
+                }
+
+                $projects = implode(',', $projects_ary);
+
+                // Delete all the projects
+                $sql = "DELETE FROM {$db->prefix}participants " .
+                       "WHERE project_id IN ({$projects})";
+                $db->query($sql);
+
+                $sql = "DELETE FROM {$db->prefix}projects " .
+                       "WHERE id IN ({$projects})";
+                $db->query($sql);
+            }           
+        }
+
+        // Set role as resigned
+        $sql = "UPDATE {$db->prefix}roles " .
+               "SET role = 'r' " .
+               "WHERE program_id = {$program_id} " .
+               "AND username = '{$user->username}'";
+        $db->query($sql);
+
+        // Redirect the user to program home
+        $core->redirect("?q=program_home&prg={$program_id}");
+    }
+
+    // Assign confirm box data
+    $skin->assign(array(
+        'message_title'     => $lang->get('confirm_resign'),
+        'message_body'      => $lang->get('confirm_resign_exp'),
+        'cancel_url'        => "?q=program_home&prg={$program_id}",
+    ));
+
+    // Output the module
+    $module_title = $lang->get('confirm_deletion');
+    $module_data = $skin->output('tpl_confirm_box');    
 }
 else
 {

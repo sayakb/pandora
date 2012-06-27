@@ -16,49 +16,95 @@
     
     <hr class="hr-hero" />
 
-    <div class="[[prg_guest_visibility]]">
-        <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]" class="btn btn-large">
-            <img src="[[skin_path]]/images/submit-project.png" alt="" />
-            {{apply_student}}
-        </a>
-        &nbsp;
-        <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=proposed" class="btn btn-large">
-            <img src="[[skin_path]]/images/mentor-project.png" alt="" />
-            {{apply_mentor}}
+    <div class="[[guest_visibility]]">
+        <a href="?q=login" class="btn btn-large">
+            <img src="[[skin_path]]/images/login.png" alt="" />
+            {{login_to_participate}}
         </a>
     </div>
 
-    <div class="[[prg_student_visibility]]">
-        <h4>
-            <i class="icon-user"></i>
-            {{role_student}}
-        </h4>
+    <div class="program-actions [[user_visibility]]">
+        <div class="[[prg_guest_visibility]]">
+            <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=apply&amp;c=student" class="btn btn-large [[dl_student_visibility]]">
+                <img src="[[skin_path]]/images/submit-project.png" alt="" />
+                {{apply_student}}
+            </a>
 
-        <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]" class="btn btn-large">
-            <img src="[[skin_path]]/images/submit-project.png" alt="" />
-            {{submit_another}}
-        </a>
-        &nbsp;        
-        <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=user" class="btn btn-large">
-            <img src="[[skin_path]]/images/my-projects.png" alt="" />
-            {{view_my_projects}}
-        </a>        
-    </div>
+            <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=apply&amp;c=mentor" class="btn btn-large [[dl_mentor_visibility]]">
+                <img src="[[skin_path]]/images/mentor-project.png" alt="" />
+                {{apply_mentor}}
+            </a>
+        </div>
 
-    <div class="[[prg_mentor_visibility]]">
-        <h4>
-            <i class="icon-user"></i>
-            {{role_mentor}}
-        </h4>
+        <div class="[[prg_resign_visibility]]">
+            <h4 class="resign-notice">
+                <i class="icon-user"></i>
+                {{role_resigned}}
+            </h4>
+        </div>
 
-        <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=proposed" class="btn btn-large">
-            <img src="[[skin_path]]/images/mentor-project.png" alt="" />
-            {{mentor_another}}
-        </a>
-        &nbsp;
-        <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=user" class="btn btn-large">
-            <img src="[[skin_path]]/images/my-projects.png" alt="" />
-            {{view_my_projects}}
+        <div class="[[prg_student_visibility]]">
+            <h4>
+                <i class="icon-user"></i>
+                {{role_student}}
+            </h4>
+
+            <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]" class="btn btn-large [[dl_student_visibility]]">
+                <img src="[[skin_path]]/images/submit-project.png" alt="" />
+                {{submit_proposal}}
+            </a>
+
+            <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=user" class="btn btn-large">
+                <img src="[[skin_path]]/images/projects.png" alt="" />
+                {{view_submissions}}
+            </a>
+
+            <div class="resign-block">
+                <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=resign" class="btn btn-danger btn-mini">
+                    {{resign_student}}
+                </a>
+            </div>
+        </div>
+
+        <div class="[[prg_interm_visibility]]">
+            <h4>
+                <i class="icon-user"></i>
+                {{role_intermediate}}
+            </h4>
+
+            <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=proposed" class="btn btn-large">
+                <img src="[[skin_path]]/images/proposals.png" alt="" />
+                {{view_proposals}}
+            </a>
+        </div>
+
+        <div class="[[prg_mentor_visibility]]">
+            <h4>
+                <i class="icon-user"></i>
+                {{role_mentor}}
+            </h4>
+
+            <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=proposed" class="btn btn-large [[dl_mentor_visibility]]">
+                <img src="[[skin_path]]/images/mentor-project.png" alt="" />
+                {{mentor_project_sel}}
+            </a>
+            
+            <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=user" class="btn btn-large">
+                <img src="[[skin_path]]/images/projects.png" alt="" />
+                {{view_my_projects}}
+            </a>
+        </div>
+
+        <div class="[[prg_rejected_visibility]]">
+            <h4 class="rejected-notice">
+                <i class="icon-user"></i>
+                {{role_rejected}}
+            </h4>
+        </div>
+
+        <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=accepted" class="btn btn-large [[started_visibility]]">
+            <img src="[[skin_path]]/images/projects.png" alt="" />
+            {{view_accepted}}
         </a>
     </div>
 </div>

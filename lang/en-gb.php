@@ -22,6 +22,7 @@ $lang_data = array(
     'accepted_projects'     => 'Accepted projects',
     'view_my_projects'      => 'View my projects',
     'approve_proposal'      => 'Approve proposals',
+    'approve_mentors'       => 'Approve mentors',
     'mandatory_fields'      => 'All fields marked with * are mandatory',
     'mandatory_all'         => 'Please fill in all the fields',
     'err_mandatory_fields'  => 'Please fill in all the mandatory fields',
@@ -66,17 +67,30 @@ $lang_data = array(
     'active'                => 'Active',
     'start_date'            => 'Start date',
     'end_date'              => 'End date',
+    'dl_student'            => 'Student deadline',
+    'dl_mentor'             => 'Mentor deadline',
     'invalid_date'          => 'Please enter a valid start and end date',
+    'invalid_deadlines'     => 'Please enter valid student and mentor application deadlines',
     'confirm_program_del'   => 'If you delete this program, all projects associated with it will also get deleted. ' .
                                'Do you want to continue?',
 
     /* Module: programs_home */
+    'login_to_participate'  => 'Log in or sign-up to participate',
+    'program_started'       => 'This program isn\'t accepting new participants',
     'apply_student'         => 'Apply as student',
     'apply_mentor'          => 'Apply to mentor',
-    'submit_another'        => 'Submit another proposal',
-    'mentor_another'        => 'Mentor another project',
+    'view_submissions'      => 'View my submissions',
+    'submit_proposal'       => 'Submit project proposal',
+    'mentor_project_sel'    => 'Select project to mentor',
+    'cancel_mentor'         => 'Cancel mentor application',
+    'view_proposals'        => 'View project proposals',
+    'resign_student'        => 'Resign from this program',
     'role_student'          => 'You are participating in this program as a student',
     'role_mentor'           => 'You are participating in this program as a mentor',
+    'role_resigned'         => 'You have resigned from this program and cannot participate again',
+    'role_rejected'         => 'Your mentorship application has been declined and you cannot participate in this program',
+    'role_intermediate'     => 'You mentor application for this program is awaiting admin approval',
+    'view_accepted'         => 'View accepted projects',
     'to'                    => 'to',
 
     /* Module: view_projects */
@@ -101,18 +115,24 @@ $lang_data = array(
     'student'               => 'Student',
     'mentor'                => 'Mentor',
     'no_projects'           => 'No projects were found in this category',
+    'new_mentor'            => 'New mentor',
+    'new_mentor_exp'        => 'Leave blank if you do not wish to change the mentor',
+    'new_mentor_student'    => 'The mentor you have selected is a student for this program',
     'approve'               => 'Approve',
     'reject'                => 'Reject',
     'admin'                 => 'Admin',
     'subject_approve'       => '[[site_name]]: Project approval notification',
     'subject_reject'        => '[[site_name]]: Project rejection notification',
     'no_mentor'             => '<em>No mentor assigned</em>',
+    'mentor_subject'        => 'New mentor request awaiting approval',
     'subscribe_student'     => '<b>Important:</b> It is essential that you subscribe to the <a href="https:' .
                                '//mail.kde.org/mailman/listinfo/kde-soc" target="_blank">KDE SoC Mailing List' .
                                '</a>, if you haven\'t done it already.',
     'subscribe_mentor'      => '<b>Important:</b> It is essential that you subscribe to the <a href="https:' .
                                '//mail.kde.org/mailman/listinfo/kde-soc-mentor" target="_blank">KDE SoC ' .
                                'Mentor Mailing List</a>, if you haven\'t done it already.',
+    'confirm_resign'        => 'Confirm resignation',
+    'confirm_resign_exp'    => 'Are you sure you want to resign? Your submissions will get invalidated.',
 
     /* Module: user_profile */
     'user_profile'          => 'User profile',
@@ -132,6 +152,10 @@ $lang_data = array(
     'unban_user'            => 'Unban this user',
     'ban'                   => 'Ban',
     'no_bans'               => 'There are no banned users at the moment',
+
+    /* Module: approve_mentors */
+    'no_pending_mentors'    => 'There are no pending mentor applications',
+    'mentor_name'           => 'Mentor username',
 );
 
 ?>

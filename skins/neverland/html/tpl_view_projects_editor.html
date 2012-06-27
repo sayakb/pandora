@@ -24,7 +24,7 @@
 <div class="control-group">
     <label class="control-label">{{project_title}}</label>
     <div class="controls">
-        <input type="text" name="title" maxlength="100" class="input-xxlarge" value="[[project_title]]"  />
+        <input type="text" name="title" maxlength="100" class="input-xxlarge" value="[[project_title]]" />
     </div>
 </div>
 
@@ -59,6 +59,18 @@
             <input type="radio" name="passed" value="-1" [[undecided_checked]] />
             {{undecided}}
         </label>
+    </div>
+</div>
+
+<div class="control-group [[newmentor_visibility]]">
+    <label class="control-label">{{new_mentor}}</label>
+    <div class="controls">
+        <input type="text" name="new_mentor" maxlength="100" class="input-medium" value="[[new_mentor]]" />
+
+        <div class="help-inline">
+            <i class="icon-info-sign"></i>
+            {{new_mentor_exp}}
+        </div>
     </div>
 </div>
 

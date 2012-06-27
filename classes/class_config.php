@@ -7,7 +7,7 @@
 
 class config
 {
-    // Declare config variables
+    // Declare config variables   
     var $db_host;
     var $db_port;
     var $db_name;
@@ -17,6 +17,7 @@ class config
 
     var $site_name;
     var $site_copyright;
+    var $webmaster;    
     var $skin_name;
     var $lang_name;
     var $per_page;
@@ -73,7 +74,7 @@ class config
         
         // Set the data
         if ($load_data)
-        {
+        {           
             $this->db_host          = isset($db_host) ? $db_host : '';
             $this->db_port          = isset($db_port) ? $db_port : '';
             $this->db_name          = isset($db_name) ? $db_name : '';
@@ -83,6 +84,7 @@ class config
             
             $this->site_name        = isset($site_name) ? $site_name : 'Pandora';
             $this->site_copyright   = isset($site_copyright) ? $site_copyright : '&copy; 2012 KDE';
+            $this->webmaster        = isset($webmaster) ? $webmaster : '';
             $this->skin_name        = isset($skin_name) ? $skin_name : 'Neverland';
             $this->lang_name        = isset($lang_name) ? $lang_name : 'en-gb';
             $this->per_page         = isset($per_page) ? $per_page : 10;

@@ -12,6 +12,8 @@ $title = $core->variable('title', '', false, true);
 $description = $core->variable('description', '', false, true);
 $start_date = $core->variable('start_date', '', false, true);
 $end_date = $core->variable('end_date', '', false, true);
+$dl_student_date = $core->variable('dl_student', '', false, true);
+$dl_mentor_date = $core->variable('dl_mentor', '', false, true);
 $active = $core->variable('active', '') == "on" ? 1 : 0;
 $page = $core->variable('pg', 1);
 $limit_start = ($page - 1) * $config->per_page;
@@ -69,16 +71,23 @@ else if ($action == 'editor')
     $page_title = $id == 0 ? $lang->get('add_program') : $lang->get('edit_program');
     $start_time = strtotime($start_date);
     $end_time = strtotime($end_date);
+    $dl_student = strtotime($dl_student_date);
+    $dl_mentor = strtotime($dl_mentor_date);
 
     if ($program_save)
     {
-        if (empty($title) || empty($start_date) || empty($end_date))
+        if (empty($title) || empty($start_date) || empty($end_date) ||
+            empty($dl_student_date) || empty($dl_mentor_date))
         {
             $error_message = $lang->get('err_mandatory_fields');
         }
         else if ($start_time === false || $end_time === false)
         {
             $error_message = $lang->get('invalid_date');
+        }
+        else if ($dl_student === false || $dl_mentor === false)
+        {
+            $error_message = $lang->get('invalid_deadlines');
         }
         else
         {
@@ -94,6 +103,8 @@ else if ($action == 'editor')
                        "    description = '{$description}', " .
                        "    start_time = {$start_time}, " .
                        "    end_time = {$end_time}, " .
+                       "    dl_student = {$dl_student}, " .
+                       "    dl_mentor = {$dl_mentor}, " .
                        "    is_active = {$active} " .
                        "WHERE id = $id";
                 $db->query($sql);
@@ -101,9 +112,10 @@ else if ($action == 'editor')
             else
             {
                 $sql = "INSERT INTO {$db->prefix}programs " .
-                       "(title, description, start_time, end_time, is_active) " .
+                       "(title, description, start_time, end_time, " .
+                       " dl_student, dl_mentor, is_active) " .
                        "VALUES ('{$title}', '{$description}', {$start_time}, " .
-                       "        {$end_time}, {$active})";
+                       "        {$end_time}, {$dl_student}, {$dl_mentor}, {$active})";
                 $db->query($sql);
             }
 
@@ -124,8 +136,10 @@ else if ($action == 'editor')
         // Set loaded data
         $title = $row['title'];
         $description = $row['description'];
-        $start_date = date('M d, Y', $row['start_time']);
-        $end_date = date('M d, Y', $row['end_time']);
+        $start_date = date('M d Y, h:i a', $row['start_time']);
+        $end_date = date('M d Y, h:i a', $row['end_time']);
+        $dl_student = date('M d Y, h:i a', $row['dl_student']);
+        $dl_mentor = date('M d Y, h:i a', $row['dl_mentor']);
         $active = $row['is_active'];
     }
     
@@ -136,6 +150,8 @@ else if ($action == 'editor')
         'description'       => htmlspecialchars($description),
         'start_date'        => $start_date,
         'end_date'          => $end_date,
+        'dl_student'        => $dl_student,
+        'dl_mentor'         => $dl_mentor,
         'active_checked'    => $skin->checked($active == 1),
         'error_message'     => isset($error_message) ? $error_message : '',
         'error_visibility'  => $skin->visibility(isset($error_message)),

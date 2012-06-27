@@ -14,6 +14,8 @@ CREATE TABLE `pdr_programs` (
   `description` mediumtext DEFAULT '',
   `start_time` int(11) unsigned NOT NULL,
   `end_time` int(11) unsigned NOT NULL,
+  `dl_student` int(11) unsigned NOT NULL,
+  `dl_mentor` int(11) unsigned NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -38,6 +40,15 @@ CREATE TABLE `pdr_participants` (
   `passed` tinyint(1) DEFAULT -1,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`project_id`) REFERENCES `pdr_projects`(`id`),
+  FOREIGN KEY (`program_id`) REFERENCES `pdr_programs`(`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `pdr_roles` (
+  `id` mediumint(10) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL DEFAULT '',
+  `program_id` mediumint(6) unsigned NOT NULL,
+  `role` char(1) NOT NULL DEFAULT 's',
+  PRIMARY KEY (`id`),
   FOREIGN KEY (`program_id`) REFERENCES `pdr_programs`(`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

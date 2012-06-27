@@ -22,6 +22,7 @@ class module
             array('name' => 'view_programs',   'access' => 'g'),
             array('name' => 'view_projects',   'access' => 'u'),
             array('name' => 'program_home',    'access' => 'g'),
+            array('name' => 'approve_mentors', 'access' => 'a'),
             array('name' => 'user_ban',        'access' => 'a'),
             array('name' => 'manage_programs', 'access' => 'a'),
         );

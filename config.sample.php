@@ -29,7 +29,10 @@ $db_prefix = "";
 $site_name = "Pandora";
 
 // Site copyright notice
-$site_copyright = "&copy; KDE";
+$site_copyright = "&copy; KDE Webteam";
+
+// Webmaster's email address
+$webmaster = "webmaster@kde.org";
 
 // Name of current skin
 $skin_name = "Neverland";
