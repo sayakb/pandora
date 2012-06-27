@@ -55,6 +55,7 @@ if ($program_data != null)
         'program_description'      => $program_data['description'],
         'program_start_date'       => date('M d, Y', $program_data['start_time']),
         'program_end_date'         => date('M d, Y', $program_data['end_time']),
+        'return_url'               => urlencode($core->request_uri()),
         'prg_guest_visibility'     => $skin->visibility($role == 'g'),
         'prg_resign_visibility'    => $skin->visibility($role == 'r'),
         'prg_rejected_visibility'  => $skin->visibility($role == 'x'),
