@@ -72,23 +72,17 @@ class module
                 }
 
                 // User module is valid for authenticated users only
-                if ($module['access'] == 'u')
+                if ($module['access'] == 'u' || $module['access'] == 'a')
                 {
                     if ($user->is_logged_in)
                     {
-                        $is_valid = true;
+                        $is_valid = $module['access'] == 'u' || ($module['access'] == 'a' && $user->is_admin);
                     }
                     else
                     {
                         $redir_url = urlencode($core->request_uri());
                         $core->redirect("?q=login&r={$redir_url}");
                     }
-                }
-
-                // Admins module is valid for administrators only
-                if ($module['access'] == 'a' && $user->is_admin)
-                {
-                    $is_valid = true;
                 }
             }
         }

@@ -2,7 +2,7 @@ Hello webmaster,<br /><br />
 
 You have received a mentor approval request from [[mentor_name]].<br /><br />
 
-Please click on the below link to view more details:<br />
+Please click on the below link to view requests in the approval queue:<br />
 <a href="[[approval_url]]">[[approval_url]]</a><br /><br />
 <hr />
 
