@@ -13,7 +13,34 @@
         <i class="icon-calendar"></i>
         [[program_start_date]] {{to}} [[program_end_date]]
     </h4>
-    
+
+    <h4 id="block-link" class="hidden">
+        <i class="icon-time"></i>
+        <a id="show-deadlines" href="#">
+            {{show_deadlines}}
+        </a>
+    </h4>
+
+    <div id="block-deadlines" class="alert alert-project">
+        <table>
+            <tr>
+                <td rowspan="2">
+                    <img src="[[skin_path]]/images/deadline.png" alt="" class="time-icon" />
+                </td>
+
+                <td>
+                    [[student_deadlines]]
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    [[mentor_deadlines]]
+                </td>
+            </tr>
+        </table>
+    </div>
+
     <hr class="hr-hero" />
 
     <div class="[[guest_visibility]]">

@@ -9,13 +9,15 @@ class lang
 {
     // Class wide variables
     var $lang_name;
-
+    var $lang_vars;
+    
     // Constructor
     function __construct()
     {
         global $config;
 
         $this->lang_name = $config->lang_name;
+        $this->lang_vars = array();
     }
 
     // Function to parse localization data
@@ -39,9 +41,7 @@ class lang
 
         foreach ($lang_data as $key => $value)
         {
-            $value = str_replace("[[host]]", $core->base_uri(), $value);
-            $value = str_replace("[[site_name]]", $config->site_name, $value);
-            $value = str_replace("[[username]]", $user->username, $value);
+            $value = $this->parse_vars($value);           
             $data = str_replace("{{{$key}}}", $value, $data);
         }
 
@@ -50,6 +50,47 @@ class lang
 
         // Done!
         return $data;
+    }
+
+    // Parses language variables
+    function parse_vars($data)
+    {
+        global $config, $core, $user;
+
+        // Substitute generic data
+        $data = str_replace("[[host]]", $core->base_uri(), $data);
+        $data = str_replace("[[site_name]]", $config->site_name, $data);
+        $data = str_replace("[[username]]", $user->username, $data);
+        $data = str_replace("[[timezone]]", date('T'), $data);
+        
+        // Replace placeholder with values
+        foreach($this->lang_vars as $key => $value)
+        {
+            $data = str_replace("[[$key]]", $value, $data);
+        }
+
+        // Remove unknown placeholders
+        $data = preg_replace('/\[\[(.*?)\]\]/', '', $data);
+
+        // Done!
+        return $data;
+    }
+
+
+    // Function to assign language variables
+    function assign($data, $value = "")
+    {
+        if (!is_array($data) && $value)
+        {
+            $this->lang_vars[$data] = $value;
+        }
+        else
+        {
+            foreach ($data as $key => $value)
+            {
+                $this->lang_vars[$key] = $value;
+            }
+        }
     }
 
     // Function to return a localized phrase
@@ -78,10 +119,8 @@ class lang
         {
             $data = $lang_data[$key];
 
-            // Parse default placeholders
-            $data = str_replace("[[host]]", $core->base_uri(), $data);
-            $data = str_replace("[[site_name]]", $config->site_name, $data);
-            $data = str_replace("[[username]]", $user->username, $data);
+            // Parse placeholders
+            $data = $this->parse_vars($data);
 
             // Return localized data
             return $data;

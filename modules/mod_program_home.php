@@ -48,6 +48,12 @@ if ($program_data != null)
         $show_mentor = false;
     }
 
+    // Set deadlines placeholders
+    $lang->assign(array(
+        'dl_student'    => date('M d Y, h:i a T', $program_data['dl_student']),
+        'dl_mentor'     => date('M d Y, h:i a T', $program_data['dl_mentor']),
+    ));
+
     // Assign screen data for the program
     $skin->assign(array(
         'program_id'               => $program_data['id'],
@@ -55,6 +61,8 @@ if ($program_data != null)
         'program_description'      => $program_data['description'],
         'program_start_date'       => date('M d, Y', $program_data['start_time']),
         'program_end_date'         => date('M d, Y', $program_data['end_time']),
+        'student_deadlines'        => $lang->get('student_dl_info'),
+        'mentor_deadlines'         => $lang->get('mentor_dl_info'),
         'return_url'               => urlencode($core->request_uri()),
         'prg_guest_visibility'     => $skin->visibility($role == 'g'),
         'prg_resign_visibility'    => $skin->visibility($role == 'r'),

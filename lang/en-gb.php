@@ -23,7 +23,6 @@ $lang_data = array(
     'view_my_projects'      => 'View my projects',
     'approve_proposal'      => 'Approve proposals',
     'approve_mentors'       => 'Approve mentors',
-    'mandatory_fields'      => 'All fields marked with * are mandatory',
     'mandatory_all'         => 'Please fill in all the fields',
     'err_mandatory_fields'  => 'Please fill in all the mandatory fields',
     'delete'                => 'Delete',
@@ -69,6 +68,8 @@ $lang_data = array(
     'end_date'              => 'End date',
     'dl_student'            => 'Student deadline',
     'dl_mentor'             => 'Mentor deadline',
+    'show_deadlines'        => 'Show deadlines',
+    'form_notice'           => 'All fields marked with * are mandatory. All times are in [[timezone]].',
     'invalid_date'          => 'Please enter a valid start and end date',
     'invalid_deadlines'     => 'Please enter valid student and mentor application deadlines',
     'confirm_program_del'   => 'If you delete this program, all projects associated with it will also get deleted. ' .
@@ -91,6 +92,8 @@ $lang_data = array(
     'role_rejected'         => 'Your mentorship application has been declined and you cannot participate in this program',
     'role_intermediate'     => 'You mentor application for this program is awaiting admin approval',
     'view_accepted'         => 'View accepted projects',
+    'student_dl_info'       => 'Student application deadline: [[dl_student]]',
+    'mentor_dl_info'        => 'Mentor application deadline: [[dl_mentor]]',
     'to'                    => 'to',
 
     /* Module: view_projects */

@@ -7,12 +7,31 @@
 var isIe = (navigator.appName.indexOf("Microsoft") >= 0);
 
 // Startup function
-$(function() {
+$(function() {   
+    $("#block-link").removeClass("hidden");
+    $("#block-deadlines").hide();
+    
     $(".datepicker").datetimepicker({
-        dateFormat: 'M dd yy,',
-        timeFormat: 'hh:mm tt',
+        dateFormat: "M dd yy,",
+        timeFormat: "hh:mm tt",
         ampm: true,
         changeMonth: true,
         changeYear: true,
+    });
+
+    $("#block-link").click(function() {
+        $(this).hide();
+
+        $("#block-deadlines")
+        .css({
+            display: "inline-block",
+            height: 0,
+            opacity: 0
+        })
+        .animate({
+            opacity: 1,
+            height: 47,
+        });
+
     });
 });
