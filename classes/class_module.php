@@ -17,6 +17,7 @@ class module
             array('name' => 'login',           'access' => 'g'),
             array('name' => 'logout',          'access' => 'u'),
             array('name' => 'home',            'access' => 'g'),
+            array('name' => 'timeline',        'access' => 'g'),
             array('name' => 'user_avatar',     'access' => 'u'),
             array('name' => 'user_profile',    'access' => 'u'),
             array('name' => 'view_programs',   'access' => 'g'),
@@ -36,7 +37,7 @@ class module
         if (file_exists(realpath("modules/mod_{$module_name}.php")))
         {
             // Set globals
-            global $gsod, $config, $core, $db, $user, $lang, $skin, $email,
+            global $gsod, $config, $core, $db, $user, $lang, $skin, $email, $donut,
                    $module_title, $module_data;
 
             // Include the module

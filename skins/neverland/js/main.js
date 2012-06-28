@@ -33,5 +33,6 @@ $(function() {
             height: 47,
         });
 
+        return false;
     });
 });

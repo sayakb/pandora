@@ -25,7 +25,7 @@ class email
     {
         global $config;
 
-        $tpl = realpath("email/{$config->lang_name}/{$file}.tpl");
+        $tpl = realpath("templates/email/{$config->lang_name}/{$file}.tpl");
 
         if (file_exists($tpl))
         {

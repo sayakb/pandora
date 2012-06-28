@@ -1,44 +1,59 @@
+<!-- We add these JS files here as we don't need them everywhere -->
+<script src="//cdn.kde.org/js/processing.js"></script>
+<script src="//cdn.kde.org/js/Tween.lib"></script>
+
 <div class="hero-unit align-center">
-    <img src="[[skin_path]]/images/project.png" class="home-glyph" alt="" />
+    <div class="row-fluid">
+        <div class="span5">
+            <canvas id="donut" datasrc="?q=timeline&amp;prg=[[program_id]]" width="400" height="400"></canvas>
 
-    <h1>
-        [[program_title]]
-    </h1>
-    
-    <h3 class="top-spacer">
-        [[program_description]]
-    </h3>
-    
-    <h4>
-        <i class="icon-calendar"></i>
-        [[program_start_date]] {{to}} [[program_end_date]]
-    </h4>
+            <div id="slice-label" class="align-center">
+                {{program_timeline}}
+            </div>
+        </div>
+        
+        <div class="span7">
+            <h2>
+                [[program_title]]
+            </h2>
 
-    <h4 id="block-link" class="hidden">
-        <i class="icon-time"></i>
-        <a id="show-deadlines" href="#">
-            {{show_deadlines}}
-        </a>
-    </h4>
+            <h4 class="description top-spacer">
+                [[program_description]]
+            </h4>
 
-    <div id="block-deadlines" class="alert alert-project">
-        <table>
-            <tr>
-                <td rowspan="2">
-                    <img src="[[skin_path]]/images/deadline.png" alt="" class="time-icon" />
-                </td>
+            <h4>
+                <i class="icon-calendar"></i>
+                [[program_start_date]] {{to}} [[program_end_date]]
+            </h4>
 
-                <td>
-                    [[student_deadlines]]
-                </td>
-            </tr>
 
-            <tr>
-                <td>
-                    [[mentor_deadlines]]
-                </td>
-            </tr>
-        </table>
+            <h4 id="block-link" class="hidden">
+                <i class="icon-time"></i>
+                <a id="show-deadlines" href="#">
+                    {{show_deadlines}}
+                </a>
+            </h4>
+
+            <div id="block-deadlines" class="alert alert-project">
+                <table>
+                    <tr>
+                        <td rowspan="2">
+                            <img src="[[skin_path]]/images/deadline.png" alt="" class="time-icon" />
+                        </td>
+
+                        <td>
+                            [[student_deadlines]]
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            [[mentor_deadlines]]
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 
     <hr class="hr-hero" />

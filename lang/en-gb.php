@@ -159,6 +159,14 @@ $lang_data = array(
     /* Module: approve_mentors */
     'no_pending_mentors'    => 'There are no pending mentor applications',
     'mentor_name'           => 'Mentor username',
+
+    /* Module: timeline */
+    'application_start'     => 'Start application submission',
+    'student_appl_dl'       => 'Student application deadline',
+    'mentor_appl_dl'        => 'Mentor application deadline',
+    'season_complete'       => 'Season completion',
+    'off_season'            => 'Off season',
+    'program_timeline'      => 'Program timeline',
 );
 
 ?>

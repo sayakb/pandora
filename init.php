@@ -18,6 +18,7 @@ include_once('classes/class_lang.php');
 include_once('classes/class_email.php');
 include_once('classes/class_skin.php');
 include_once('classes/class_module.php');
+include_once('classes/class_donut.php');
 
 // We need to instantiate the GSoD class first, just in case!
 $gsod = new gsod();
@@ -31,6 +32,7 @@ $lang   = new lang();
 $email  = new email();
 $skin   = new skin();
 $module = new module();
+$donut  = new donut();
 
 // Set up the db connection
 $db->connect();
