@@ -164,7 +164,9 @@ $lang_data = array(
     'application_start'     => 'Start application submission',
     'student_appl_dl'       => 'Student application deadline',
     'mentor_appl_dl'        => 'Mentor application deadline',
+    'application_process'   => 'Application processing',
     'season_complete'       => 'Season completion',
+    'students_coding'       => 'Students coding!',
     'off_season'            => 'Off season',
     'program_timeline'      => 'Program timeline',
 );
