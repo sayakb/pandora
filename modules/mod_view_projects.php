@@ -603,19 +603,18 @@ else if ($action == 'approve' || $action == 'reject')
         'project_url'       => "{$base}?q=view_projects&amp;prg={$program_id}&amp;p={$project_id}",
     ));
 
-    // Set the template and subject based on action
+    // Set the subject based on action
     $subject = $lang->get("subject_{$action}");
-    $tpl = "mail_{$action}";
 
     // Send a mail to the student
     $email->assign('recipient', $student_to);
-    $status = $email->send($student_mail, $subject, $tpl);
+    $status = $email->send($student_mail, $subject, $action);
 
     // Send a mail to the mentor, if any
     if (isset($mentor_mail))
     {
         $email->assign('recipient', $mentor_to);
-        $email->send($mentor_mail, $subject, $tpl);
+        $email->send($mentor_mail, $subject, $action);
     }
     
     // Redirect to return URL
@@ -659,7 +658,7 @@ else if ($action == 'apply')
             'approval_url'   => $core->base_uri() . "?q=approve_mentors",
         ));
 
-        $email->send($config->webmaster, $lang->get('mentor_subject'), 'mail_mentor');
+        $email->send($config->webmaster, $lang->get('mentor_subject'), 'mentor');
     }
 
     // Redirect to program home

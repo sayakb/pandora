@@ -111,6 +111,6 @@ if ($program_data != null)
 }
 
 // Output the donut
-$donut->output('donut_timeline');
+$donut->output('timeline');
     
 ?>
