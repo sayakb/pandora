@@ -15,9 +15,11 @@ $user->restrict(!empty($username));
 // Get the avatar for the user
 $user_data = $user->get_details($username, $config->ldap_avatar);
 
-// Set the page header
-header('Content-type: octet-stream');
-header('Content-Transfer-Encoding: binary');
+// Set the page headers
+$skin->set_header(array(
+    'Content-type'              => 'octet-stream',
+    'Content-Transfer-Encoding' => 'binary',
+));
 
 // Does the user have an avatar?
 if (!empty($user_data[$config->ldap_avatar][0]))

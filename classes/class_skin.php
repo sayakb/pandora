@@ -110,6 +110,10 @@ class skin
 
         // Remove unknown placeholders
         $data = preg_replace('/\[\[(.*?)\]\]/', '', $data);
+
+        // Remove line breaks and tabs
+        $data = preg_replace('/[\n]+/', '', $data);
+        $data = preg_replace('/[ \t]+/', ' ', $data);
         
         // Apply localization data
         $data = $lang->parse($data);
@@ -148,6 +152,18 @@ class skin
         if (!$mode)
         {
             $this->skin_script[] = realpath('skins/' . $this->skin_name . '/js/' . $file_name);
+        }
+    }
+
+    // Sets HTTP headers
+    function set_header($headers_ary)
+    {
+        if (is_array($headers_ary))
+        {
+            foreach ($headers_ary as $key => $value)
+            {
+                header("{$key}: {$value}");
+            }
         }
     }
 

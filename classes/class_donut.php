@@ -73,9 +73,13 @@ class donut
     // Outputs the donut
     function output($donut_tpl)
     {
+        global $skin;
+        
         // Set the page header
-        header('Content-type: text/javascript');
-        header('Content-Disposition: inline; filename="timeline.pjs"');
+        $skin->set_header(array(
+            'Content-type'        => 'text/javascript',
+            'Content-Disposition' => 'inline; filename="timeline.pjs"',
+        ));
 
         // Output the template only if some data was added
         if (count($this->donut_data) > 0)

@@ -4,20 +4,10 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
-var isIe = (navigator.appName.indexOf("Microsoft") >= 0);
-
 // Startup function
-$(function() {   
+$(document).ready(function() {
     $("#block-link").removeClass("hidden");
     $("#block-deadlines").hide();
-    
-    $(".datepicker").datetimepicker({
-        dateFormat: "M dd yy,",
-        timeFormat: "hh:mm tt",
-        ampm: true,
-        changeMonth: true,
-        changeYear: true,
-    });
 
     $("#block-link").click(function() {
         $(this).hide();
@@ -35,4 +25,14 @@ $(function() {
 
         return false;
     });
+
+    if (typeof($().datetimepicker) == "function") {
+        $(".datepicker").datetimepicker({
+            dateFormat: "M dd yy,",
+            timeFormat: "hh:mm tt",
+            ampm: true,
+            changeMonth: true,
+            changeYear: true,
+        });
+    }
 });
