@@ -14,11 +14,6 @@ $mode = $core->variable('q', 'home');
 // Initialize the skin
 $skin->init('tpl_master');
 
-// Set the default header
-$skin->set_header(array(
-    'Content-Type'  => 'text/html; charset=utf-8'
-));
-
 // Validate and set-up module
 $module->validate($mode);
 $module->load($mode);
