@@ -70,7 +70,10 @@ if ($project_id > 0)
     
     $is_owner = $owner_count['count'] > 0;
 }
-
+else
+{
+    $is_owner = false;
+}
 
 // Serve the page based on the action
 if ($action == 'editor')

@@ -31,6 +31,9 @@ float STROKE_WEIGHT_EXPANDED = 60;
 float OUTER_BORDER = 5;
 float EPSILON = TWO_PI / 100; // Tolerance for applying angleAdjustment
 
+// Performance fixes
+var hoverTimeout;
+
 public class DonutSlice {
     String id = "";
     String name = "";
@@ -125,7 +128,7 @@ public class DonutSlice {
         float stop = this.angleStop % TWO_PI;
     
         if (r >= seg.donut.radius - seg.breadth / 2 && r <= seg.donut.radius + seg.breadth / 2 &&
-           ((angle > start && angle < stop) || (start > stop && (angle > start || angle < stop)))) {           
+           ((angle > start && angle < stop) || (start > stop && (angle > start || angle < stop)))) {
             seg.donut.setSelectedSlice(this);
 
             $('#slice-label').html(this.name);
@@ -368,6 +371,8 @@ void setup() {
     DonutSegment seg;
     donut = new Donut(125, 150);
 
+    fixPerformance();
+
     // Do not remove this
     [[donut_data]]
 }
@@ -390,4 +395,22 @@ void mouseMoved() {
             donut.segments[i].slices[j].checkSelected();
         }
     }
+}
+
+void fixPerformance() {
+    hoverTimeout = setTimeout(function() {
+        noLoop();
+    }, 1000);
+
+    $('canvas')
+        .mouseover(function() {
+            clearTimeout(hoverTimeout);
+            loop();
+        })
+        .mouseout(function() {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = setTimeout(function() {
+                noLoop();
+            }, 1000);
+        });
 }
