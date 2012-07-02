@@ -30,7 +30,8 @@ $program_data = $db->query($data_sql . $filter . $limit);
 $program_count = $db->query($count_sql . $filter, true);
 
 // If only one program is active, directly take the user to the destination
-if ($program_count['count'] == 1 && count($program_data) == 1)
+// Don't do this when we are viewing archived projects
+if ($program_count['count'] == 1 && count($program_data) == 1 && $action != 'inactive')
 {
     $row = $program_data[0];
 
