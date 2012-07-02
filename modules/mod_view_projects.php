@@ -62,10 +62,14 @@ $role = $role_data != null ? $role_data['role'] : 'g';
 if ($project_id > 0)
 {
     $sql = "SELECT COUNT(*) AS count " .
-           "FROM {$db->prefix}participants " .
-           "WHERE project_id = {$project_id} " .
-           "AND username = '{$user->username}' " .
-           "AND (role = 's' OR role = 'm')";       
+           "FROM {$db->prefix}projects prj " .
+           "LEFT JOIN {$db->prefix}participants prt " .
+           "ON (prj.id = prt.project_id) " .
+           "WHERE prj.id = {$project_id} " .
+           "AND prt.username = '{$user->username}' " .
+           "AND (prt.role = 's' " .
+           "OR (prt.role = 'm' " .
+           "AND prj.is_accepted = 1))";
     $owner_count = $db->query($sql, true);
     
     $is_owner = $owner_count['count'] > 0;
@@ -106,6 +110,29 @@ if ($action == 'editor')
         $program_data = $db->query($sql, true);
 
         $user->restrict($core->timestamp < $program_data['dl_student'], true);
+    }
+
+    // Fetch project data
+    if ($project_id > 0)
+    {
+        $sql = "SELECT * FROM {$db->prefix}projects prj " .
+               "LEFT JOIN {$db->prefix}participants prt " .
+               "ON (prj.id = prt.project_id) " .
+               "WHERE prj.id = {$project_id} " .
+               "AND prt.role = 's'";
+        $project_data = $db->query($sql, true);
+
+        // Do not let anyone but admins edit rejected projects`
+        $user->restrict($project_data['is_accepted'] != 0, true);
+
+        // Load data from DB only if new data wasn't POSTed
+        if (!$project_save)
+        {
+            $title = $project_data['title'];
+            $description = $project_data['description'];
+            $is_passed = $project_data['passed'];
+            $is_complete = $project_data['is_complete'];
+        }
     }
 
     // Only mentor/admins can mark project as complete and pass a student
@@ -231,22 +258,6 @@ if ($action == 'editor')
         }
     }
 
-    // Populate project data 
-    if ($project_id > 0)
-    {
-        $sql = "SELECT * FROM {$db->prefix}projects prj " .
-               "LEFT JOIN {$db->prefix}participants prt " .
-               "ON (prj.id = prt.project_id) " .
-               "WHERE prj.id = {$project_id} " .
-               "AND prt.role = 's'";
-        $project_data = $db->query($sql, true);
-
-        $title = $project_data['title'];
-        $description = $project_data['description'];
-        $is_passed = $project_data['passed'];
-        $is_complete = $project_data['is_complete'];
-    }
-
     // Determine the cancel URL
     $cancel_url = !empty($return_url) ? "?q=view_projects&amp;prg={$program_id}&amp;p={$project_id}"
                                       : "?q=program_home&amp;prg={$program_id}";
@@ -330,6 +341,11 @@ else if ($action == 'view')
            "WHERE project_id = {$project_id}";
     $participant_data = $db->query($sql);
 
+    // Now that we have project data, allow only owner or admin to view
+    // a rejected project
+    $user->restrict($project_data['is_accepted'] != 0 ||
+                   ($project_data['is_accepted'] == 0 && $is_owner), true);
+
     // Assign participant data
     $mentor = '-';
     $has_mentor = false;
@@ -380,10 +396,10 @@ else if ($action == 'view')
         $result = $lang->get('undecided');
     }
 
-    // Don't let students edit post student deadline
+    // Don't let students edit post student deadline or if project is rejected
     if ($role == 's' && $is_owner)
     {
-        $is_owner = $core->timestamp < $program_data['dl_student'];
+        $is_owner = ($core->timestamp < $program_data['dl_student'] && $project_data['is_accepted'] != 0);
     }
     
     // A user can choose to mentor if:
@@ -404,6 +420,7 @@ else if ($action == 'view')
         $can_mentor = false;
         $show_subscribe = true;
         $mentor = $user->username;
+        $is_owner = $project_data['is_accepted'] == 1;
     }
 
     // Set the return URL (needed when approving the project)
@@ -441,7 +458,11 @@ else if ($action == 'view')
     $module_data = $skin->output('tpl_view_project');
 }
 else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || $action == 'rejected')
-{   
+{
+    // Only admins can see rejected projects
+    $user->restrict($action != 'rejected' || ($action == 'rejected' && $user->is_admin));
+
+    // Build the queries
     $data_sql = "SELECT * FROM {$db->prefix}projects ";
     $count_sql = "SELECT COUNT(*) AS count FROM {$db->prefix}projects ";
     $limit = "LIMIT {$limit_start}, {$config->per_page}";

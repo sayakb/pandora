@@ -11,9 +11,14 @@ $action = $core->variable('a', 'active');
 $page = $core->variable('pg', 1);
 $limit_start = ($page - 1) * $config->per_page;
 
-// Validate action and return URL
+// Validate return URL
 $user->restrict(in_array($return_url, array('', 'accepted', 'proposed', 'rejected')));
+
+// Inactive programs can be viewed only by admins
 $user->restrict($action == 'active' || ($action == 'inactive' && $user->is_admin));
+
+// Rejected return URL allowed only for admins
+$user->restrict($return_url != 'rejected' || ($return_url == 'rejected' && $user->is_admin));
 
 // Get a list of active programs
 $data_sql = "SELECT * FROM {$db->prefix}programs ";
