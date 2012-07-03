@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 // Log out the user
 $user->logout();
 

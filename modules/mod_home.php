@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 // Get the IDs of active programs
 $sql = "SELECT id FROM {$db->prefix}programs " .
        "WHERE is_active = 1";

@@ -1,6 +1,6 @@
 Hello [[recipient]],<br /><br />
 
-Your project has been <b>rejected</b> for [[program_name]].
+You have <b>passed</b> in your project for [[program_name]].
 Details of the project are as follows:<br /><br />
 
 <table border="0">

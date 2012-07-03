@@ -58,8 +58,8 @@ class email
     {
         global $config;
 
-        @include('Mail.php');
-        @include('Mail/mime.php');
+        @require_once('Mail.php');
+        @require_once('Mail/mime.php');
 
         if (class_exists('Mail') && class_exists('Mail_mime'))
         {

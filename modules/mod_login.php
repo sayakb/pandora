@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 // Collect some data
 $username = $core->variable('username', '', false, true);
 $password = $core->variable('password', '');

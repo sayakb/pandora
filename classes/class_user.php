@@ -120,6 +120,12 @@ class user
         $values = array();
         $entries = !is_array($entries) ? array($entries) : $entries;
 
+        // Username is required
+        if (empty($username))
+        {
+            return false;
+        }
+
         // Connect to the LDAP server
         if (!empty($config->ldap_port))
         {

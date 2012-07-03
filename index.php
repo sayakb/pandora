@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+define('IN_PANDORA', true);
+
 // Invoke required files
 include_once('init.php');
 

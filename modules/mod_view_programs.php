@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 // Collect some data
 $return_url = $core->variable('r', '');
 $action = $core->variable('a', 'active');

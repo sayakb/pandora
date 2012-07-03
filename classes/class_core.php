@@ -99,8 +99,15 @@ class core
     // Get the base URI
     function base_uri()
     {
-        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
-        $uri = $protocol . '://' . $_SERVER['HTTP_HOST'] . $this->path();
+        if (php_sapi_name() != 'cli')
+        {
+            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+            $uri = $protocol . '://' . $_SERVER['HTTP_HOST'] . $this->path();
+        }
+        else
+        {
+            $uri = $this->path();
+        }
         
         return $uri;
     }

@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 // Collect some data
 $action = $core->variable('a', 'view');
 $category = $core->variable('c', '');
@@ -33,7 +35,7 @@ if ($project_id > 0)
     $sql = "SELECT COUNT(*) AS count " .
            "FROM {$db->prefix}projects prj " .
            "LEFT JOIN {$db->prefix}programs prg " .
-           "ON (prg.id = prj.program_id) " .           
+           "ON prg.id = prj.program_id " .
            "WHERE prj.id = {$project_id} " .
            "AND prg.id = {$program_id} " .
            (!$user->is_admin ? "AND prg.is_active = 1" : "");
@@ -64,7 +66,7 @@ if ($project_id > 0)
     $sql = "SELECT COUNT(*) AS count " .
            "FROM {$db->prefix}projects prj " .
            "LEFT JOIN {$db->prefix}participants prt " .
-           "ON (prj.id = prt.project_id) " .
+           "ON prj.id = prt.project_id " .
            "WHERE prj.id = {$project_id} " .
            "AND prt.username = '{$user->username}' " .
            "AND (prt.role = 's' " .
@@ -117,7 +119,7 @@ if ($action == 'editor')
     {
         $sql = "SELECT * FROM {$db->prefix}projects prj " .
                "LEFT JOIN {$db->prefix}participants prt " .
-               "ON (prj.id = prt.project_id) " .
+               "ON prj.id = prt.project_id " .
                "WHERE prj.id = {$project_id} " .
                "AND prt.role = 's'";
         $project_data = $db->query($sql, true);
@@ -573,73 +575,6 @@ else if ($action == 'approve' || $action == 'reject')
            "SET is_accepted = {$flag} " .
            "WHERE id = {$project_id}";
     $db->query($sql);
-
-    // Set default for sending mail
-    $name = $config->ldap_fullname;
-    $mail = $config->ldap_mail;
-    $base = $core->base_uri();
-    $mentor_name = $lang->get('no_mentor');
-
-    // Get program and project data
-    $sql = "SELECT prg.title as program, " .
-           "       prj.title as project " .
-           "FROM {$db->prefix}projects prj " .
-           "LEFT JOIN {$db->prefix}programs prg " .
-           "ON (prg.id = prj.program_id) " .
-           "WHERE prg.id = {$program_id} " .
-           "AND prj.id = {$project_id}";
-    $env_data = $db->query($sql, true);
-
-    // Get participant data
-    $sql = "SELECT * FROM {$db->prefix}participants " .
-           "WHERE project_id = {$project_id}";
-    $participant_data = $db->query($sql);
-
-    // Set the mentor and student names
-    foreach ($participant_data as $participant)
-    {
-        $data = $user->get_details($participant['username'], array($name, $mail));
-        $fullname = $data[$name][0];
-        $mail = $data[$mail][0];
-
-        if ($participant['role'] == 's')
-        {
-            $student      = $participant['username'];
-            $student_to   = $fullname;
-            $student_name = "{$fullname} &lt;{$mail}&gt;";
-            $student_mail = $mail;
-        }
-        else if ($participant['role'] == 'm')
-        {
-            $mentor      = $participant['username'];
-            $mentor_to   = $fullname;
-            $mentor_name = "{$fullname} &lt;{$mail}&gt;";
-            $mentor_mail = $mail;
-        }
-    }
-
-    // Assign data needed for the email
-    $email->assign(array(
-        'program_name'      => $env_data['program'],
-        'project_name'      => $env_data['project'],
-        'student_name'      => $student_name,
-        'mentor_name'       => $mentor_name,
-        'project_url'       => "{$base}?q=view_projects&amp;prg={$program_id}&amp;p={$project_id}",
-    ));
-
-    // Set the subject based on action
-    $subject = $lang->get("subject_{$action}");
-
-    // Send a mail to the student
-    $email->assign('recipient', $student_to);
-    $status = $email->send($student_mail, $subject, $action);
-
-    // Send a mail to the mentor, if any
-    if (isset($mentor_mail))
-    {
-        $email->assign('recipient', $mentor_to);
-        $email->send($mentor_mail, $subject, $action);
-    }
     
     // Redirect to return URL
     $core->redirect(urldecode($return_url));
@@ -677,11 +612,7 @@ else if ($action == 'apply')
     // Notify admin with email for new mentor requests
     if ($new_role == 'i')
     {
-        $email->assign(array(
-            'mentor_name'    => $user->username,
-            'approval_url'   => $core->base_uri() . "?q=approve_mentors",
-        ));
-
+        $email->assign('mentor_name', $user->username);
         $email->send($config->webmaster, $lang->get('mentor_subject'), 'mentor');
     }
 

@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 // Collect some data
 $action = $core->variable('a', 'list');
 $id = $core->variable('p', 0);
@@ -94,10 +96,14 @@ else if ($action == 'editor')
             $db->escape($id);
             $db->escape($title);
             $db->escape($description);
+            
+            // Determine deadline and completion flags
+            $deadline = $dl_student < $core->timestamp ? 1 : 0;
+            $complete = $end_time < $core->timestamp ? 1 : 0;
 
-            // Are we updating?
             if ($id > 0)
             {
+                // Update program data
                 $sql = "UPDATE {$db->prefix}programs " .
                        "SET title = '{$title}', " .
                        "    description = '{$description}', " .
@@ -108,14 +114,34 @@ else if ($action == 'editor')
                        "    is_active = {$active} " .
                        "WHERE id = $id";
                 $db->query($sql);
+
+                // Update program flags in the queue
+                // Usually, one entry for the program is exptected to
+                // be there, unless the program is updated post completion,
+                // which is highly unlikely.
+                $sql = "UPDATE {$db->prefix}queue " .
+                       "SET deadline = {$deadline}, " .
+                       "    complete = {$complete} " .
+                       "WHERE program_id = {$id}";
+                $db->query($sql);
             }
             else
             {
+                // Insert program data
                 $sql = "INSERT INTO {$db->prefix}programs " .
                        "(title, description, start_time, end_time, " .
                        " dl_student, dl_mentor, is_active) " .
                        "VALUES ('{$title}', '{$description}', {$start_time}, " .
-                       "        {$end_time}, {$dl_student}, {$dl_mentor}, {$active})";
+                       "         {$end_time}, {$dl_student}, {$dl_mentor}, {$active})";
+                $db->query($sql);
+
+                // Get the new program ID
+                $program_id = $db->get_id();
+
+                // Insert new entry to the queue
+                $sql = "INSERT INTO {$db->prefix}queue " .
+                       "(program_id, deadline, complete) " .
+                       "VALUES ({$program_id}, {$deadline}, {$complete})";
                 $db->query($sql);
             }
 

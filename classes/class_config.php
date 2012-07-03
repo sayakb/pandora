@@ -17,7 +17,8 @@ class config
 
     var $site_name;
     var $site_copyright;
-    var $webmaster;    
+    var $webmaster;
+    var $http_host;
     var $skin_name;
     var $lang_name;
     var $per_page;
@@ -85,6 +86,7 @@ class config
             $this->site_name        = isset($site_name) ? $site_name : 'Pandora';
             $this->site_copyright   = isset($site_copyright) ? $site_copyright : '&copy; 2012 KDE';
             $this->webmaster        = isset($webmaster) ? $webmaster : '';
+            $this->http_host        = isset($http_host) ? $http_host : '';
             $this->skin_name        = isset($skin_name) ? $skin_name : 'Neverland';
             $this->lang_name        = isset($lang_name) ? $lang_name : 'en-gb';
             $this->per_page         = isset($per_page) ? $per_page : 10;

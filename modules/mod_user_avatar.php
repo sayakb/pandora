@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 // Get the username
 $username_encoded = $core->variable('u', '');
 $username = urldecode($username_encoded);

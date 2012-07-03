@@ -4,8 +4,8 @@ CREATE TABLE `pdr_cron` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `pdr_cron` (
-    `timestamp`,
-    `locked`
+  `timestamp`,
+  `locked`
 ) VALUES (0, 0);
 
 CREATE TABLE `pdr_programs` (
@@ -63,4 +63,13 @@ CREATE TABLE `pdr_session` (
 CREATE TABLE `pdr_bans` (
   `username` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `pdr_queue` (
+  `id` mediumint(6) unsigned NOT NULL AUTO_INCREMENT,
+  `program_id` mediumint(6) unsigned NOT NULL,
+  `deadline` tinyint(1) DEFAULT 0,
+  `complete` tinyint(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`program_id`) REFERENCES `pdr_programs`(`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

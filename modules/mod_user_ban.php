@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 // Collect some data
 $ban_user = $core->variable('ban_user', '', false, true);
 $unban_user_url = $core->variable('u', '');

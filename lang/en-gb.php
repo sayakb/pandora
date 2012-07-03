@@ -5,6 +5,8 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
+if (!defined('IN_PANDORA')) exit;
+
 $lang_data = array(
     /* Global links */
     'kde_links'             => 'KDE Links',
@@ -124,8 +126,8 @@ $lang_data = array(
     'approve'               => 'Approve',
     'reject'                => 'Reject',
     'admin'                 => 'Admin',
-    'subject_approve'       => '[[site_name]]: Project approval notification',
-    'subject_reject'        => '[[site_name]]: Project rejection notification',
+    'subject_status'        => '[[site_name]]: Status of your submission',
+    'subject_result'        => '[[site_name]]: Result of your project',
     'no_mentor'             => '<em>No mentor assigned</em>',
     'mentor_subject'        => 'New mentor request awaiting approval',
     'subscribe_student'     => '<b>Important:</b> It is essential that you subscribe to the <a href="https:' .

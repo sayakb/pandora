@@ -3,7 +3,7 @@ Hello webmaster,<br /><br />
 You have received a mentor approval request from [[mentor_name]].<br /><br />
 
 Please click on the below link to view requests in the approval queue:<br />
-<a href="[[approval_url]]">[[approval_url]]</a><br /><br />
+<a href="https//season.kde.org/?q=approve_mentors">https//season.kde.org/?q=approve_mentors</a><br /><br />
 <hr />
 
 <em>
