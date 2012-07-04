@@ -115,12 +115,14 @@ if (php_sapi_name() == 'cli')
                 {
                     $email->assign('recipient', $student_to);
                     $success_student = $email->send($student_mail, $lang->get('subject_status'), $status);
+                    sleep(2);
                 }
 
                 if ($mentor_data !== false && !empty($mentor_mail))
                 {
                     $email->assign('recipient', $mentor_to);
                     $success_mentor = $email->send($mentor_mail, $lang->get('subject_status'), $status);
+                    sleep(2);
                 }
 
                 // Determine status for logging
@@ -144,6 +146,7 @@ if (php_sapi_name() == 'cli')
                 {
                     $email->assign('recipient', $student_to);
                     $success = $email->send($student_mail, $lang->get('subject_result'), $status);
+                    sleep(2);
                 }
 
                 // Determine status for logging
