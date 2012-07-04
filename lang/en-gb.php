@@ -8,7 +8,7 @@
 if (!defined('IN_PANDORA')) exit;
 
 $lang_data = array(
-    /* Global links */
+    /* Global keys */
     'kde_links'             => 'KDE Links',
     'not_logged_in'         => 'You are not logged in',
     'logged_in_as'          => 'Logged in as [[username]]',
@@ -41,6 +41,8 @@ $lang_data = array(
     'save'                  => 'Save',
     'cancel'                => 'Cancel',
     'username'              => 'Username',
+    'sending_status'        => 'Sending status mails for project:',
+    'sending_result'        => 'Sending result mails for project:',
 
     /* Homepage */
     'welcome_homepage'      => 'Welcome to [[site_name]]',

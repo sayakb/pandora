@@ -66,7 +66,7 @@ if (php_sapi_name() == 'cli')
 
         // Traverse through each project
         foreach ($project_data as $project)
-        {
+        {            
             // Get student and mentor data from LDAP
             $student_data = $user->get_details($project['student'], array($name, $mail));
             $mentor_data  = $user->get_details($project['mentor'], array($name, $mail));
@@ -101,6 +101,9 @@ if (php_sapi_name() == 'cli')
             // Send out status mails on deadline
             if ($program['program_deadline'] < $core->timestamp && $deadline == 0)
             {
+                // Output status to console
+                echo $lang->get('sending_status') . " {$project['project_title']}\n";
+                
                 // Set the template based on the status
                 $status = $project['is_accepted'] == 1 ? 'accept' : 'reject';
 
@@ -115,13 +118,14 @@ if (php_sapi_name() == 'cli')
                     $email->assign('recipient', $mentor_to);
                     $email->send($mentor_mail, $lang->get('subject_status'), $status);
                 }
-
-                // Set the deadline flag
-                $deadline = 1;
             }
+
             // Send out result mails on program completion
             if ($program['program_complete'] < $core->timestamp && $complete == 0)
             {
+                // Output status to console
+                echo $lang->get('sending_result') . " {$project['project_title']}\n";
+
                 // Set the template based on the status
                 $status = $project['passed'] == 1 ? 'pass' : 'fail';
 
@@ -130,11 +134,12 @@ if (php_sapi_name() == 'cli')
                     $email->assign('recipient', $student_to);
                     $email->send($student_mail, $lang->get('subject_result'), $status);
                 }
-
-                // Set the completion flag
-                $complete = 1;
             }
         }
+
+        // Set new flag values
+        $deadline = $program['program_deadline'] < $core->timestamp ? 1 : 0;
+        $complete = $program['program_complete'] < $core->timestamp ? 1 : 0;
 
         // Update the queue entry if at least one flag is still unset
         if ($deadline == 0 || $complete == 0)
