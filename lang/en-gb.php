@@ -25,6 +25,7 @@ $lang_data = array(
     'view_my_projects'      => 'View my projects',
     'approve_proposal'      => 'Approve proposals',
     'approve_mentors'       => 'Approve mentors',
+    'edit_templates'        => 'Edit email templates',
     'mandatory_all'         => 'Please fill in all the fields',
     'err_mandatory_fields'  => 'Please fill in all the mandatory fields',
     'delete'                => 'Delete',
@@ -171,6 +172,23 @@ $lang_data = array(
     'students_coding'       => 'Students coding!',
     'off_season'            => 'Off season',
     'program_timeline'      => 'Program timeline',
+
+    /* Module: edit_templates */
+    'select_tpl'            => 'Select template',
+    'load_tpl'              => 'Load template',
+    'language'              => 'Language',
+    'no_tpl_loaded'         => 'No template loaded. Select a template file from the list above and click on ' .
+                               '\'Load template\' button to edit it.',
+    'tpl_saved'             => 'Template saved successfully',
+    'tpl_save_error'        => 'An error occurred while saving the template file',
+    'save_tpl'              => 'Save template',
+    'placeholders'          => 'Placeholders',
+    'recepient'             => 'Recepient\'s full name',
+    'program_name'          => 'Name of the program',
+    'project_name'          => 'Name of the project',
+    'project_url'           => 'Permanent URL for the project',
+    'student_fname'         => 'Student\'s full name and e-mail address',
+    'mentor_fname'          => 'Mentor\'s full name and e-mail address',
 );
 
 ?>

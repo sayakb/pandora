@@ -281,7 +281,8 @@ class skin
     }
 
     // Creates a list of options from directory contents
-    function get_list($relative_path, $excluded_files = "", $selected_entry = false, $pascal_case = false, $trim_extension = false)
+    function get_list($relative_path, $excluded_files = "", $selected_entry = false, $insert_empty = false,
+                      $pascal_case = false, $trim_extension = false)
     {
         $dir = opendir(realpath($relative_path));
         $list = '';
@@ -314,11 +315,16 @@ class skin
 
         sort($entries);
 
+        if ($insert_empty)
+        {
+            $list = '<option></option>';
+        }
+
         foreach($entries as $entry)
         {
             $selected = ($selected_entry !== false && strtolower($entry) == strtolower($selected_entry));
             $list .= '<option' . ($selected ? ' selected="selected"' : '') . '>' .
-                     $entry . '</option>';
+                     htmlspecialchars($entry) . '</option>';
         }
 
         return $list;

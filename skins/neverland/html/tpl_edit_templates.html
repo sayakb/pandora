@@ -1,0 +1,82 @@
+<h1>{{edit_templates}}</h1>
+<hr class="hr-head" />
+
+<div class="well oneline-form tpl-form">
+    <div class="control-group">
+        <label class="control-label">
+            {{select_tpl}}
+        </label>
+
+        <div class="controls">
+            <select name="tpl_name">
+                [[tpl_names]]
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">
+            {{language}}
+        </label>
+
+        <div class="controls">
+            <select name="tpl_lang">
+                [[tpl_langs]]
+            </select>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" name="tpl_load" class="btn">
+            {{load_tpl}}
+        </button>
+    </div>
+</div>
+
+<div class="alert alert-info [[notice_visibility]]">
+    {{no_tpl_loaded}}
+</div>
+
+<div class="tpl-editor [[editor_visibility]]">
+    <div class="well tpl-placeholders">
+        <h4>{{placeholders}}</h4>
+
+        <dl class="dl-horizontal">
+            <dt>&#91;&#91;recepient&#93;&#93;</dt>
+            <dd>{{recepient}}</dd>
+
+            <dt>&#91;&#91;program_name&#93;&#93;</dt>
+            <dd>{{program_name}}</dd>
+
+            <dt>&#91;&#91;project_name&#93;&#93;</dt>
+            <dd>{{project_name}}</dd>
+
+            <dt>&#91;&#91;project_url&#93;&#93;</dt>
+            <dd>{{project_url}}</dd>
+
+            <dt>&#91;&#91;student_name&#93;&#93;</dt>
+            <dd>{{student_fname}}</dd>
+
+            <dt>&#91;&#91;mentor_name&#93;&#93;</dt>
+            <dd>{{mentor_fname}}</dd>
+        </dl>
+    </div>
+
+    <div class="alert alert-success [[success_visibility]]">
+        <a class="close" data-dismiss="alert">×</a>
+        {{tpl_saved}}
+    </div>
+
+    <div class="alert alert-error [[error_visibility]]">
+        <a class="close" data-dismiss="alert">×</a>
+        {{tpl_save_error}}
+    </div>
+    
+    <textarea name="tpl_data">[[tpl_data]]</textarea>
+
+    <div class="align-center top-spacer">
+        <button name="tpl_save" class="btn btn-primary">
+            {{save_tpl}}
+        </button>
+    </div>
+</div>
