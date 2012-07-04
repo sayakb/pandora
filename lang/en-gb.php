@@ -43,6 +43,8 @@ $lang_data = array(
     'username'              => 'Username',
     'sending_status'        => 'Sending status mails for project',
     'sending_result'        => 'Sending result mails for project',
+    'status_ok'             => '[Status OK]',
+    'status_error'          => '[Status ERROR]',
 
     /* Homepage */
     'welcome_homepage'      => 'Welcome to [[site_name]]',

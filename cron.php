@@ -102,38 +102,53 @@ if (php_sapi_name() == 'cli')
             if ($program['program_deadline'] < $core->timestamp && $deadline == 0)
             {
                 // Output status to console
-                echo $lang->get('sending_status') . " #{$project['project_id']}\n";
+                echo $lang->get('sending_status') . " #{$project['project_id']} ";
                 
                 // Set the template based on the status
                 $status = $project['is_accepted'] == 1 ? 'accept' : 'reject';
 
+                // Set initial flag values
+                $success_student = false;
+                $success_mentor  = false;
+
                 if ($student_data !== false && !empty($student_mail))
                 {
                     $email->assign('recipient', $student_to);
-                    $email->send($student_mail, $lang->get('subject_status'), $status);
+                    $success_student = $email->send($student_mail, $lang->get('subject_status'), $status);
                 }
 
                 if ($mentor_data !== false && !empty($mentor_mail))
                 {
                     $email->assign('recipient', $mentor_to);
-                    $email->send($mentor_mail, $lang->get('subject_status'), $status);
+                    $success_mentor = $email->send($mentor_mail, $lang->get('subject_status'), $status);
                 }
+
+                // Determine status for logging
+                $log_status = $success_student && $success_mentor ? $lang->get('status_ok') : $lang->get('status_error');
+                echo "{$log_status}\n";
             }
 
             // Send out result mails on program completion
             if ($program['program_complete'] < $core->timestamp && $complete == 0)
             {
                 // Output status to console
-                echo $lang->get('sending_result') . " #{$project['project_id']}\n";
+                echo $lang->get('sending_result') . " #{$project['project_id']} ";
 
                 // Set the template based on the status
                 $status = $project['passed'] == 1 ? 'pass' : 'fail';
 
+                // Set initial flag status
+                $success = false;
+
                 if ($student_data !== false && !empty($student_mail))
                 {
                     $email->assign('recipient', $student_to);
-                    $email->send($student_mail, $lang->get('subject_result'), $status);
+                    $success = $email->send($student_mail, $lang->get('subject_result'), $status);
                 }
+
+                // Determine status for logging
+                $log_status = $success ? $lang->get('status_ok') : $lang->get('status_error');
+                echo "{$log_status}\n";
             }
         }
 
