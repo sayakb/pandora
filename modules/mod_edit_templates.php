@@ -56,10 +56,10 @@ if ($tpl_load || $tpl_save)
 $tpl_data = htmlspecialchars($tpl_data);
 $tpl_data = str_replace("\r\n", "\n", $tpl_data);
 $tpl_data = str_replace("\n", "\r\n", $tpl_data);
-$tpl_data = str_replace("[", "&#91;", $tpl_data);
-$tpl_data = str_replace("]", "&#93;", $tpl_data);
-$tpl_data = str_replace("{", "&#123;", $tpl_data);
-$tpl_data = str_replace("}", "&#125;", $tpl_data);
+
+// Escape the template data
+$lang->escape($tpl_data);
+$skin->escape($tpl_data);
 
 // Assign final skin data
 $skin->assign(array(
