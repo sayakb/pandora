@@ -25,7 +25,7 @@ Details of the project are as follows:<br /><br />
 <br />
 
 Please click on the below link to view more details:<br />
-<a href="https//season.kde.org/[[project_url]]">https//season.kde.org/[[project_url]]</a><br /><br />
+<a href="https://season.kde.org/[[project_url]]">https://season.kde.org/[[project_url]]</a><br /><br />
 
 Regards,<br />
 Program co-ordinator<br /><br />
