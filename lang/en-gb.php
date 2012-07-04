@@ -41,8 +41,8 @@ $lang_data = array(
     'save'                  => 'Save',
     'cancel'                => 'Cancel',
     'username'              => 'Username',
-    'sending_status'        => 'Sending status mails for project:',
-    'sending_result'        => 'Sending result mails for project:',
+    'sending_status'        => 'Sending status mails for project',
+    'sending_result'        => 'Sending result mails for project',
 
     /* Homepage */
     'welcome_homepage'      => 'Welcome to [[site_name]]',
