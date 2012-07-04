@@ -102,7 +102,7 @@ if (php_sapi_name() == 'cli')
             if ($program['program_deadline'] < $core->timestamp && $deadline == 0)
             {
                 // Output status to console
-                echo $lang->get('sending_status') . " #{$project['project_id']} ";
+                echo '[' . date('r') . '] ' . $lang->get('sending_status') . " #{$project['project_id']} ";
                 
                 // Set the template based on the status
                 $status = $project['is_accepted'] == 1 ? 'accept' : 'reject';
@@ -132,7 +132,7 @@ if (php_sapi_name() == 'cli')
             if ($program['program_complete'] < $core->timestamp && $complete == 0)
             {
                 // Output status to console
-                echo $lang->get('sending_result') . " #{$project['project_id']} ";
+                echo '[' . date('r') . '] ' . $lang->get('sending_result') . " #{$project['project_id']} ";
 
                 // Set the template based on the status
                 $status = $project['passed'] == 1 ? 'pass' : 'fail';
