@@ -196,11 +196,19 @@ else if ($action == 'delete')
     {
         $db->escape($id);
 
+        $sql = "DELETE FROM {$db->prefix}roles " .
+               "WHERE program_id = {$id}";
+        $db->query($sql);
+
         $sql = "DELETE FROM {$db->prefix}participants " .
                "WHERE program_id = {$id}";
         $db->query($sql);
 
         $sql = "DELETE FROM {$db->prefix}projects " .
+               "WHERE program_id = {$id}";
+        $db->query($sql);
+
+        $sql = "DELETE FROM {$db->prefix}queue " .
                "WHERE program_id = {$id}";
         $db->query($sql);
 
