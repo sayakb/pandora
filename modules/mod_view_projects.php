@@ -73,7 +73,7 @@ if ($project_id > 0)
            "OR (prt.role = 'm' " .
            "AND prj.is_accepted = 1))";
     $owner_count = $db->query($sql, true);
-    
+
     $is_owner = $owner_count['count'] > 0;
 }
 else
@@ -91,7 +91,7 @@ if ($action == 'editor')
 
     // Validate pass status of student (should be 1, 0 or -1)
     $user->restrict(in_array($is_passed, array(1, 0, -1)));
-    
+
     // Only students can create new proposals
     if ($project_id == 0)
     {
@@ -139,7 +139,7 @@ if ($action == 'editor')
 
     // Only mentor/admins can mark project as complete and pass a student
     $can_decide = ($role == 'm' && $is_owner) || $user->is_admin;
-    
+
     // Project was saved
     if ($project_save)
     {
@@ -157,7 +157,7 @@ if ($action == 'editor')
 
             // Are we updating?
             if ($project_id > 0)
-            {                
+            {
                 // Update project data
                 $sql = "UPDATE {$db->prefix}projects " .
                        "SET title = '{$title}', " .
@@ -230,6 +230,9 @@ if ($action == 'editor')
 
                 if (empty($error_message))
                 {
+                    // Purge the project cache
+                    $cache->purge('projects');
+
                     // We take the user back to the view project page
                     $core->redirect("?q=view_projects&prg={$program_id}&p={$project_id}");
                 }
@@ -257,6 +260,9 @@ if ($action == 'editor')
                 $description = '';
                 $show_subscribe = true;
             }
+
+            // Purge the project cache
+            $cache->purge('projects');
         }
     }
 
@@ -294,7 +300,7 @@ else if ($action == 'delete')
     // Program ID should be supplied, and user must be an admin
     $user->restrict($program_id > 0);
     $user->restrict(false, true);
-    
+
     // Deletion was confirmed
     if ($confirm)
     {
@@ -307,6 +313,9 @@ else if ($action == 'delete')
         $sql = "DELETE FROM {$db->prefix}projects " .
                "WHERE id = {$project_id}";
         $db->query($sql);
+
+        // Purge the project cache
+        $cache->purge('projects');
 
         // Redirect to list page
         $core->redirect("?q=program_home&amp;prg={$program_id}");
@@ -328,20 +337,37 @@ else if ($action == 'view')
     // Program and Project IDs are mandatory here
     $user->restrict($program_id > 0 && $project_id > 0);
 
-    // Get program data
-    $sql = "SELECT * FROM {$db->prefix}programs " .
-            "WHERE id = {$program_id}";
-    $program_data = $db->query($sql, true);
-   
-    // Get project data
-    $sql = "SELECT * FROM {$db->prefix}projects " .
-           "WHERE id = {$project_id}";
-    $project_data = $db->query($sql, true);
+    // Get program, project and participant data
+    $program_data     = $cache->get("program_{$program_id}", 'programs');
+    $project_data     = $cache->get("project_{$project_id}", 'projects');
+    $participant_data = $cache->get("participant_{$project_id}", 'projects');
 
-    // Get participants for the project
-    $sql = "SELECT * FROM {$db->prefix}participants " .
-           "WHERE project_id = {$project_id}";
-    $participant_data = $db->query($sql);
+    if (!$program_data)
+    {
+        $sql = "SELECT * FROM {$db->prefix}programs " .
+               "WHERE id = {$program_id}";
+        $program_data = $db->query($sql, true);
+
+        $cache->put("program_{$program_id}", $program_data, 'programs');
+    }
+
+    if (!$project_data)
+    {
+        $sql = "SELECT * FROM {$db->prefix}projects " .
+               "WHERE id = {$project_id}";
+        $project_data = $db->query($sql, true);
+
+        $cache->put("project_{$project_id}", $project_data, 'projects');
+    }
+
+    if (!$participant_data)
+    {
+        $sql = "SELECT * FROM {$db->prefix}participants " .
+               "WHERE project_id = {$project_id}";
+        $participant_data = $db->query($sql);
+
+        $cache->put("participant_{$project_id}", $participant_data, 'projects');
+    }
 
     // Now that we have project data, allow only owner or admin to view
     // a rejected project
@@ -403,7 +429,7 @@ else if ($action == 'view')
     {
         $is_owner = ($core->timestamp < $program_data['dl_student'] && $project_data['is_accepted'] != 0);
     }
-    
+
     // A user can choose to mentor if:
     //  1. He signed up as a mentor for the program, and
     //  2. Project doesn't already have a mentor
@@ -423,6 +449,9 @@ else if ($action == 'view')
         $show_subscribe = true;
         $mentor = $user->username;
         $is_owner = $project_data['is_accepted'] == 1;
+
+        // Purge project data
+        $cache->purge('projects');
     }
 
     // Set the return URL (needed when approving the project)
@@ -468,7 +497,7 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
     $data_sql = "SELECT * FROM {$db->prefix}projects ";
     $count_sql = "SELECT COUNT(*) AS count FROM {$db->prefix}projects ";
     $limit = "LIMIT {$limit_start}, {$config->per_page}";
-    
+
     // Set action specific page title and query
     if ($action == 'user')
     {
@@ -497,9 +526,30 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
                   "AND program_id = {$program_id} ";
     }
 
+    // Apply filters
+    $data_sql  .= $filter;
+    $data_sql  .= $limit;
+    $count_sql .= $filter;
+
+    // Generate the cache keys
+    $crc_data  = crc32($data_sql);
+    $crc_count = crc32($count_sql);
+
     // Get list data and count
-    $list_data = $db->query($data_sql . $filter . $limit);
-    $list_count = $db->query($count_sql . $filter, true);
+    $list_data  = $cache->get($crc_data, 'projects');
+    $list_count = $cache->get($crc_count, 'projects');
+
+    if (!$list_data)
+    {
+        $list_data = $db->query($data_sql);
+        $cache->put($crc_data, $list_data, 'projects');
+    }
+
+    if (!$list_count)
+    {
+        $list_count = $db->query($count_sql, true);
+        $cache->put($crc_count, $list_count, 'projects');
+    }
 
     // Assign approve/reject flag, we need it everywhere!
     $skin->assign('apprej_visibility', $skin->visibility($action == 'proposed' && $user->is_admin));
@@ -507,38 +557,44 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
     // Set the return URL (needed when approving projects)
     $return_url = urlencode($core->request_uri());
 
-    // Populate the project list
-    $projects_list = '';
-    
-    foreach($list_data as $row)
+    // Generate the project list
+    $key = "skin{$crc_data}" . ($user->is_admin ? '1' : '0');
+    $projects_list = $cache->get($key, 'projects');
+
+    if (!$projects_list)
     {
-        $project_title = htmlspecialchars($row['title']);
-        $project_desc  = htmlspecialchars($row['description']);
-
-        // Trim the title to 60 characters
-        if (strlen($project_title) > 60)
+        foreach($list_data as $row)
         {
-            $project_title = trim(substr($project_title, 0, 60)) . '&hellip;';
-        }
-        
-        // Trim the description to 150 characters
-        if (strlen($project_desc) > 150)
-        {
-            $project_desc = trim(substr($project_desc, 0, 150)) . '&hellip;';
-        }
-        
-        // Assign data for each project
-        $skin->assign(array(
-            'project_title'         => $project_title,
-            'project_description'   => $project_desc,
-            'project_url'           => "?q=view_projects&amp;prg={$program_id}&amp;p={$row['id']}",
-            'approve_url'           => "?q=view_projects&amp;a=approve&amp;prg={$program_id}" .
-                                       "&amp;p={$row['id']}&amp;r={$return_url}",
-            'reject_url'            => "?q=view_projects&amp;a=reject&amp;prg={$program_id}" .
-                                       "&amp;p={$row['id']}&amp;r={$return_url}",
-        ));
+            $project_title = htmlspecialchars($row['title']);
+            $project_desc  = htmlspecialchars($row['description']);
 
-        $projects_list .= $skin->output('tpl_view_projects_item');
+            // Trim the title to 60 characters
+            if (strlen($project_title) > 60)
+            {
+                $project_title = trim(substr($project_title, 0, 60)) . '&hellip;';
+            }
+
+            // Trim the description to 150 characters
+            if (strlen($project_desc) > 150)
+            {
+                $project_desc = trim(substr($project_desc, 0, 150)) . '&hellip;';
+            }
+
+            // Assign data for each project
+            $skin->assign(array(
+                'project_title'         => $project_title,
+                'project_description'   => $project_desc,
+                'project_url'           => "?q=view_projects&amp;prg={$program_id}&amp;p={$row['id']}",
+                'approve_url'           => "?q=view_projects&amp;a=approve&amp;prg={$program_id}" .
+                                        "&amp;p={$row['id']}&amp;r={$return_url}",
+                'reject_url'            => "?q=view_projects&amp;a=reject&amp;prg={$program_id}" .
+                                        "&amp;p={$row['id']}&amp;r={$return_url}",
+            ));
+
+            $projects_list .= $skin->output('tpl_view_projects_item');
+        }
+
+        $cache->put($key, $projects_list, 'projects');
     }
 
     // Get the pagination
@@ -568,14 +624,17 @@ else if ($action == 'approve' || $action == 'reject')
     $user->restrict($program_id > 0 && $project_id > 0 && !empty($return_url));
 
     // Set the accepted flag when approving
-    $flag = $action == 'approve' ? 1 : 0;        
+    $flag = $action == 'approve' ? 1 : 0;
 
     // Set the project as approved
     $sql = "UPDATE {$db->prefix}projects " .
            "SET is_accepted = {$flag} " .
            "WHERE id = {$project_id}";
     $db->query($sql);
-    
+
+    // Purge the project cache
+    $cache->purge('projects');
+
     // Redirect to return URL
     $core->redirect(urldecode($return_url));
 }
@@ -591,9 +650,16 @@ else if ($action == 'apply')
     $user->restrict(in_array($category, array('student', 'mentor')));
 
     // Get the program data
-    $sql = "SELECT * FROM {$db->prefix}programs " .
-           "WHERE id = {$program_id}";
-    $program_data = $db->query($sql, true);
+    $program_data = $cache->get("program_{$program_id}", 'programs');
+
+    if (!$program_data)
+    {
+        $sql = "SELECT * FROM {$db->prefix}programs " .
+               "WHERE id = {$program_id}";
+        $program_data = $db->query($sql, true);
+
+        $cache->put("program_{$program_id}", $program_data, 'programs');
+    }
 
     // Set the new role based on action
     $new_role = $category == 'student' ? 's' : 'i';
@@ -674,7 +740,7 @@ else if ($action == 'resign')
                 $sql = "DELETE FROM {$db->prefix}projects " .
                        "WHERE id IN ({$projects})";
                 $db->query($sql);
-            }           
+            }
         }
 
         // Set role as resigned
@@ -683,6 +749,9 @@ else if ($action == 'resign')
                "WHERE program_id = {$program_id} " .
                "AND username = '{$user->username}'";
         $db->query($sql);
+
+        // Purge the projects cache
+        $cache->purge('projects');
 
         // Redirect the user to program home
         $core->redirect("?q=program_home&prg={$program_id}");
@@ -697,7 +766,7 @@ else if ($action == 'resign')
 
     // Output the module
     $module_title = $lang->get('confirm_deletion');
-    $module_data = $skin->output('tpl_confirm_box');    
+    $module_data = $skin->output('tpl_confirm_box');
 }
 else
 {

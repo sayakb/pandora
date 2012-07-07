@@ -38,8 +38,8 @@ class module
         if (file_exists(realpath("modules/mod_{$module_name}.php")))
         {
             // Set globals
-            global $gsod, $config, $core, $db, $user, $lang, $skin, $email, $donut,
-                   $module_title, $module_data;
+            global $gsod, $config, $core, $db, $user, $lang, $skin, $email,
+                   $cache, $donut, $module_title, $module_data;
 
             // Include the module
             include("modules/mod_{$module_name}.php");

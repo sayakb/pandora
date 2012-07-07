@@ -12,12 +12,47 @@
 class email
 {
     // Global variables
+    var $is_available;
     var $email_vars;
+    var $mime;
+    var $smtp;
 
     // Class constructor
     function __construct()
     {
-        $this->email_vars = array();
+        @require_once('Mail.php');
+        @require_once('Mail/mime.php');
+
+        if (class_exists('Mail_mime'))
+        {
+            global $config;
+                    
+            // Set the SMTP server options
+            $options = array(
+                'host'    => $config->smtp_host,
+                'port'    => $config->smtp_port,
+            );
+
+            // If SMTP authentication data is provided, add it to server options
+            if (!empty($config->smtp_username) && !empty($config->smtp_password))
+            {
+                $options = array_merge($options, array(
+                    'auth'     => true,
+                    'username' => $config->smtp_username,
+                    'password' => $config->smtp_password,
+                ));
+            }
+
+            $this->mime = new Mail_mime("\n");
+            $this->smtp = @Mail::factory('smtp', $options);
+            $this->is_available = !@PEAR::isError($this->smtp);
+            $this->email_vars = array();
+        }
+        else
+        {
+            $this->is_available = false;
+            $this->email_vars = array();
+        }
     }
     
     // Load a template and return its contents
@@ -58,10 +93,7 @@ class email
     {
         global $config;
 
-        @require_once('Mail.php');
-        @require_once('Mail/mime.php');
-
-        if (class_exists('Mail') && class_exists('Mail_mime'))
+        if ($this->is_available)
         {
             // Set the e-mail headers
             $headers = array (
@@ -70,25 +102,6 @@ class email
                 'To'          => $recipient,
                 'Subject'     => $subject,
             );
-
-            // Set the SMTP server options
-            $options = array(
-                'host'    => $config->smtp_host,
-                'port'    => $config->smtp_port,
-            );
-
-            // If SMTP authentication data is provided, add it to server options
-            if (!empty($config->smtp_username) && !empty($config->smtp_password))
-            {
-                $options = array_merge($options, array(
-                    'auth'     => true,
-                    'username' => $config->smtp_username,
-                    'password' => $config->smtp_password,
-                ));
-            }
-
-            // Creating the Mime message
-            $mime = new Mail_mime("\n");
 
             // Load the mail template
             $tpl = $this->load($body_tpl);
@@ -99,15 +112,14 @@ class email
                 $body = $this->parse($tpl);
 
                 // Setting the body of the email
-                $mime->setTXTBody(strip_tags($body));
-                $mime->setHTMLBody($body);
+                $this->mime->setTXTBody(strip_tags($body));
+                $this->mime->setHTMLBody($body);
 
-                $body = $mime->get();
-                $headers = $mime->headers($headers);
+                $body = $this->mime->get();
+                $headers = $this->mime->headers($headers);
 
-                // Sending the email
-                $smtp = @Mail::factory('smtp', $options);
-                $status = @$smtp->send($recipient, $headers, $body);
+                // Deliver the email
+                $status = $this->smtp->send($recipient, $headers, $body);
 
                 // Return true if no error occurred
                 return !@PEAR::isError($status);

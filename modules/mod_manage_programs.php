@@ -145,6 +145,9 @@ else if ($action == 'editor')
                 $db->query($sql);
             }
 
+            // Purge the programs cache
+            $cache->purge('programs');
+
             // Redirect to list page
             $core->redirect("?q=manage_programs");
         }
@@ -215,6 +218,9 @@ else if ($action == 'delete')
         $sql = "DELETE FROM {$db->prefix}programs " .
                "WHERE id = {$id}";
         $db->query($sql);
+
+        // Purge the programs cache
+        $cache->purge('programs');
         
         // Redirect to list page
         $core->redirect("?q=manage_programs");

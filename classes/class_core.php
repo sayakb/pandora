@@ -122,6 +122,16 @@ class core
         $data = str_replace(chr(0), '', $data);
     }
     
+    // Return time in milliseconds
+    function get_microtime()
+    {
+        $time = microtime();
+        $time = explode(' ', $time);
+        $time = $time[1] + $time[0];
+
+        return $time;
+    }
+    
     // Method to redirect to a specified URL
     function redirect($url)
     {

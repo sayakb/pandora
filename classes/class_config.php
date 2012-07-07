@@ -22,6 +22,7 @@ class config
     var $skin_name;
     var $lang_name;
     var $per_page;
+    var $show_debug;
 
     var $ldap_server;
     var $ldap_port;
@@ -90,6 +91,7 @@ class config
             $this->skin_name        = isset($skin_name) ? $skin_name : 'Neverland';
             $this->lang_name        = isset($lang_name) ? $lang_name : 'en-gb';
             $this->per_page         = isset($per_page) ? $per_page : 10;
+            $this->show_debug       = isset($show_debug) ? $show_debug : false;
             
             $this->ldap_server      = isset($ldap_server) ? $ldap_server : '';
             $this->ldap_port        = isset($ldap_port) ? $ldap_port : '';

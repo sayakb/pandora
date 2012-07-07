@@ -112,10 +112,23 @@ class user
         return $row['count'] > 0;
     }
 
+    // Gets total number of online users
+    function online()
+    {
+        global $db;
+
+        $sql = "SELECT COUNT(*) AS count " .
+               "FROM {$db->prefix}session";
+        $row = $db->query($sql, true);
+
+        // Return the user count
+        return $row['count'];
+    }
+
     // Get details of the user from LDAP
     function get_details($username, $entries)
     {
-        global $config, $db;
+        global $config, $db, $cache;
 
         $values = array();
         $entries = !is_array($entries) ? array($entries) : $entries;
@@ -124,6 +137,15 @@ class user
         if (empty($username))
         {
             return false;
+        }
+
+        // Read user data from cache
+        $crc = crc32($username . implode('', $entries));
+        $cached = $cache->get($crc, 'users');
+        
+        if ($cached !== false)
+        {
+            return $cached;
         }
 
         // Connect to the LDAP server
@@ -174,6 +196,9 @@ class user
                 }
             }
 
+            // Add values to cache
+            $cache->put($crc, $values, 'users');
+            
             return $values;
         }
         else

@@ -15,6 +15,7 @@ class skin
     var $skin_title;
     var $skin_script;
     var $skin_file;
+    var $start_time;
 
     // Class constructor
     function __construct()
@@ -27,6 +28,7 @@ class skin
         $this->skin_script = array();
         $this->skin_file = '';
         $this->skin_path = $core->path() . 'skins/' . strtolower($config->skin_name);
+        $this->start_time = $core->get_microtime();
     }
 
     // Returns the name of the active skin
@@ -64,31 +66,19 @@ class skin
     }
 
     // Function to parse template variables
-    function parse($file_name, $has_scripts = false)
+    function parse($file_name)
     {
-        global $lang, $gsod;
+        global $lang, $gsod, $cache;
 
-        // First, see if scripts are added
-        if ($has_scripts)
+        // Build cache key
+        $c_key = $this->generate_key($file_name);
+
+        // Check if template data is cached
+        $cached = $cache->get($c_key, 'skin');
+
+        if ($cached !== false)
         {
-            $tmp_data = ' ';
-
-            foreach($this->skin_script as $script)
-            {
-                $tmp_data .= "\n" . '<script type="text/javascript">' . "\n";
-                $tmp_data .= file_get_contents($script);
-                $tmp_data .= "\n</script>\n";
-
-                foreach($this->skin_vars as $key => $value)
-                {
-                    $tmp_data = str_replace("[[$key]]", $value, $tmp_data);
-                }
-
-                $tmp_data = preg_replace('#/\*(?:[^*]*(?:\*(?!/))*)*\*/#', '', $tmp_data);
-            }
-
-            $data = $tmp_data;
-            unset($tmp_data);
+            return $cached;
         }
 
         // Parse template variables
@@ -100,7 +90,7 @@ class skin
             $gsod->trigger($title, $message);
         }
         
-        $data = ($has_scripts ? $data : '') . file_get_contents($file_name);
+        $data = file_get_contents($file_name);
         $data = $this->set_defaults($data);
 
         foreach($this->skin_vars as $key => $value)
@@ -118,8 +108,24 @@ class skin
         // Apply localization data
         $data = $lang->parse($data);
 
+        // Add it to cache
+        $cache->put($c_key, $data, 'skin');
+
         // Done!
-        return trim($data);
+        return $data;
+    }
+
+    // Generates a cache key
+    function generate_key($prefix = '')
+    {
+        $c_key = $prefix;
+        
+        foreach ($this->skin_vars as $key => $value)
+        {
+            $c_key .= "{$key}{$value}";
+        }
+
+        return crc32($c_key);
     }
 
     // Function to assign default variables
@@ -170,27 +176,7 @@ class skin
     // Function to get full path of file
     function locate($file)
     {
-        global $core;
-        
-        if (strpos($file, '.html') === false &&
-            strpos($file, '.xml') === false &&
-            strpos($file, '.json') === false)
-        {
-            $file .= '.html';
-        }
-
-        if (strpos($file, 'api') !== false && strpos($file, 'api') == 0)
-        {
-            return realpath('api/' . $file);
-        }
-        else if (strpos($file, 'rss') !== false && strpos($file, 'rss') == 0)
-        {
-            return realpath('rss/' . $file);
-        }
-        else
-        {
-            return realpath('skins/' . $this->skin_name . '/html/' . $file);
-        }
+        return realpath("skins/{$this->skin_name}/html/{$file}.html");
     }
 
     // Function to output the page
@@ -222,14 +208,45 @@ class skin
 
             if ($body_only)
             {
-                echo $this->parse($file_body, true);
+                echo $this->parse($file_body);
             }
             else
             {
                 echo $this->parse($file_header);
-                echo $this->parse($file_body, true);
+                echo $this->parse($file_body);
                 echo $this->parse($file_footer);
+
+                // Output page load time
+                $this->load_time();
             }
+        }
+    }
+
+    // Outputs the page load time
+    function load_time()
+    {
+        global $user, $core, $config, $user, $db;
+        
+        if ($user->is_admin && $config->show_debug)
+        {
+            // Get the load time
+            $load_time = $core->get_microtime() - $this->start_time;
+            $load_time = round($load_time, 3);
+            $rendered  = "Page rendered in {$load_time} seconds";
+
+            // Get the number of queries
+            $hits = $db->hits - 3;
+            $times = $hits == 1 ? 'time' : 'times';
+            $queries = "Module queried the database {$hits} {$times}";
+
+            // Get the online user count
+            $count = $user->online();
+            $users = $count == 1 ? "is {$count} user" : "are {$count} users";
+            $online = "There {$users} online";
+
+            echo '<div style="text-align:center; font-size:0.85em; margin-bottom:10px;">' .
+                     "{$rendered} &bull; {$queries} &bull; {$online}" .
+                 '</div>';
         }
     }
 

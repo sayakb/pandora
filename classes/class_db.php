@@ -10,6 +10,13 @@ class db
     // Class wide variables
     var $mysqli;
     var $prefix;
+    var $hits;
+
+    // Constructor
+    function __construct()
+    {
+        $this->hits = 0;
+    }
 
     // Function to initialize a db connection
     function connect()
@@ -45,7 +52,8 @@ class db
         try
         {
             global $gsod;
-            
+
+            $this->hits++;
             $recordset = array();
             $result = $this->mysqli->query($sql);
             $sql = strtolower($sql);

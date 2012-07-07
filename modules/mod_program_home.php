@@ -13,9 +13,16 @@ $id = $core->variable('prg', 0);
 // Get program data
 $db->escape($id);
 
-$sql = "SELECT * FROM {$db->prefix}programs " .
-       "WHERE id = {$id}";
-$program_data = $db->query($sql, true);
+$program_data = $cache->get("program_{$id}", 'programs');
+
+if (!$program_data)
+{
+    $sql = "SELECT * FROM {$db->prefix}programs " .
+           "WHERE id = {$id}";
+    $program_data = $db->query($sql, true);
+
+    $cache->put("program_{$id}", $program_data, 'programs');
+}
 
 // Was the program found?
 if ($program_data != null)

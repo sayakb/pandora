@@ -45,6 +45,9 @@ $lang_name = "en-gb";
 // No. of items to display per page for lists
 $per_page = 20;
 
+// Show debug info in the footer
+$show_debug = true;
+
 // LDAP server address
 $ldap_server = "";
 

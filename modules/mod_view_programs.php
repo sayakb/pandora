@@ -27,9 +27,31 @@ $data_sql = "SELECT * FROM {$db->prefix}programs ";
 $count_sql = "SELECT COUNT(*) AS count FROM {$db->prefix}programs ";
 $filter = "WHERE is_active = " . ($action == 'active' ? '1 ' : '0 ');
 $limit = "LIMIT {$limit_start}, {$config->per_page}";
-       
-$program_data = $db->query($data_sql . $filter . $limit);
-$program_count = $db->query($count_sql . $filter, true);
+
+// Apply filters
+$data_sql  .= $filter;
+$data_sql  .= $limit;
+$count_sql .= $filter;
+
+// Get the cache keys
+$crc_data  = crc32($data_sql);
+$crc_count = crc32($count_sql);
+
+// Get program data
+$program_data = $cache->get($crc_data, 'programs');
+$program_count = $cache->get($crc_count, 'programs');
+
+if (!$program_data)
+{
+    $program_data = $db->query($data_sql);
+    $cache->put($crc_data, $program_data, 'programs');
+}
+
+if (!$program_count)
+{
+    $program_count = $db->query($count_sql, true);
+    $cache->put($crc_count, $program_count, 'programs');
+}
 
 // If only one program is active, directly take the user to the destination
 // Don't do this when we are viewing archived projects
