@@ -20,13 +20,13 @@ class email
     // Class constructor
     function __construct()
     {
-        @require_once('Mail.php');
-        @require_once('Mail/mime.php');
+        @include('Mail.php');
+        @include('Mail/mime.php');
 
         if (class_exists('Mail_mime'))
         {
             global $config;
-                    
+
             // Set the SMTP server options
             $options = array(
                 'host'    => $config->smtp_host,

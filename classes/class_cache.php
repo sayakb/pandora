@@ -18,7 +18,7 @@ class cache
     // Constructor
     function __construct()
     {
-        @require_once('Cache/Lite.php');
+        @include('Cache/Lite.php');
 
         if (class_exists('Cache_Lite'))
         {
@@ -28,7 +28,7 @@ class cache
                 'lifeTime'               => 600,
                 'automaticSerialization' => true,
             );
-            
+
             // Inistantiate the cache objects
             $this->lite = new Cache_Lite($options);
             $this->is_available = !@PEAR::isError($this->lite);
