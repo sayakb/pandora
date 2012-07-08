@@ -45,6 +45,13 @@ $lang_data = array(
     'sending_result'        => 'Sending result mails for project',
     'status_ok'             => '(Status OK)',
     'status_error'          => '(Status ERROR)',
+    'available'             => 'available',
+    'unavailable'           => 'unavailable',
+    'debug_render'          => 'Rendered in %ss',
+    'debug_queries'         => 'DB queries: %s',
+    'debug_users'           => 'User(s) online: %s',
+    'debug_caching'         => 'Caching is %s',
+    'debug_email'           => 'Mail service is %s',
 
     /* Homepage */
     'welcome_homepage'      => 'Welcome to [[site_name]]',

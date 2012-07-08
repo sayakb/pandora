@@ -239,27 +239,34 @@ class skin
     // Outputs the page load time
     function load_time()
     {
-        global $user, $core, $config, $user, $db;
+        global $user, $core, $config, $user, $db, $cache, $email, $lang;
 
         if ($user->is_admin && $config->show_debug)
         {
             // Get the load time
             $load_time = $core->get_microtime() - $this->start_time;
             $load_time = round($load_time, 3);
-            $rendered  = "Page rendered in {$load_time} seconds";
+            $rendered  = sprintf($lang->get('debug_render'), $load_time);
 
             // Get the number of queries
             $hits = $db->hits - 3;
-            $times = $hits == 1 ? 'time' : 'times';
-            $queries = "Module queried the database {$hits} {$times}";
+            $queries = sprintf($lang->get('debug_queries'), $hits);
+
+            // Get cache status
+            $status = $cache->is_available ? 'available' : 'unavailable';
+            $caching = sprintf($lang->get('debug_caching'), $lang->get($status));
+
+            // Get email status
+            $status = $email->is_available ? 'available' : 'unavailable';
+            $emailsvc = sprintf($lang->get('debug_email'), $lang->get($status));
 
             // Get the online user count
             $count = $user->online();
-            $users = $count == 1 ? "is {$count} user" : "are {$count} users";
-            $online = "There {$users} online";
+            $online = sprintf($lang->get('debug_users'), $count);
 
             echo '<div style="text-align:center; font-size:0.85em; margin-bottom:10px;">' .
-                     "{$rendered} &bull; {$queries} &bull; {$online}" .
+                    "{$rendered} &bull; {$queries} &bull; {$caching} &bull; " .
+                    "{$emailsvc} &bull; {$online} " .
                  '</div>';
         }
     }
