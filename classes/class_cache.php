@@ -22,16 +22,18 @@ class cache
 
         if (class_exists('Cache_Lite'))
         {
+            $cache_path = realpath('./cache') . '/';
+            
             // Set the caching options
             $options = array(
-                'cacheDir'               => realpath('./cache') . '/',
+                'cacheDir'               => $cache_path,
                 'lifeTime'               => 7200,
                 'automaticSerialization' => true,
             );
 
             // Inistantiate the cache objects
             $this->lite = new Cache_Lite($options);
-            $this->is_available = !@PEAR::isError($this->lite);
+            $this->is_available = !@PEAR::isError($this->lite) && is_writable($cache_path);
         }
         else
         {
