@@ -57,7 +57,7 @@ class lang
     {
         global $config, $core, $user;
 
-        // Substitute generic data
+        // Substitute generic data within the laguage files
         $data = str_replace("[[host]]", $core->base_uri(), $data);
         $data = str_replace("[[site_name]]", $config->site_name, $data);
         $data = str_replace("[[username]]", $user->username, $data);

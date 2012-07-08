@@ -13,7 +13,6 @@ class skin
     var $skin_path;
     var $skin_vars;
     var $skin_title;
-    var $skin_script;
     var $skin_file;
     var $start_time;
 
@@ -21,11 +20,9 @@ class skin
     function __construct()
     {
         global $core, $config;
-       
+
         $this->skin_name = strtolower($config->skin_name);
         $this->skin_name_fancy = $config->skin_name;
-        $this->skin_vars = array();
-        $this->skin_script = array();
         $this->skin_file = '';
         $this->skin_path = $core->path() . 'skins/' . strtolower($config->skin_name);
         $this->start_time = $core->get_microtime();
@@ -46,6 +43,7 @@ class skin
     // Function to assign template variables
     function assign($data, $value = "")
     {
+        // Add assigned data
         if (!is_array($data) && $value)
         {
             $this->skin_vars[$data] = $value;
@@ -70,6 +68,9 @@ class skin
     {
         global $lang, $gsod, $cache;
 
+        // Before we do anything, we set default skin data
+        $this->set_defaults();
+
         // Build cache key
         $c_key = $this->generate_key($file_name);
 
@@ -89,10 +90,11 @@ class skin
             $message .= 'Verify that the skin selected is present in the skins/ folder';
             $gsod->trigger($title, $message);
         }
-        
-        $data = file_get_contents($file_name);
-        $data = $this->set_defaults($data);
 
+        // Get the contents of the template file
+        $data = file_get_contents($file_name);
+
+        // Parse the skin vars
         foreach($this->skin_vars as $key => $value)
         {
             $data = str_replace("[[$key]]", $value, $data);
@@ -104,7 +106,10 @@ class skin
         // Remove line breaks and tabs
         $data = preg_replace('/[\n]+/', '', $data);
         $data = preg_replace('/[ \t]+/', ' ', $data);
-        
+
+        // Remove hidden tags
+        $data = $this->remove_hidden($data);
+
         // Apply localization data
         $data = $lang->parse($data);
 
@@ -115,11 +120,27 @@ class skin
         return $data;
     }
 
-    // Generates a cache key
-    function generate_key($prefix = '')
+    // Removes hidden tags
+    function remove_hidden($data)
     {
-        $c_key = $prefix;
+        include_once('addons/simple_html_dom.php');
+
+        $html = new simple_html_dom();
+        $html->load($data);
         
+        $elts = $html->find('[class*=_hidden]');
+
+        foreach ($elts as $elt)
+        {
+            $elt->outertext = '';
+        }
+
+        return $html;
+    }
+
+    // Generates a cache key
+    function generate_key($c_key = '')
+    {
         foreach ($this->skin_vars as $key => $value)
         {
             $c_key .= "{$key}{$value}";
@@ -128,36 +149,29 @@ class skin
         return crc32($c_key);
     }
 
-    // Function to assign default variables
-    function set_defaults($data)
+    // Function to set default data to the skin vars
+    function set_defaults()
     {
-        global $core, $user, $lang, $nav;
+        global $core, $user;
 
-        $data = str_replace("[[site_logo]]",
-                            $this->skin_path . '/images/' . $lang->lang_name . '/logo.png', $data);
-        $data = str_replace("[[site_logo_rss]]",
-                            $core->base_uri() . 'skins/' . $this->skin_name .
-                            '/images/' . $lang->lang_name . '/logo_rss.png', $data);
-        $data = str_replace("[[page_title]]", $this->skin_title, $data);
-        $data = str_replace("[[skin_path]]", $this->skin_path, $data);
-        $data = str_replace("[[skin_name]]", $this->skin_name_fancy, $data);
-        $data = str_replace("[[username]]", $user->username, $data);
-        $data = str_replace("[[guest_visibility]]", $this->visibility(!$user->is_logged_in), $data);
-        $data = str_replace("[[user_visibility]]", $this->visibility($user->is_logged_in), $data);
-        $data = str_replace("[[admin_visibility]]", $this->visibility($user->is_admin), $data);
-        $data = str_replace("[[nav_home]]", $core->path(), $data);
-        
-        return $data;
-    }
+        $default_data = array(
+            'page_title'        => $this->skin_title,
+            'skin_path'         => $this->skin_path,
+            'skin_name'         => $this->skin_name_fancy,
+            'username'          => $user->username,
+            'guest_visibility'  => $this->visibility(!$user->is_logged_in),
+            'user_visibility'   => $this->visibility($user->is_logged_in),
+            'admin_visibility'  => $this->visibility($user->is_admin),
+            'nav_home'          => $core->path(),
+        );
 
-    // Function to add a script
-    function script($file_name)
-    {
-        global $mode;
-
-        if (!$mode)
+        if (is_array($this->skin_vars))
         {
-            $this->skin_script[] = realpath('skins/' . $this->skin_name . '/js/' . $file_name);
+            $this->skin_vars = array_merge($this->skin_vars, $default_data);
+        }
+        else
+        {
+            $this->skin_vars = $default_data;
         }
     }
 
@@ -226,7 +240,7 @@ class skin
     function load_time()
     {
         global $user, $core, $config, $user, $db;
-        
+
         if ($user->is_admin && $config->show_debug)
         {
             // Get the load time
@@ -318,7 +332,7 @@ class skin
                 {
                     $entry = substr($entry, 0, strrpos($entry, '.'));
                 }
-                
+
                 if ($pascal_case)
                 {
                     $entries[] = strtoupper(substr($entry, 0, 1)) . substr($entry, 1, strlen($entry) - 1);
@@ -360,7 +374,7 @@ class skin
     // Return visibility based on condition
     function visibility($condition)
     {
-        return $condition ? 'visible' : 'hidden';
+        return $condition ? '_visible' : '_hidden';
     }
 
     // Return checked status of checkbox/radio based on a condition
@@ -374,7 +388,7 @@ class skin
     {
         return $condition ? 'disabled="disabled"' : '';
     }
-    
+
     // Function to exclude a string from being treated as a key
     function escape(&$data)
     {

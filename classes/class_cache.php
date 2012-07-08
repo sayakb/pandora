@@ -25,7 +25,7 @@ class cache
             // Set the caching options
             $options = array(
                 'cacheDir'               => realpath('./cache') . '/',
-                'lifeTime'               => 600,
+                'lifeTime'               => 7200,
                 'automaticSerialization' => true,
             );
 

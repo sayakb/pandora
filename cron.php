@@ -199,6 +199,7 @@ else
         if ($db->affected_rows() > 0)
         {
             // Perform cron tasks
+            $cache->purge('users');
             $db->query("DELETE FROM {$db->prefix}session WHERE timestamp < {$user->max_age}");
             $db->query("UPDATE {$db->prefix}cron SET timestamp = " . time() . ", locked = 0");
         }
