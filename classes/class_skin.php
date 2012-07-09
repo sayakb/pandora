@@ -128,7 +128,7 @@ class skin
         $html = new simple_html_dom();
         $html->load($data);
         
-        $elts = $html->find('[class*=remove]');
+        $elts = $html->find('[class*=-do-not-render-]');
 
         foreach ($elts as $elt)
         {
@@ -385,7 +385,7 @@ class skin
             $condition = !$condition;
         }
 
-        return $condition ? 'visible' : 'remove';
+        return $condition ? 'visible -render-' : 'hidden -do-not-render-';
     }
 
     // Return checked status of checkbox/radio based on a condition
