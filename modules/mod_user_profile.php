@@ -33,7 +33,7 @@ if (isset($username_data[$config->ldap_mail]))
     $is_admin   = false;
     $avatar_url = "?q=user_avatar&amp;u={$username_encoded}";
     $full_name  = $username_data[$config->ldap_fullname][0];
-    $email      = $username_data[$config->ldap_mail][0];
+    $user_email = $username_data[$config->ldap_mail][0];
 
     // Determine if the user is a site admin
     foreach ($username_data[$config->ldap_group] as $group)
@@ -48,13 +48,13 @@ if (isset($username_data[$config->ldap_mail]))
     $skin->assign(array(
         'user_username'         => htmlspecialchars($username),
         'user_fullname'         => htmlspecialchars($full_name),
-        'user_email'            => htmlspecialchars($email),
+        'user_email'            => htmlspecialchars($user_email),
         'avatar_url'            => $avatar_url,
         'return_url'            => $return_url,
-        'profile_visibility'    => $skin->visibility(true),
-        'notice_visibility'     => $skin->visibility(false),
+        'profile_visibility'    => $skin->visibility(empty($user_email), true),
+        'notice_visibility'     => $skin->visibility(empty($user_email)),
         'badge_visibility'      => $skin->visibility($is_admin),
-        'return_visibility'     => $skin->visibility(!empty($return_url)),
+        'return_visibility'     => $skin->visibility(empty($return_url), true),
     ));    
 }
 else

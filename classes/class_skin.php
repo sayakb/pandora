@@ -128,7 +128,7 @@ class skin
         $html = new simple_html_dom();
         $html->load($data);
         
-        $elts = $html->find('[class*=_hidden]');
+        $elts = $html->find('[class*=remove]');
 
         foreach ($elts as $elt)
         {
@@ -158,8 +158,7 @@ class skin
             'page_title'        => $this->skin_title,
             'skin_path'         => $this->skin_path,
             'skin_name'         => $this->skin_name_fancy,
-            'username'          => $user->username,
-            'guest_visibility'  => $this->visibility(!$user->is_logged_in),
+            'guest_visibility'  => $this->visibility($user->is_logged_in, true),
             'user_visibility'   => $this->visibility($user->is_logged_in),
             'admin_visibility'  => $this->visibility($user->is_admin),
             'nav_home'          => $core->path(),
@@ -379,20 +378,35 @@ class skin
     }
 
     // Return visibility based on condition
-    function visibility($condition)
+    function visibility($condition, $invert = false)
     {
-        return $condition ? '_visible' : '_hidden';
+        if ($invert)
+        {
+            $condition = !$condition;
+        }
+
+        return $condition ? 'visible' : 'remove';
     }
 
     // Return checked status of checkbox/radio based on a condition
-    function checked($condition)
+    function checked($condition, $invert = false)
     {
+        if ($invert)
+        {
+            $condition = !$condition;
+        }
+
         return $condition ? 'checked="checked"' : '';
     }
 
     // Return disabled status of control based on a condition
-    function disabled($condition)
+    function disabled($condition, $invert = false)
     {
+        if ($invert)
+        {
+            $condition = !$condition;
+        }
+
         return $condition ? 'disabled="disabled"' : '';
     }
 

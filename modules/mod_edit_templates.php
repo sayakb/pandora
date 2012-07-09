@@ -67,7 +67,7 @@ $skin->assign(array(
     'tpl_langs'           => $tpl_langs,
     'tpl_data'            => $tpl_data,
     'notice_visibility'   => $skin->visibility(empty($tpl_name)),
-    'editor_visibility'   => $skin->visibility(!empty($tpl_name)),
+    'editor_visibility'   => $skin->visibility(empty($tpl_name), true),
     'error_visibility'    => $skin->visibility(isset($show_error)),
     'success_visibility'  => $skin->visibility(isset($show_success)),
 ));
