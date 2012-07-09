@@ -81,11 +81,23 @@ class cache
     }
 
     // Purges the cache (for a specific group)
-    function purge($group = 'default')
+    function purge($groups = array('default'))
     {
+        if (!is_array($groups))
+        {
+            $groups = array($groups);
+        }
+        
         if ($this->is_available)
         {
-            return $this->lite->clean($group);
+            $status = true;
+            
+            foreach ($groups as $group)
+            {
+                $status = $status && $this->lite->clean($group);
+            }
+
+            return $status;
         }
         else
         {

@@ -34,6 +34,9 @@ if (!empty($action) && !empty($username))
         $db->query($sql);
     }
 
+    // Purge the roles cache
+    $cache->purge('roles');
+
     // Redirect to refresh
     $core->redirect("?q=approve_mentors");
 }

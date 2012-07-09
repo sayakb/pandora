@@ -31,7 +31,14 @@ if ($program_data != null)
     $sql = "SELECT role FROM {$db->prefix}roles " .
            "WHERE username = '{$user->username}' " .
            "AND program_id = {$id}";
-    $role_data = $db->query($sql, true);
+    $crc = crc32($sql);
+    $role_data = $cache->get($crc, 'roles');
+
+    if (!$role_data)
+    {
+        $role_data = $db->query($sql, true);
+        $cache->put($crc, $role_data, 'roles');
+    }
 
     // Check if we have a role
     if ($role_data != null)

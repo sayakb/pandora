@@ -219,8 +219,8 @@ else if ($action == 'delete')
                "WHERE id = {$id}";
         $db->query($sql);
 
-        // Purge the programs cache
-        $cache->purge('programs');
+        // Purge the cache data
+        $cache->purge(array('programs', 'projects', 'roles'));
         
         // Redirect to list page
         $core->redirect("?q=manage_programs");

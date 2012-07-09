@@ -55,7 +55,14 @@ $user->restrict($row['count'] > 0);
 $sql = "SELECT * FROM {$db->prefix}roles " .
        "WHERE program_id = {$program_id} " .
        "AND username = '{$user->username}'";
-$role_data = $db->query($sql, true);
+$crc = crc32($sql);
+$role_data = $cache->get($crc, 'roles');
+
+if (!$role_data)
+{
+    $role_data = $db->query($sql, true);
+    $cache->put($crc, $role_data, 'roles');
+}
 
 // Role is guest if no entry was found
 $role = $role_data != null ? $role_data['role'] : 'g';
@@ -230,8 +237,8 @@ if ($action == 'editor')
 
                 if (empty($error_message))
                 {
-                    // Purge the project cache
-                    $cache->purge('projects');
+                    // Purge the project and roles cache
+                    $cache->purge(array('projects', 'roles'));
 
                     // We take the user back to the view project page
                     $core->redirect("?q=view_projects&prg={$program_id}&p={$project_id}");
@@ -682,6 +689,9 @@ else if ($action == 'apply')
         $email->send($config->webmaster, $lang->get('mentor_subject'), 'mentor');
     }
 
+    // Purge the roles cache
+    $cache->purge('roles');
+
     // Redirect to program home
     $core->redirect("?q=program_home&prg={$program_id}");
 }
@@ -750,8 +760,8 @@ else if ($action == 'resign')
                "AND username = '{$user->username}'";
         $db->query($sql);
 
-        // Purge the projects cache
-        $cache->purge('projects');
+        // Purge the projects and roles cache
+        $cache->purge(array('projects', 'roles'));
 
         // Redirect the user to program home
         $core->redirect("?q=program_home&prg={$program_id}");
