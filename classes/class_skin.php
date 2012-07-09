@@ -248,7 +248,7 @@ class skin
             $rendered  = sprintf($lang->get('debug_render'), $load_time);
 
             // Get the number of queries
-            $hits = $db->hits - 3;
+            $hits = $db->hits - 2;
             $queries = sprintf($lang->get('debug_queries'), $hits);
 
             // Get cache status

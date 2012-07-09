@@ -55,12 +55,19 @@ class db
 
             $this->hits++;
             $recordset = array();
-            $result = $this->mysqli->query($sql);
-            $sql = strtolower($sql);
 
-            if ((strpos($sql, 'select') !== false && strpos($sql, 'select') == 0) ||
-                (strpos($sql, 'show') !== false && strpos($sql, 'show') == 0))
+            if (stripos($sql, 'SELECT') !== false && stripos($sql, 'SELECT') == 0)
             {
+                // Append limit to single row select query
+                if ($single)
+                {
+                    $sql .= " LIMIT 1";
+                }
+
+                // Execute the query
+                $result = $this->mysqli->query($sql);
+
+                // Some error occurred
                 if (!$result)
                 {
                     $title    = 'Database error';
@@ -69,6 +76,7 @@ class db
                     $gsod->trigger($title, $message);
                 }
 
+                // Return the data
                 if (!$single)
                 {
                     while ($row = $result->fetch_assoc())
@@ -86,6 +94,10 @@ class db
 
                     return $row;
                 }
+            }
+            else
+            {
+                $this->mysqli->query($sql);
             }
 
             return true;

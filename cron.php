@@ -184,25 +184,54 @@ else
 {
     if (!defined('IN_PANDORA')) exit;
 
-    // Read the cron table
-    $sql = "SELECT timestamp, locked FROM {$db->prefix}cron LIMIT 1";
-    $row = $db->query($sql, true);
-    $timestamp = $row['timestamp'];
-    $locked = $row['locked'];
+    // Use cache for cron
+    if ($cache->is_available)
+    {
+        // Get last run time
+        $last_run = $cache->get('last_run', 'cron');
+
+        if (!$last_run)
+        {
+            $last_run = 0;
+        }
+    }
+    
+    // Use DB for cron
+    else
+    {
+        // Get last run time
+        $sql = "SELECT timestamp " .
+               "FROM {$db->prefix}cron";
+        $row = $db->query($sql, true);
+
+        if ($row != null)
+        {
+            $last_run = $row['timestamp'];
+        }
+        else
+        {
+            $last_run = 0;
+        }
+    }
 
     // Check the time difference
-    if (((time() - $timestamp) > 60) && !$locked)
+    if (($core->timestamp - $last_run) > 60)
     {
-        // Make sure the cron is run only once
-        $db->query("UPDATE {$db->prefix}cron SET locked = 1 WHERE locked = 0");
-
-        if ($db->affected_rows() > 0)
+        // Update new run time
+        if ($cache->is_available)
         {
-            // Perform cron tasks
-            $cache->purge('users');
-            $db->query("DELETE FROM {$db->prefix}session WHERE timestamp < {$user->max_age}");
-            $db->query("UPDATE {$db->prefix}cron SET timestamp = " . time() . ", locked = 0");
+            $cache->put('last_run', $core->timestamp, 'cron');
         }
+        else
+        {
+            $sql = "UPDATE {$db->prefix}cron " .
+                   "SET timestamp = {$core->timestamp}";
+            $db->query($sql);
+        }
+        
+        // Cron tasks
+        $cache->purge('users');
+        $db->query("DELETE FROM {$db->prefix}session WHERE timestamp < {$user->max_age}");
     }
 }
 

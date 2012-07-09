@@ -1,12 +1,10 @@
 CREATE TABLE `pdr_cron` (
-  `timestamp` int(11) unsigned NOT NULL DEFAULT 0,
-  `locked` tinyint(1) NOT NULL DEFAULT 0
+  `timestamp` int(11) unsigned NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `pdr_cron` (
-  `timestamp`,
-  `locked`
-) VALUES (0, 0);
+  `timestamp`
+) VALUES (0);
 
 CREATE TABLE `pdr_programs` (
   `id` mediumint(6) unsigned NOT NULL AUTO_INCREMENT,
