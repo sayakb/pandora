@@ -547,6 +547,7 @@ else if ($action == 'view')
         'subscribe_visibility'      => $skin->visibility(isset($show_subscribe)),
         'approve_visibility'        => $skin->visibility($can_approve),
         'reject_visibility'         => $skin->visibility($can_reject),
+        'modadm_visibility'         => $skin->visibility($can_approve || $can_reject),
     ));
 
     // Output the module

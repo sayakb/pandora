@@ -52,6 +52,8 @@ $lang_data = array(
     'debug_users'           => 'User(s) online: %s',
     'debug_caching'         => 'Caching is %s',
     'debug_email'           => 'Mail service is %s',
+    'approve'               => 'Approve',
+    'reject'                => 'Reject',
 
     /* Homepage */
     'welcome_homepage'      => 'Welcome to [[site_name]]',
@@ -140,9 +142,9 @@ $lang_data = array(
     'new_student'           => 'New student',
     'new_student_exp'       => 'Leave blank if you do not wish to change the student',
     'new_student_mentor'    => 'The student you have selected is a mentor for this program',
-    'approve'               => 'Approve',
-    'reject'                => 'Reject',
     'admin'                 => 'Admin',
+    'approve_project'       => 'Approve this project',
+    'reject_project'        => 'Reject this project',
     'subject_status'        => '[[site_name]]: Status of your submission',
     'subject_result'        => '[[site_name]]: Result of your project',
     'no_mentor'             => '<em>No mentor assigned</em>',

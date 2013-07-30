@@ -53,7 +53,7 @@ if ($program_data != null)
     // Set object availability based on deadlines
     $show_student = true;
     $show_mentor = true;
-    
+
     if ($core->timestamp >= $program_data['dl_student'])
     {
         $show_student = false;
@@ -89,6 +89,8 @@ if ($program_data != null)
         'dl_student_visibility'    => $skin->visibility($show_student),
         'dl_mentor_visibility'     => $skin->visibility($show_mentor),
         'started_visibility'       => $skin->visibility($role == 'g' && !($show_student || $show_mentor)),
+        'create_proj_visibility'   => $skin->visibility($user->is_admin),
+        'modadm_visibility'        => $skin->visibility($user->is_admin),
     ));
 
     // Output the module
