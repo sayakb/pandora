@@ -14,6 +14,7 @@ $program_id = $core->variable('prg', 0);
 $project_id = $core->variable('p', 0);
 $title = $core->variable('title', '', false, true);
 $description = $core->variable('description', '', false, true);
+$new_student = $core->variable('new_student', '', false, true);
 $new_mentor = $core->variable('new_mentor', '', false, true);
 $return_url = $core->variable('r', '');
 $is_passed = $core->variable('passed', 0);
@@ -183,7 +184,55 @@ if ($action == 'editor')
                     $db->query($sql);
                 }
 
-                // Update student and mentor names
+                // Update student name
+                if ($user->is_admin && !empty($new_student))
+                {
+                    $db->escape($new_student);
+
+                    // Get existing role of the new student
+                    $sql = "SELECT role FROM {$db->prefix}roles " .
+                           "WHERE username = '{$new_student}' " .
+                           "AND program_id = {$program_id}";
+                    $role_data = $db->query($sql, true);
+
+                    // New student has an already defined role
+                    if ($role_data != null)
+                    {
+                        if ($role_data['role'] != 'm')
+                        {
+                            // Update role to mentor
+                            $sql = "UPDATE {$db->prefix}roles " .
+                                   "SET role = 's' " .
+                                   "WHERE username = '{$new_student}' " .
+                                   "AND program_id = {$program_id} ";
+                            $db->query($sql);
+                        }
+                        else
+                        {
+                            $error_message = $lang->get('new_student_mentor');
+                        }
+                    }
+                    else
+                    {
+                        $sql = "INSERT INTO {$db->prefix}roles " .
+                               "(username, program_id, role) " .
+                               "VALUES ('{$new_student}', {$program_id}, 's')";
+                        $db->query($sql);
+                    }
+
+                    if (empty($error_message))
+                    {
+                       // Update the project student
+                        $sql = "UPDATE {$db->prefix}participants " .
+                               "SET username = '{$new_student}', " .
+                               "    role = 's' " .
+                               "WHERE program_id = {$program_id} " .
+                               "AND project_id = {$project_id}";
+                        $db->query($sql);
+                    }
+                }
+
+                // Update mentor name
                 if ($user->is_admin && !empty($new_mentor))
                 {
                     $db->escape($new_mentor);
@@ -290,7 +339,7 @@ if ($action == 'editor')
         'error_visibility'      => $skin->visibility(empty($error_message), true),
         'decision_visibility'   => $skin->visibility($project_id > 0 && $can_decide),
         'subscribe_visibility'  => $skin->visibility(isset($show_subscribe)),
-        'newmentor_visibility'  => $skin->visibility($project_id > 0 && $user->is_admin),
+        'newuser_visibility'    => $skin->visibility($project_id > 0 && $user->is_admin),
         'complete_checked'      => $skin->checked($is_complete == 1),
         'pass_checked'          => $skin->checked($is_passed == 1),
         'fail_checked'          => $skin->checked($is_passed == 0),
@@ -437,11 +486,20 @@ else if ($action == 'view')
         $is_owner = ($core->timestamp < $program_data['dl_student'] && $project_data['is_accepted'] != 0);
     }
 
+    // Only mentors and admins can view proposal status before mentor deadline
+    if ($role != 'm' && !$user->is_admin && $core->timestamp < $program_data['dl_mentor'])
+    {
+        $accepted = $lang->get('undecided');
+    }
+
     // A user can choose to mentor if:
     //  1. He signed up as a mentor for the program, and
     //  2. Project doesn't already have a mentor
     //  3. Project hasn't passed mentor deadline
-    $can_mentor = ($role == 'm' && !$has_mentor && $core->timestamp < $program_data['dl_mentor']);
+    //  4. Projest has passed student deadline
+    $can_mentor = ($role == 'm' && !$has_mentor &&
+                   $core->timestamp > $program_data['dl_student'] &&
+                   $core->timestamp < $program_data['dl_mentor']);
 
     // User applied as mentor
     if ($mentor_apply && $can_mentor)
@@ -500,12 +558,29 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
     // Only admins can see rejected projects
     $user->restrict($action != 'rejected' || ($action == 'rejected' && $user->is_admin));
 
+    // Program ID is mandatory here
+    $user->restrict($program_id > 0);
+
+    // Get program  data
+    $program_data = $cache->get("program_{$program_id}", 'programs');
+
+    if (!$program_data)
+    {
+        $sql = "SELECT * FROM {$db->prefix}programs " .
+               "WHERE id = {$program_id}";
+        $program_data = $db->query($sql, true);
+
+        $cache->put("program_{$program_id}", $program_data, 'programs');
+    }
+
     // Build the queries
     $data_sql = "SELECT * FROM {$db->prefix}projects ";
     $count_sql = "SELECT COUNT(*) AS count FROM {$db->prefix}projects ";
     $limit = "LIMIT {$limit_start}, {$config->per_page}";
 
     // Set action specific page title and query
+    // Proposals will continue to appear as 'proposed' even if it is approved
+    // for non-admin and non-mentor roles until the mentor deadline
     if ($action == 'user')
     {
         $title = $lang->get('your_projects');
@@ -516,14 +591,30 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
     }
     else if ($action == 'proposed')
     {
+        $is_accepted = 'is_accepted = -1';
+
+        if ($role != 'm' && !$user->is_admin && $core->timestamp < $program_data['dl_mentor'])
+        {
+            $is_accepted .= ' OR is_accepted = 1';
+        }
+
         $title = $lang->get('proposed_projects');
-        $filter = "WHERE is_accepted = -1 " .
+        $filter = "WHERE {$is_accepted} " .
                   "AND program_id = {$program_id} ";
     }
     else if ($action == 'accepted')
     {
+        $is_accepted = 'is_accepted = 1';
+
+        if ($role != 'm' && !$user->is_admin && $core->timestamp < $program_data['dl_mentor'])
+        {
+            // Just use a random value for is_accepted (2)
+            // we don't want to fetch anything here
+            $is_accepted = 'is_accepted = 2';
+        }
+
         $title = $lang->get('accepted_projects');
-        $filter = "WHERE is_accepted = 1 " .
+        $filter = "WHERE {$is_accepted} " .
                   "AND program_id = {$program_id} ";
     }
     else if ($action == 'rejected')
@@ -593,9 +684,9 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
                 'project_description'   => $project_desc,
                 'project_url'           => "?q=view_projects&amp;prg={$program_id}&amp;p={$row['id']}",
                 'approve_url'           => "?q=view_projects&amp;a=approve&amp;prg={$program_id}" .
-                                        "&amp;p={$row['id']}&amp;r={$return_url}",
+                                           "&amp;p={$row['id']}&amp;r={$return_url}",
                 'reject_url'            => "?q=view_projects&amp;a=reject&amp;prg={$program_id}" .
-                                        "&amp;p={$row['id']}&amp;r={$return_url}",
+                                           "&amp;p={$row['id']}&amp;r={$return_url}",
             ));
 
             $projects_list .= $skin->output('tpl_view_projects_item');

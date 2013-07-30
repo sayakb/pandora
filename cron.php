@@ -24,14 +24,14 @@ if (php_sapi_name() == 'cli')
     // Get all entries from the queue and their corresponding program data
     $sql = "SELECT prg.id as program_id, " .
            "       prg.title as program_title, " .
-           "       prg.dl_student as program_deadline, " .
+           "       prg.dl_mentor as program_deadline, " .
            "       prg.end_time as program_complete, " .
            "       que.deadline as deadline_flag, " .
            "       que.complete as complete_flag " .
            "FROM {$db->prefix}queue que " .
            "LEFT JOIN {$db->prefix}programs prg " .
            "ON que.program_id = prg.id " .
-           "WHERE (prg.dl_student < TIMESTAMP(CURRENT_DATE()) " .
+           "WHERE (prg.dl_mentor < TIMESTAMP(CURRENT_DATE()) " .
            "OR prg.end_time < TIMESTAMP(CURRENT_DATE()))";
     $program_data = $db->query($sql);
 
@@ -66,7 +66,7 @@ if (php_sapi_name() == 'cli')
 
         // Traverse through each project
         foreach ($project_data as $project)
-        {            
+        {
             // Get student and mentor data from LDAP
             $student_data = $user->get_details($project['student'], array($name, $mail));
             $mentor_data  = $user->get_details($project['mentor'], array($name, $mail));
@@ -103,7 +103,7 @@ if (php_sapi_name() == 'cli')
             {
                 // Output status to console
                 echo '[' . date('r') . '] ' . $lang->get('sending_status') . " #{$project['project_id']} ";
-                
+
                 // Set the template based on the status
                 $status = $project['is_accepted'] == 1 ? 'accept' : 'reject';
 
@@ -195,7 +195,7 @@ else
             $last_run = 0;
         }
     }
-    
+
     // Use DB for cron
     else
     {
@@ -228,7 +228,7 @@ else
                    "SET timestamp = {$core->timestamp}";
             $db->query($sql);
         }
-        
+
         // Cron tasks
         $cache->purge('users');
         $db->query("DELETE FROM {$db->prefix}session WHERE timestamp < {$user->max_age}");

@@ -62,7 +62,19 @@
     </div>
 </div>
 
-<div class="control-group [[newmentor_visibility]]">
+<div class="control-group [[newuser_visibility]]">
+    <label class="control-label">{{new_student}}</label>
+    <div class="controls">
+        <input type="text" name="new_student" maxlength="100" class="input-medium" value="[[new_student]]" />
+
+        <div class="help-inline">
+            <i class="icon-info-sign"></i>
+            {{new_student_exp}}
+        </div>
+    </div>
+</div>
+
+<div class="control-group [[newuser_visibility]]">
     <label class="control-label">{{new_mentor}}</label>
     <div class="controls">
         <input type="text" name="new_mentor" maxlength="100" class="input-medium" value="[[new_mentor]]" />

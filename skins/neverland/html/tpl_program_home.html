@@ -3,6 +3,24 @@
 <script src="//cdn.kde.org/js/tween.js"></script>
 
 <div class="hero-unit align-center">
+    <div class="pull-right [[admin_visibility]]">
+        <div class="btn-group admin-buttons [[admin_visibility]]">
+            <button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+                {{admin}}
+                <span class="caret"></span>
+            </button>
+
+            <ul class="dropdown-menu">
+                <li class="[[approve_visibility]]">
+                    <a href="?q=view_projects&amp;a=editor&amp;prg=[[program_id]]">
+                        <i class="icon-plus icon-black"></i>
+                        {{create_project}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div class="row-fluid">
         <div class="span5">
             <canvas id="donut" datasrc="?q=timeline&amp;prg=[[program_id]]" width="400" height="400"></canvas>
@@ -11,7 +29,7 @@
                 {{program_timeline}}
             </div>
         </div>
-        
+
         <div class="span7">
             <h2 class="program-title">
                 [[program_title]]
@@ -130,7 +148,7 @@
                 <img src="[[skin_path]]/images/mentor-project.png" width="26" height="26" alt="" />
                 {{mentor_project_sel}}
             </a>
-            
+
             <a href="?q=view_projects&amp;prg=[[program_id]]&amp;a=user" class="btn btn-large">
                 <img src="[[skin_path]]/images/projects.png" width="26" height="26" alt="" />
                 {{view_my_projects}}
