@@ -296,10 +296,13 @@ if ($action == 'editor')
 
             else
             {
+                // Auto accept project when being created by an admin
+                $is_accepted = $user->is_admin ? 1 : -1;
+
                 // Insert new project
                 $sql = "INSERT INTO {$db->prefix}projects " .
                        "(title, description, program_id, is_accepted, is_complete) " .
-                       "VALUES ('{$title}', '{$description}', {$program_id}, -1, 0)";
+                       "VALUES ('{$title}', '{$description}', {$program_id}, {$is_accepted}, 0)";
                 $db->query($sql);
 
                 // Get the new project ID
