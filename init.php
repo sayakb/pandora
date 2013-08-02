@@ -10,6 +10,9 @@ if (!defined('IN_PANDORA')) exit;
 // Turn off error reporting
 error_reporting(E_ALL);
 
+// Set default timezone to UTC
+date_default_timezone_set('UTC');
+
 // Include classes
 include_once('classes/class_gsod.php');
 include_once('classes/class_config.php');
