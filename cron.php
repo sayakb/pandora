@@ -43,22 +43,11 @@ if (php_sapi_name() == 'cli')
         $complete = $program['complete_flag'];
 
         // All projects for this program
-        $sql = "SELECT prj.id as project_id, " .
-               "       prj.title as project_title, " .
-               "       prj.is_accepted as is_accepted, " .
-               "       prts.username as student, " .
-               "       prtm.username as mentor, " .
-               "       prts.passed as passed " .
-               "FROM {$db->prefix}projects prj " .
-               "LEFT JOIN {$db->prefix}participants prts " .
-               "ON prj.id = prts.project_id " .
-               "RIGHT JOIN {$db->prefix}participants prtm " .
-               "ON prj.id = prtm.project_id " .
-               "WHERE prj.program_id = {$program['program_id']} " .
-               "AND prj.is_accepted <> -1 " .
-               "AND prts.passed <> -1 " .
-               "AND prts.role = 's' " .
-               "AND prtm.role = 'm'";
+        $sql = "SELECT id as project_id, " .
+               "       title as project_title, " .
+               "       is_accepted " .
+               "FROM {$db->prefix}projects " .
+               "WHERE program_id = {$program['program_id']}";
         $project_data = $db->query($sql);
 
         // Assign program name
@@ -67,6 +56,37 @@ if (php_sapi_name() == 'cli')
         // Traverse through each project
         foreach ($project_data as $project)
         {
+            $project['student'] = '';
+            $project['mentor'] = '';
+            $project['passed'] = false;
+
+            // Get student data
+            $sql = "SELECT username, passed " .
+                   "FROM {$db->prefix}participants " .
+                   "WHERE program_id = {$program['program_id']} " .
+                   "AND project_id = {$project['project_id']} " .
+                   "AND role = 's'";
+            $student_data = $db->query($sql, true);
+
+            if ($student_data != null)
+            {
+                $project['student'] = $student_data['username'];
+                $project['passed'] = $student_data['passed'];
+            }
+
+            // Get mentor data
+            $sql = "SELECT username " .
+                   "FROM {$db->prefix}participants " .
+                   "WHERE program_id = {$program['program_id']} " .
+                   "AND project_id = {$project['project_id']} " .
+                   "AND role = 'm'";
+            $mentor_data = $db->query($sql, true);
+
+            if ($mentor_data != null)
+            {
+                $project['mentor'] = $mentor_data['username'];
+            }
+
             // Get student and mentor data from LDAP
             $student_data = $user->get_details($project['student'], array($name, $mail));
             $mentor_data  = $user->get_details($project['mentor'], array($name, $mail));
@@ -99,7 +119,7 @@ if (php_sapi_name() == 'cli')
             ));
 
             // Send out status mails on deadline
-            if ($program['program_deadline'] < $core->timestamp && $deadline == 0)
+            if ($program['program_deadline'] < $core->timestamp && $project['is_accepted'] != -1 && $deadline == 0)
             {
                 // Output status to console
                 echo '[' . date('r') . '] ' . $lang->get('sending_status') . " #{$project['project_id']} ";
@@ -108,8 +128,8 @@ if (php_sapi_name() == 'cli')
                 $status = $project['is_accepted'] == 1 ? 'accept' : 'reject';
 
                 // Set initial flag values
-                $success_student = false;
-                $success_mentor  = false;
+                $success_student = true;
+                $success_mentor  = true;
 
                 if ($student_data !== false && !empty($student_mail))
                 {
@@ -131,7 +151,7 @@ if (php_sapi_name() == 'cli')
             }
 
             // Send out result mails on program completion
-            if ($program['program_complete'] < $core->timestamp && $complete == 0)
+            if ($program['program_complete'] < $core->timestamp && $project['passed'] != -1 && $complete == 0)
             {
                 // Output status to console
                 echo '[' . date('r') . '] ' . $lang->get('sending_result') . " #{$project['project_id']} ";
@@ -140,7 +160,7 @@ if (php_sapi_name() == 'cli')
                 $status = $project['passed'] == 1 ? 'pass' : 'fail';
 
                 // Set initial flag status
-                $success = false;
+                $success = true;
 
                 if ($student_data !== false && !empty($student_mail))
                 {

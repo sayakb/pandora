@@ -8,7 +8,7 @@
 if (!defined('IN_PANDORA')) exit;
 
 // Turn off error reporting
-error_reporting(E_ALL);
+error_reporting(0);
 
 // Set default timezone to UTC
 date_default_timezone_set('UTC');
