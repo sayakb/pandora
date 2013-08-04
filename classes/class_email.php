@@ -5,10 +5,6 @@
 * copyright (c) 2012 KDE. All rights reserved.
 */
 
-/**
-* In case if you're wondering, GSoD is, in fact, the Grey Screen of Death!
-*/
-
 class email
 {
     // Global variables
@@ -54,7 +50,7 @@ class email
             $this->email_vars = array();
         }
     }
-    
+
     // Load a template and return its contents
     function load($file)
     {
@@ -87,7 +83,7 @@ class email
         // Done!
         return $data;
     }
-    
+
     // Sends an email message
     function send($recipient, $subject, $body_tpl)
     {

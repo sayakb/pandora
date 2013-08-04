@@ -5,16 +5,12 @@
 * @copyright (c) 2012 KDE. All rights reserved.
 */
 
-/**
-* In case if you're wondering, GSoD is, in fact, the Grey Screen of Death!
-*/
-
 class cache
 {
     // Global vars
     var $is_available;
     var $lite;
-    
+
     // Constructor
     function __construct()
     {
@@ -23,7 +19,7 @@ class cache
         if (class_exists('Cache_Lite'))
         {
             $cache_path = realpath('./cache') . '/';
-            
+
             // Set the caching options
             $options = array(
                 'cacheDir'               => $cache_path,
@@ -87,11 +83,11 @@ class cache
         {
             $groups = array($groups);
         }
-        
+
         if ($this->is_available)
         {
             $status = true;
-            
+
             foreach ($groups as $group)
             {
                 $status = $status && $this->lite->clean($group);
