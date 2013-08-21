@@ -25,6 +25,7 @@ $lang_data = array(
     'view_my_projects'      => 'View my projects',
     'approve_proposal'      => 'Approve proposals',
     'approve_mentors'       => 'Approve mentors',
+    'view_participants'     => 'View participants',
     'edit_templates'        => 'Edit email templates',
     'mandatory_all'         => 'Please fill in all the fields',
     'err_mandatory_fields'  => 'Please fill in all the mandatory fields',
@@ -207,6 +208,18 @@ $lang_data = array(
     'project_url'           => 'Permanent URL for the project',
     'student_fname'         => 'Student\'s full name and e-mail address',
     'mentor_fname'          => 'Mentor\'s full name and e-mail address',
+
+    /* Module: view_participants */
+    'prog_participants'     => 'Program participants',
+    'role'                  => 'Role',
+    'role_s'                => 'Student',
+    'role_r'                => 'Resigned student',
+    'role_x'                => 'Rejected mentor',
+    'role_m'                => 'Mentor',
+    'role_i'                => 'Unapproved mentor',
+    'role_g'                => 'Guest',
+    'no_participants'       => 'This programs has no participants',
+    'projects'              => 'Projects',
 );
 
 ?>

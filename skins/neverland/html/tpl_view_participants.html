@@ -1,8 +1,8 @@
-<h1>{{approve_mentors}}</h1>
+<h1>{{prog_participants}}</h1>
 <hr class="hr-head" />
 
 <div class="alert alert-info [[notice_visibility]]">
-    {{no_pending_mentors}}
+    {{no_participants}}
 </div>
 
 <div class="[[list_visibility]]">
@@ -10,15 +10,21 @@
         <thead>
             <tr>
                 <th>
-                    {{mentor_name}}
+                    {{username}}
                 </th>
-                
-                <th style="width:200px;"></th>
+
+                <th>
+                    {{role}}
+                </th>
+
+                <th>
+                    {{projects}}
+                </th>
             </tr>
         </thead>
 
         <tbody>
-            [[mentors_list]]
+            [[participant_list]]
         </tbody>
     </table>
 </div>

@@ -72,7 +72,7 @@ class email
     function parse($data)
     {
         // Replace placeholder with values
-        foreach($this->email_vars as $key => $value)
+        foreach ($this->email_vars as $key => $value)
         {
             $data = str_replace("[[$key]]", $value, $data);
         }

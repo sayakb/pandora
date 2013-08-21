@@ -438,7 +438,7 @@ else if ($action == 'view')
     $has_mentor = false;
     $passed = -1;
 
-    foreach($participant_data as $participant)
+    foreach ($participant_data as $participant)
     {
         if ($participant['role'] == 's')
         {
@@ -665,7 +665,7 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
 
     if (!$projects_list)
     {
-        foreach($list_data as $row)
+        foreach ($list_data as $row)
         {
             $project_title = htmlspecialchars($row['title']);
             $project_desc  = htmlspecialchars($row['description']);

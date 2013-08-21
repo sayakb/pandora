@@ -14,22 +14,23 @@ class module
     function __construct()
     {
         $this->pool = array(
-            array('name' => 'login',           'access' => 'g'),
-            array('name' => 'logout',          'access' => 'u'),
-            array('name' => 'home',            'access' => 'g'),
-            array('name' => 'timeline',        'access' => 'g'),
-            array('name' => 'user_avatar',     'access' => 'u'),
-            array('name' => 'user_profile',    'access' => 'u'),
-            array('name' => 'view_programs',   'access' => 'g'),
-            array('name' => 'view_projects',   'access' => 'u'),
-            array('name' => 'program_home',    'access' => 'g'),
-            array('name' => 'approve_mentors', 'access' => 'a'),
-            array('name' => 'edit_templates',  'access' => 'a'),
-            array('name' => 'user_ban',        'access' => 'a'),
-            array('name' => 'manage_programs', 'access' => 'a'),
+            array('name' => 'login',             'access' => 'g'),
+            array('name' => 'logout',            'access' => 'u'),
+            array('name' => 'home',              'access' => 'g'),
+            array('name' => 'timeline',          'access' => 'g'),
+            array('name' => 'user_avatar',       'access' => 'u'),
+            array('name' => 'user_profile',      'access' => 'u'),
+            array('name' => 'view_programs',     'access' => 'g'),
+            array('name' => 'view_projects',     'access' => 'u'),
+            array('name' => 'program_home',      'access' => 'g'),
+            array('name' => 'approve_mentors',   'access' => 'a'),
+            array('name' => 'view_participants', 'access' => 'a'),
+            array('name' => 'edit_templates',    'access' => 'a'),
+            array('name' => 'user_ban',          'access' => 'a'),
+            array('name' => 'manage_programs',   'access' => 'a'),
         );
     }
-    
+
     // Method to load a module
     function load($module_name)
     {

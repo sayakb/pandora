@@ -49,10 +49,10 @@ $list_data = $db->query($sql);
 // Populate the mentor list
 $mentors_list = '';
 
-foreach($list_data as $row)
+foreach ($list_data as $row)
 {
     $mentor_url = urlencode($row['username']);
-    
+
     // Assign data for each mentor
     $skin->assign(array(
         'mentor_name'           => $user->profile(htmlspecialchars($row['username']), true),

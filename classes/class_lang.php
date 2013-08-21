@@ -10,7 +10,7 @@ class lang
     // Class wide variables
     var $lang_name;
     var $lang_vars;
-    
+
     // Constructor
     function __construct()
     {
@@ -24,7 +24,7 @@ class lang
     function parse($data)
     {
         global $core, $user, $gsod, $config;
-        
+
         if (file_exists(realpath("lang/{$this->lang_name}.php")))
         {
             include("lang/{$this->lang_name}.php");
@@ -41,7 +41,7 @@ class lang
 
         foreach ($lang_data as $key => $value)
         {
-            $value = $this->parse_vars($value);           
+            $value = $this->parse_vars($value);
             $data = str_replace("{{{$key}}}", $value, $data);
         }
 
@@ -62,9 +62,9 @@ class lang
         $data = str_replace("[[site_name]]", $config->site_name, $data);
         $data = str_replace("[[username]]", $user->username, $data);
         $data = str_replace("[[timezone]]", date('T'), $data);
-        
+
         // Replace placeholder with values
-        foreach($this->lang_vars as $key => $value)
+        foreach ($this->lang_vars as $key => $value)
         {
             $data = str_replace("[[$key]]", $value, $data);
         }
@@ -99,7 +99,7 @@ class lang
         global $config, $core, $user;
 
         // Return default data
-        switch($key)
+        switch ($key)
         {
             case 'lang_name':
                 return $this->lang_name;
@@ -142,7 +142,7 @@ class lang
 
         return $data;
     }
-    
+
     // Function to exclude a string from being treated as a key
     function escape(&$data)
     {

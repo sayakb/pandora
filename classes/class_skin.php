@@ -95,7 +95,7 @@ class skin
         $data = file_get_contents($file_name);
 
         // Parse the skin vars
-        foreach($this->skin_vars as $key => $value)
+        foreach ($this->skin_vars as $key => $value)
         {
             $data = str_replace("[[$key]]", $value, $data);
         }
@@ -127,7 +127,7 @@ class skin
 
         $html = new simple_html_dom();
         $html->load($data);
-        
+
         $elts = $html->find('[class*=-do-not-render-]');
 
         foreach ($elts as $elt)
@@ -357,7 +357,7 @@ class skin
             $list = '<option></option>';
         }
 
-        foreach($entries as $entry)
+        foreach ($entries as $entry)
         {
             $selected = ($selected_entry !== false && strtolower($entry) == strtolower($selected_entry));
             $list .= '<option' . ($selected ? ' selected="selected"' : '') . '>' .
