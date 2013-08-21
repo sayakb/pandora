@@ -27,13 +27,15 @@ $list_data = $db->query($sql);
 // Parse the participant list
 $list = array();
 $prev_row = null;
+$project = null;
 
 foreach ($list_data as $row)
 {
+    // Append project to previous row
     if ($prev_row != null)
     {
-        if ($prev_row['username'] == $row['username'] &&
-            $prev_row['role'] == $row['role'])
+        if ($prev_row['username'] == $row['username'] && $prev_row['role'] == $row['role'] &&
+            $row['project_id'] != null)
         {
             $idx = count($list) - 1;
             $list[$idx]['projects'] .= '<br /><a href="?q=view_projects&prg=' . $program_id .
@@ -43,13 +45,22 @@ foreach ($list_data as $row)
         }
     }
 
+    // Link to project only if it exists
+    if ($row['project_id'] != null)
+    {
+        $project = '<a href="?q=view_projects&prg=' . $program_id . '&p=' . $row['project_id'] . '">' .
+                   htmlspecialchars($row['project_title']) . '</a>';
+    }
+    else
+    {
+        $project = '-';
+    }
+
     $list[] = array(
         'username'  => $row['username'],
         'profile'   => $user->profile(htmlspecialchars($row['username']), true),
         'role'      => $lang->get('role_' . $row['role']),
-        'projects'  => '<a href="?q=view_projects&prg=' . $program_id . '&p=' .
-                       $row['project_id'] . '">' . htmlspecialchars($row['project_title']) .
-                      '</a>',
+        'projects'  => $project,
     );
 
     $prev_row = $row;
