@@ -27,7 +27,7 @@ $confirm = isset($_POST['yes']);
 if ($action == 'list')
 {
     $programs_list = '';
-    
+
     // Get all programs
     $sql = "SELECT * FROM {$db->prefix}programs " .
            "LIMIT {$limit_start}, {$config->per_page}";
@@ -44,7 +44,7 @@ if ($action == 'list')
         $skin->assign(array(
             'program_id'          => $row['id'],
             'program_title'       => htmlspecialchars($row['title']),
-            'program_description' => htmlspecialchars($row['description']),
+            'program_description' => nl2br(htmlspecialchars($row['description'])),
             'program_active'      => $skin->visibility($row['is_active'] == 1),
             'program_inactive'    => $skin->visibility($row['is_active'] == 0),
         ));
@@ -96,7 +96,7 @@ else if ($action == 'editor')
             $db->escape($id);
             $db->escape($title);
             $db->escape($description);
-            
+
             // Determine deadline and completion flags
             $deadline = $dl_student < $core->timestamp ? 1 : 0;
             $complete = $end_time < $core->timestamp ? 1 : 0;
@@ -171,12 +171,12 @@ else if ($action == 'editor')
         $dl_mentor = date('M d Y, h:i a', $row['dl_mentor']);
         $active = $row['is_active'];
     }
-    
+
     // Assign skin data
     $skin->assign(array(
         'editor_title'      => $page_title,
         'title'             => htmlspecialchars($title),
-        'description'       => htmlspecialchars($description),
+        'description'       => nl2br(htmlspecialchars($description)),
         'start_date'        => $start_date,
         'end_date'          => $end_date,
         'dl_student'        => $dl_student,
@@ -221,11 +221,11 @@ else if ($action == 'delete')
 
         // Purge the cache data
         $cache->purge(array('programs', 'projects', 'roles'));
-        
+
         // Redirect to list page
         $core->redirect("?q=manage_programs");
     }
-    
+
     // Assign confirm box data
     $skin->assign(array(
         'message_title'     => $lang->get('confirm_deletion'),

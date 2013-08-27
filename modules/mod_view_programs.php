@@ -81,7 +81,7 @@ else
         $skin->assign(array(
             'program_url'         => $url,
             'program_title'       => htmlspecialchars($row['title']),
-            'program_description' => htmlspecialchars($row['description']),
+            'program_description' => nl2br(htmlspecialchars($row['description'])),
         ));
 
         $programs_list .= $skin->output('tpl_view_programs_item');

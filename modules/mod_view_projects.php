@@ -334,7 +334,7 @@ if ($action == 'editor')
         'editor_title'          => $page_title,
         'program_id'            => $program_id,
         'project_title'         => htmlspecialchars($title),
-        'project_description'   => htmlspecialchars($description),
+        'project_description'   => nl2br(htmlspecialchars($description)),
         'new_mentor'            => htmlspecialchars($new_mentor),
         'success_message'       => isset($success_message) ? $success_message : '',
         'error_message'         => isset($error_message) ? $error_message : '',
@@ -534,7 +534,7 @@ else if ($action == 'view')
         'program_id'                => $program_id,
         'project_id'                => $project_id,
         'project_title'             => htmlspecialchars($project_data['title']),
-        'project_description'       => htmlspecialchars($project_data['description']),
+        'project_description'       => nl2br(htmlspecialchars($project_data['description'])),
         'project_student'           => $user->profile(htmlspecialchars($student), true),
         'project_mentor'            => $user->profile(htmlspecialchars($mentor), true),
         'project_accepted'          => $accepted,
@@ -685,7 +685,7 @@ else if ($action == 'user' || $action == 'proposed' || $action == 'accepted' || 
             // Assign data for each project
             $skin->assign(array(
                 'project_title'         => $project_title,
-                'project_description'   => $project_desc,
+                'project_description'   => nl2br($project_desc),
                 'project_url'           => "?q=view_projects&amp;prg={$program_id}&amp;p={$row['id']}",
                 'approve_url'           => "?q=view_projects&amp;a=approve&amp;prg={$program_id}" .
                                            "&amp;p={$row['id']}&amp;r={$return_url}",

@@ -74,7 +74,7 @@ if ($program_data != null)
     $skin->assign(array(
         'program_id'               => $program_data['id'],
         'program_title'            => $program_data['title'],
-        'program_description'      => $program_data['description'],
+        'program_description'      => nl2br($program_data['description']),
         'program_start_date'       => date('M d, Y', $program_data['start_time']),
         'program_end_date'         => date('M d, Y', $program_data['end_time']),
         'student_deadlines'        => $lang->get('student_dl_info'),
