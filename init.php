@@ -41,6 +41,12 @@ $skin   = new skin();
 $module = new module();
 $donut  = new donut();
 
+// Always use https
+if ($core->get_protocol() == 'http://')
+{
+    $core->redirect('https://' . $core->base_uri(false));
+}
+
 // Set up the db connection
 $db->connect();
 

@@ -15,7 +15,7 @@ class core
     {
         $this->timestamp = time();
     }
-    
+
     // Function to return root path
     function path()
     {
@@ -25,7 +25,7 @@ class core
 
         return $path;
     }
-    
+
     // Function to return remote IP
     function remote_ip()
     {
@@ -34,7 +34,7 @@ class core
 
     // Function to set a cookie
     function set_cookie($name, $value, $expire = 0)
-    {      
+    {
         if ($expire > 0)
         {
             $expire = time() + ($expire * 24 * 60 * 60);
@@ -42,7 +42,7 @@ class core
 
         setcookie('pandora_' . $name, $value, $expire, $this->path());
     }
-    
+
     // Function to expire a cookie
     function unset_cookie($name)
     {
@@ -97,21 +97,35 @@ class core
     }
 
     // Get the base URI
-    function base_uri()
+    function base_uri($add_protocol = true)
     {
         if (php_sapi_name() != 'cli')
         {
-            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
-            $uri = $protocol . '://' . $_SERVER['HTTP_HOST'] . $this->path();
+            if ($add_protocol)
+            {
+                $protocol = $this->get_protocol();
+            }
+            else
+            {
+                $protocol = '';
+            }
+
+            $uri = $protocol . $_SERVER['HTTP_HOST'] . $this->path();
         }
         else
         {
             $uri = $this->path();
         }
-        
+
         return $uri;
     }
-    
+
+    // Returns the current protocol
+    function get_protocol()
+    {
+        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
+    }
+
     // Method to replace square brackets with normal braces
     function rss_encode(&$data)
     {
@@ -121,7 +135,7 @@ class core
         $data = str_replace('}', ')', $data);
         $data = str_replace(chr(0), '', $data);
     }
-    
+
     // Return time in milliseconds
     function get_microtime()
     {
@@ -131,58 +145,58 @@ class core
 
         return $time;
     }
-    
+
     // Method to redirect to a specified URL
     function redirect($url)
     {
         header("Location: {$url}");
         exit;
     }
- 
+
     // Method to return the server load
-    function server_load() 
+    function server_load()
     {
         $os = strtolower(PHP_OS);
-        
-        if (strpos($os, "win") === false) 
+
+        if (strpos($os, "win") === false)
         {
-            if(file_exists("/proc/loadavg")) 
+            if(file_exists("/proc/loadavg"))
             {
                 $load = file_get_contents("/proc/loadavg");
                 $load = explode(' ', $load);
                 return $load[0];
             }
-            else if (function_exists("shell_exec")) 
+            else if (function_exists("shell_exec"))
             {
                 $load = explode(' ', `uptime`);
                 return $load[count($load) - 1];
             }
-            else 
+            else
             {
                 return false;
             }
         }
-        else if ($windows) 
+        else if ($windows)
         {
-            if (class_exists("COM")) 
+            if (class_exists("COM"))
             {
                 $wmi = new COM("WinMgmts:\\\\.");
                 $cpus = $wmi->InstancesOf("Win32_Processor");
-         
+
                 $cpuload = 0;
                 $i = 0;
-         
-                while ($cpu = $cpus->Next()) 
+
+                while ($cpu = $cpus->Next())
                 {
                     $cpuload += $cpu->LoadPercentage;
                     $i++;
                 }
-         
+
                 $cpuload = round($cpuload / $i, 2);
-         
+
                 return "$cpuload%";
             }
-            else 
+            else
             {
                 return false;
             }
