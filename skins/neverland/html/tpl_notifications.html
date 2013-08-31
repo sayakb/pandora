@@ -1,0 +1,49 @@
+<h1>{{notification_mails}}</h1>
+<hr class="hr-head" />
+
+<div class="alert alert-info">
+    {{mail_queue_exp}}
+</div>
+
+<div class="pull-right">
+    <input type="submit" name="process" class="btn btn-primary" value="{{send_notifications}}" />
+</div>
+
+<h4>{{mail_queue}}</h4>
+
+<div class="alert alert-info [[notice_visibility]]">
+    {{queue_empty}}
+</div>
+
+<div class="[[queue_visibility]]">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    {{program_title}}
+                </th>
+
+                <th class="align-center">
+                    {{acceptance_mails}}
+                </th>
+
+                <th class="align-center">
+                    {{result_mails}}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            [[queue_items]]
+        </tbody>
+    </table>
+</div>
+
+<div class="[[output_visibility]]">
+    <br />
+    <h4>{{sendmail_output}}</h4>
+
+    <div class="well">
+        [[notify_output]]
+    </div>
+</div>

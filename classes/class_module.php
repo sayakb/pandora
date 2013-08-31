@@ -28,6 +28,7 @@ class module
             array('name' => 'edit_templates',    'access' => 'a'),
             array('name' => 'user_ban',          'access' => 'a'),
             array('name' => 'manage_programs',   'access' => 'a'),
+            array('name' => 'notifications',     'access' => 'a'),
         );
     }
 

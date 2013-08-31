@@ -220,6 +220,22 @@ $lang_data = array(
     'role_g'                => 'Guest',
     'no_participants'       => 'This programs has no participants',
     'projects'              => 'Projects',
+
+    /* Module: notifications */
+    'notification_mails'    => 'Notification mails',
+    'mail_queue'            => 'Queued emails',
+    'mail_queue_exp'        => 'Each program has two types of emails: acceptance emails and result emails. Acceptance ' .
+                               'emails are sent out to students and mentors only after the mentor deadline is reached ' .
+                               'while result emails are sent out once the program has ended. Use the <b>Send notifications</b> ' .
+                               'button to trigger these mails. No matter when you trigger them, the mails will be sent ' .
+                               'only past these deadlines.',
+    'acceptance_mails'      => 'Acceptance emails',
+    'result_mails'          => 'Result emails',
+    'queue_empty'           => 'There are no items in the queue',
+    'send_notifications'    => 'Send notifications',
+    'sendmail_output'       => 'Sendmail output',
+    'processing_program'    => 'Processing program #',
+    'program_no_mail'       => 'No mails were sent for this program',
 );
 
 ?>
