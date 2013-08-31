@@ -249,7 +249,7 @@ $skin->assign(array(
 ));
 
 // Output the module
-$module_title = $lang->get('notifications');
+$module_title = $lang->get('notification_mails');
 $module_data = $skin->output('tpl_notifications');
 
 ?>
